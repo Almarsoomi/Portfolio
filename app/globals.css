@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Theme tokens — every color/spacing decision lives here.
+   Values are RGB channel triplets so Tailwind can apply alpha values.
+--------------------------------------------------------------------------- */
+:root {
+  /* Surfaces (slate-950 base) */
+  --color-surface: 2 6 23; /* slate-950 */
+  --color-surface-raised: 15 23 42; /* slate-900 */
+  --color-surface-overlay: 30 41 59; /* slate-800 */
+
+  /* Text */
+  --color-ink: 241 245 249; /* slate-100 */
+  --color-ink-muted: 148 163 184; /* slate-400 */
+  --color-ink-faint: 100 116 139; /* slate-500 */
+
+  /* Accent (cyan → blue) */
+  --color-accent: 34 211 238; /* cyan-400 */
+  --color-accent-bright: 103 232 249; /* cyan-300 */
+  --color-accent-deep: 59 130 246; /* blue-500 */
+
+  /* Borders */
+  --color-edge: 30 41 59; /* slate-800 */
+  --color-edge-strong: 51 65 85; /* slate-700 */
+
+  /* Layout */
+  --width-content: 72rem;
+  --space-section: clamp(5rem, 10vw, 8rem);
+  --space-section-sm: clamp(3.5rem, 7vw, 5.5rem);
+
+  /* Sticky nav height, used for scroll offset */
+  --nav-height: 4.5rem;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Anchored sections stop below the sticky nav */
+  scroll-padding-top: calc(var(--nav-height) + 1rem);
+}
+
+body {
+  @apply bg-surface text-ink font-body antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgb(var(--color-accent) / 0.25);
+  color: rgb(var(--color-ink));
+}
+
+/* Faint background grid texture */
+.bg-grid {
+  background-image:
+    linear-gradient(rgb(var(--color-edge) / 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--color-edge) / 0.35) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%);
+}
+
+/* Hero radial glow — animated with transform/opacity only (GPU-friendly) */
+.hero-glow {
+  background: radial-gradient(
+    ellipse at center,
+    rgb(var(--color-accent) / 0.16) 0%,
+    rgb(var(--color-accent-deep) / 0.08) 40%,
+    transparent 70%
+  );
+  will-change: transform, opacity;
+}
+
+/* Gradient text for headline highlights */
+.text-gradient {
+  background: linear-gradient(
+    100deg,
+    rgb(var(--color-accent-bright)),
+    rgb(var(--color-accent-deep))
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Respect reduced motion: kill decorative animation + smooth scroll */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .hero-glow,
+  .animate-glow-drift {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
