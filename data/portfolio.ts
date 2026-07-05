@@ -40,7 +40,7 @@ export const site = {
   title: "Ahmed — Builder & Bookkeeper in Dubai",
   description:
     "Dubai-based developer building practical business tools — web apps, financial automation, and accounting systems for UAE businesses. Zoho Books bookkeeping specialist.",
-  url: "https://ahmed-portfolio.vercel.app",
+  url: "https://almarsoomi.github.io/Portfolio",
   email: "almarsoomi96@gmail.com",
   github: "https://github.com/almarsoomi",
 };
