@@ -35,6 +35,7 @@ export default function Nav() {
   }, []);
 
   return (
+    <>
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         scrolled
@@ -79,14 +80,16 @@ export default function Nav() {
           <Menu aria-hidden className="h-6 w-6" />
         </button>
       </nav>
+    </header>
 
-      {/* Mobile drawer */}
-      <AnimatePresence>
+    {/* Mobile drawer — rendered outside the header: its backdrop-blur would
+        otherwise become the containing block for these fixed elements. */}
+    <AnimatePresence>
         {open && (
           <>
             <motion.div
               key="backdrop"
-              className="fixed inset-0 z-40 bg-surface/70 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-[60] bg-surface/70 backdrop-blur-sm md:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -100,7 +103,7 @@ export default function Nav() {
               role="dialog"
               aria-modal="true"
               aria-label="Mobile menu"
-              className="fixed inset-y-0 right-0 z-50 flex w-72 max-w-[85vw] flex-col border-l border-edge bg-surface-raised p-6 md:hidden"
+              className="fixed inset-y-0 right-0 z-[70] flex w-72 max-w-[85vw] flex-col border-l border-edge bg-surface-raised p-6 md:hidden"
               initial={{ x: reduce ? 0 : "100%", opacity: reduce ? 0 : 1 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: reduce ? 0 : "100%", opacity: reduce ? 0 : 1 }}
@@ -157,7 +160,7 @@ export default function Nav() {
             </motion.div>
           </>
         )}
-      </AnimatePresence>
-    </header>
+    </AnimatePresence>
+    </>
   );
 }
