@@ -137,6 +137,38 @@ body {
   color: transparent;
 }
 
+/* ---------------------------------------------------------------------------
+   Mobile performance: phones pay the most for the least-visible decoration.
+   Drop the masked grid, freeze the large glow layer (and un-promote it), and
+   disable backdrop-filter — the single most expensive effect on mobile GPUs.
+--------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .bg-grid {
+    display: none;
+  }
+  .hero-glow {
+    will-change: auto;
+  }
+  .animate-glow-drift {
+    animation: none;
+  }
+  .backdrop-blur,
+  .backdrop-blur-sm,
+  .backdrop-blur-md {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  /* Blur was carrying legibility for these. Without it, content scrolling
+     underneath ghosts through — even at 96% on a dark theme — so go fully
+     opaque. .backdrop-blur-sm (the drawer scrim) is meant to be see-through. */
+  .backdrop-blur-md {
+    background-color: rgb(var(--color-surface));
+  }
+  .backdrop-blur {
+    background-color: rgb(var(--color-surface-raised));
+  }
+}
+
 /* Respect reduced motion: kill decorative animation + smooth scroll */
 @media (prefers-reduced-motion: reduce) {
   html {

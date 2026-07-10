@@ -15,7 +15,8 @@ import { ArrowRight, MapPin } from "lucide-react";
 import { hero } from "@/data/portfolio";
 import { EASE } from "./motion-primitives";
 import Typewriter from "./Typewriter";
-import ahmedPhoto from "@/app/Ahmed.png";
+import { useIsDesktop, useMediaQuery } from "./use-media-query";
+import ahmedPhoto from "@/app/ahmed.webp";
 
 /** A shape that gently bobs up and down (disabled under reduced motion). */
 function Float({
@@ -51,6 +52,13 @@ function Float({
 
 export default function Hero() {
   const reduce = useReducedMotion();
+  const isDesktop = useIsDesktop();
+  // Scroll/pointer-linked effects are desktop-only: on phones they add
+  // main-thread work per scroll frame for effects nobody can trigger anyway.
+  const motionOff = reduce || !isDesktop;
+  // Shapes are *not rendered* below md (rather than CSS-hidden) so their 7
+  // infinite animations never tick on phones.
+  const showShapes = useMediaQuery("(min-width: 768px)");
 
   // Parallax: elements move at different rates as the hero scrolls away.
   const heroRef = useRef<HTMLElement>(null);
@@ -61,9 +69,9 @@ export default function Hero() {
   const bgYRaw = useTransform(scrollYProgress, [0, 1], [0, 150]);
   const textYRaw = useTransform(scrollYProgress, [0, 1], [0, 40]);
   const photoYRaw = useTransform(scrollYProgress, [0, 1], [0, -60]);
-  const bgY = reduce ? undefined : bgYRaw;
-  const textY = reduce ? undefined : textYRaw;
-  const photoY = reduce ? undefined : photoYRaw;
+  const bgY = motionOff ? undefined : bgYRaw;
+  const textY = motionOff ? undefined : textYRaw;
+  const photoY = motionOff ? undefined : photoYRaw;
 
   // Cursor-move parallax: the portrait and shapes react to pointer position,
   // at different depths, so the flat layout gains spatial depth.
@@ -79,7 +87,7 @@ export default function Hero() {
   const photoRotX = useTransform(psY, (v) => v * -9);
 
   const handlePointerMove = (e: React.MouseEvent) => {
-    if (reduce || !heroRef.current) return;
+    if (motionOff || !heroRef.current) return;
     const r = heroRef.current.getBoundingClientRect();
     pointerX.set((e.clientX - r.left) / r.width - 0.5);
     pointerY.set((e.clientY - r.top) / r.height - 0.5);
@@ -217,12 +225,12 @@ export default function Hero() {
               src={ahmedPhoto}
               alt="Ahmed"
               priority
-              sizes="(max-width: 1024px) 80vw, 26rem"
               className="h-full w-full object-cover"
             />
           </div>
 
           {/* ── Floating geometric shapes (extra cursor parallax) ── */}
+          {showShapes ? (
           <motion.div style={{ x: shapeX, y: shapeY }} className="absolute inset-0">
 
           {/* Filled accent circle, top-right */}
@@ -334,6 +342,7 @@ export default function Hero() {
             <span className="h-1.5 w-1.5 rounded-full bg-accent/30" />
           </Float>
           </motion.div>
+          ) : null}
           </motion.div>
         </motion.div>
       </motion.div>

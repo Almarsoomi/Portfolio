@@ -13,6 +13,7 @@ import {
 import { projects } from "@/data/portfolio";
 import type { Project, ProjectStatus } from "@/data/portfolio";
 import { SectionHeading } from "./motion-primitives";
+import { useIsDesktop } from "./use-media-query";
 
 const statusStyles: Record<ProjectStatus, string> = {
   Live: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400",
@@ -30,6 +31,7 @@ function iconFor(category: string): LucideIcon {
 
 export default function PinnedProjects() {
   const reduce = useReducedMotion();
+  const isDesktop = useIsDesktop();
   const [active, setActive] = useState(0);
   const current = projects[active];
   const ActiveIcon = iconFor(current.category);
@@ -62,6 +64,12 @@ export default function PinnedProjects() {
   }, [active]);
 
   useEffect(() => {
+    // The pinned panel (and so the connector) only exists at lg. Below that,
+    // skip the per-scroll-frame measurement entirely.
+    if (!isDesktop) {
+      setPath(null);
+      return;
+    }
     measure();
     setPulseKey((k) => k + 1);
     const onScroll = () => requestAnimationFrame(measure);
@@ -71,7 +79,7 @@ export default function PinnedProjects() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [measure]);
+  }, [measure, isDesktop]);
 
   return (
     <section id="projects" className="mx-auto max-w-content px-5 py-section-sm sm:px-8">

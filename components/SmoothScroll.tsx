@@ -13,16 +13,17 @@ import { registerLenis } from "./lenis-store";
 export default function SmoothScroll() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Touch devices already scroll smoothly on the compositor thread. Driving
+    // that from JS (syncTouch) moves scrolling onto the main thread and makes
+    // phones stutter, so leave native scroll alone there.
+    if (!window.matchMedia("(pointer: fine)").matches) return;
 
     const lenis = new Lenis({
       duration: 1.05,
       // Expo-out: quick to respond, gentle to settle.
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      // Normalize touch so mobile momentum stops feeling jumpy.
-      syncTouch: true,
-      syncTouchLerp: 0.09,
-      touchMultiplier: 1.2,
+      syncTouch: false,
     });
 
     registerLenis(lenis);

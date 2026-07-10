@@ -9,6 +9,7 @@ import {
   type Variants,
 } from "framer-motion";
 import { useRef, type ReactNode } from "react";
+import { useIsDesktop } from "./use-media-query";
 
 export const EASE = [0.25, 0.4, 0.25, 1] as const;
 
@@ -99,6 +100,7 @@ export function SectionHeading({
   intro?: string;
 }) {
   const reduce = useReducedMotion();
+  const isDesktop = useIsDesktop();
   const ref = useRef<HTMLDivElement>(null);
   // Lag: the heading gently trails the scroll via a spring-smoothed offset.
   const { scrollYProgress } = useScroll({
@@ -110,7 +112,8 @@ export function SectionHeading({
     damping: 20,
     mass: 0.35,
   });
-  const y = reduce ? undefined : yRaw;
+  // Off on phones: a spring per heading is per-frame main-thread work.
+  const y = reduce || !isDesktop ? undefined : yRaw;
 
   return (
     <Reveal className="mb-12 max-w-2xl md:mb-16">
