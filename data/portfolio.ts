@@ -55,7 +55,11 @@ export const nav = [
 
 export const hero = {
   badge: "Builder & Bookkeeper • Dubai",
+  greeting: "Hi, I'm Ahmed",
   headline: "Building Tools That Solve Real Problems",
+  // Lead-in + the words the typewriter cycles through after it.
+  lead: "I build",
+  typewriter: ["web apps.", "financial tools.", "automation.", "clean books."],
   subheadline:
     "Full-stack developer and bookkeeping specialist for UAE businesses. I build web apps, financial automation, and accounting systems — and keep the books behind them clean, VAT-ready, and audit-friendly.",
   primaryCta: { label: "View Projects", href: "#projects" },

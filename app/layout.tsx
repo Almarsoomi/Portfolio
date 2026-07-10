@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Manrope } from "next/font/google";
 import { site } from "@/data/portfolio";
+import CustomCursor from "@/components/CustomCursor";
+import SmoothScroll from "@/components/SmoothScroll";
+import ScrollToTop from "@/components/ScrollToTop";
 import "./globals.css";
 
 const display = Space_Grotesk({
@@ -39,7 +42,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable}`}>
-      <body>{children}</body>
+      <body>
+        <SmoothScroll />
+        <CustomCursor />
+        {children}
+        <ScrollToTop />
+      </body>
     </html>
   );
 }

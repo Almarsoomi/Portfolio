@@ -41,6 +41,26 @@ html {
   scroll-padding-top: calc(var(--nav-height) + 1rem);
 }
 
+/* Lenis smooth scroll — recommended base styles. When Lenis is active it adds
+   .lenis / .lenis-smooth to <html> and drives scroll itself, so native
+   scroll-behavior must yield to it. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
 body {
   @apply bg-surface text-ink font-body antialiased;
   text-rendering: optimizeLegibility;
@@ -70,6 +90,39 @@ body {
     transparent 70%
   );
   will-change: transform, opacity;
+}
+
+/* Custom cursor: hide the native pointer only on fine-pointer devices while
+   the JS cursor is active. Text fields keep their native caret for usability. */
+@media (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: none;
+  }
+  html.has-custom-cursor input,
+  html.has-custom-cursor textarea,
+  html.has-custom-cursor select {
+    cursor: auto;
+  }
+}
+
+/* Blinking caret for the typewriter headline */
+.typewriter-caret {
+  display: inline-block;
+  margin-left: 0.06em;
+  font-weight: 400;
+  color: rgb(var(--color-accent));
+  animation: caret-blink 1.05s step-end infinite;
+}
+
+@keyframes caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 /* Gradient text for headline highlights */

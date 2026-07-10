@@ -1,6 +1,6 @@
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
-import ProjectsGrid from "@/components/ProjectsGrid";
+import PinnedProjects from "@/components/PinnedProjects";
 import WorkCategories from "@/components/WorkCategories";
 import Accounting from "@/components/Accounting";
 import Skills from "@/components/Skills";
@@ -14,7 +14,7 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
-        <ProjectsGrid />
+        <PinnedProjects />
         <WorkCategories />
         <Accounting />
         <Skills />
