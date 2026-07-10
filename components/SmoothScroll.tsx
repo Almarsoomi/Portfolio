@@ -22,7 +22,7 @@ export default function SmoothScroll() {
       // Normalize touch so mobile momentum stops feeling jumpy.
       syncTouch: true,
       syncTouchLerp: 0.09,
-      touchInertiaMultiplier: 20,
+      touchMultiplier: 1.2,
     });
 
     registerLenis(lenis);
