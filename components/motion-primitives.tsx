@@ -8,8 +8,8 @@ import {
   useTransform,
   type Variants,
 } from "framer-motion";
-import { useRef, type ReactNode } from "react";
-import { useIsDesktop } from "./use-media-query";
+import { useId, useRef, type ReactNode } from "react";
+import { useIsDesktop, useMediaQuery } from "./use-media-query";
 
 export const EASE = [0.25, 0.4, 0.25, 1] as const;
 
@@ -131,9 +131,20 @@ export function SectionHeading({
   );
 }
 
-/** A hand-drawn accent underline that draws itself when scrolled into view. */
+/**
+ * A hand-drawn accent underline that draws itself when scrolled into view.
+ * Not rendered below md — it's decorative, and on phones the scroll-linked
+ * draw is unreliable.
+ */
 export function HeadingFlourish({ className }: { className?: string }) {
   const reduce = useReducedMotion();
+  const show = useMediaQuery("(min-width: 768px)");
+  // Each instance needs its own gradient id: a shared id is invalid HTML and
+  // makes every other instance depend on the first one still being rendered.
+  const gradientId = `flourish-${useId().replace(/:/g, "")}`;
+
+  if (!show) return null;
+
   return (
     <svg
       aria-hidden
@@ -142,14 +153,14 @@ export function HeadingFlourish({ className }: { className?: string }) {
       className={`mt-3 h-3 w-40 ${className ?? ""}`}
     >
       <defs>
-        <linearGradient id="flourish-gradient" x1="0" y1="0" x2="1" y2="0">
+        <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="rgb(var(--color-accent-bright))" />
           <stop offset="100%" stopColor="rgb(var(--color-accent-deep))" />
         </linearGradient>
       </defs>
       <motion.path
         d="M2 9 Q 22 2, 44 8 T 88 8 T 132 7 T 166 6"
-        stroke="url(#flourish-gradient)"
+        stroke={`url(#${gradientId})`}
         strokeWidth="3"
         strokeLinecap="round"
         initial={{ pathLength: reduce ? 1 : 0 }}
