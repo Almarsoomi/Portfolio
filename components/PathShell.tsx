@@ -26,7 +26,7 @@ export default function PathShell({ path, children }: { path: PathKey; children:
       <div aria-hidden className="path-curtain" />
       <Nav path={path} />
       <main>{children}</main>
-      <Footer />
+      <Footer path={path} />
       <SpeedBadge />
     </div>
   );
