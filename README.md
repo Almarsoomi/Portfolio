@@ -60,6 +60,15 @@ Open [http://localhost:3000](http://localhost:3000).
 - Each path shows a moving strip of client names (pauses on hover).
 - A swipeable quote carousel appears automatically once real testimonials are added to `data/testimonials.ts`. Only add quotes clients have agreed to share.
 
+### Light / dark theme
+- A sun/moon button in the nav and on the homepage switches the theme. The new theme grows as a circle out of the button (View Transitions API; other browsers and reduced-motion visitors get an instant swap).
+- Dark is the default. The choice is remembered (`localStorage`) and applied by a tiny inline script before first paint, so there is no flash.
+- The light palette is the `[data-theme="light"]` blocks in `app/globals.css`. Use the `light:` Tailwind variant for one-off overrides. The homepage doors and their mock-ups stay dark on purpose.
+
+### Availability badge
+- A pill with a pulsing green dot ("Available for new projects" / "Taking on new clients") sits beside the logo on desktop and in the hero on smaller screens; it links to the contact section.
+- Set `AVAILABLE` to `false` in `data/availability.ts` when fully booked — the badge turns amber. The wording is in `ui.availability` in each language file.
+
 ### Speed badge
 - On the path pages, a small badge shows how long the page actually took to load on the visitor's device (browser navigation timing) and how many KB were transferred. It counts up, tucks away after a few seconds, and expands on hover or tap.
 

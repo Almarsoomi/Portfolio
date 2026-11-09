@@ -16,6 +16,7 @@ import type { PathKey } from "@/data/portfolio";
 import { useContent } from "./i18n";
 import { EASE } from "./motion-primitives";
 import Typewriter from "./Typewriter";
+import AvailabilityBadge from "./AvailabilityBadge";
 import { useIsDesktop, useMediaQuery } from "./use-media-query";
 import ahmedPhoto from "@/app/ahmed.webp";
 
@@ -138,13 +139,17 @@ export default function Hero({ path }: { path: PathKey }) {
       >
         {/* Text column */}
         <motion.div style={{ y: textY }} className="text-center lg:text-start">
-          <motion.p
+          <motion.div
             variants={item}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-edge-strong bg-surface-raised/60 px-4 py-2 text-sm font-medium text-ink-muted backdrop-blur"
+            className="mb-6 flex flex-wrap items-center justify-center gap-2 lg:justify-start"
           >
-            <MapPin aria-hidden className="h-4 w-4 text-accent" />
-            {content.badge}
-          </motion.p>
+            <p className="inline-flex items-center gap-2 rounded-full border border-edge-strong bg-surface-raised/60 px-4 py-2 text-sm font-medium text-ink-muted backdrop-blur">
+              <MapPin aria-hidden className="h-4 w-4 text-accent" />
+              {content.badge}
+            </p>
+            {/* The nav carries this badge from lg up */}
+            <AvailabilityBadge path={path} className="inline-flex py-2 lg:hidden" />
+          </motion.div>
 
           <motion.p
             variants={item}

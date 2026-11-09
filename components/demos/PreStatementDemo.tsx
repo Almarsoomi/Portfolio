@@ -79,7 +79,7 @@ export default function PreStatementDemo() {
               transition={{ duration: 0.25, ease }}
               className="absolute inset-x-0 top-0 flex h-[2.4rem] items-center gap-2 rounded-xl border border-edge-strong bg-surface-overlay/90 px-2.5 shadow-lg backdrop-blur"
             >
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400 light:text-emerald-600">
                 <MessageSquare aria-hidden className="h-3 w-3" />
               </span>
               <p className="min-w-0 truncate text-[0.7rem] text-ink-muted">
@@ -101,7 +101,7 @@ export default function PreStatementDemo() {
             >
               <span
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-                  matched ? "bg-emerald-500/20 text-emerald-400" : "bg-accent/20 text-accent"
+                  matched ? "bg-emerald-500/20 text-emerald-400 light:text-emerald-600" : "bg-accent/20 text-accent"
                 }`}
               >
                 {matched ? (
@@ -112,7 +112,7 @@ export default function PreStatementDemo() {
               </span>
               <p className="text-[0.72rem] font-medium text-ink">
                 {matched ? (
-                  <span className="text-emerald-400">Statement matches · no surprises</span>
+                  <span className="text-emerald-400 light:text-emerald-600">Statement matches · no surprises</span>
                 ) : (
                   <>
                     October statement arrived
@@ -132,7 +132,7 @@ export default function PreStatementDemo() {
             <CreditCard aria-hidden className="h-3.5 w-3.5" />
             Everyday card ·· 4821
           </div>
-          <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[0.6rem] font-medium text-emerald-400">
+          <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[0.6rem] font-medium text-emerald-400 light:text-emerald-600">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
             Live
           </span>

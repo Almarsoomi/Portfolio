@@ -9,6 +9,7 @@ import type { PathKey } from "@/data/portfolio";
 import { localHref } from "@/data/content";
 import { useContent, useLang } from "../i18n";
 import LangSwitch, { LANG_KEY } from "../LangSwitch";
+import ThemeToggle from "../ThemeToggle";
 import { useMediaQuery } from "../use-media-query";
 import FitStage from "./FitStage";
 import BuildVisual from "./BuildVisual";
@@ -16,8 +17,6 @@ import BooksVisual from "./BooksVisual";
 
 const ORDER: PathKey[] = ["build", "books"];
 const LAST_PATH_KEY = "fork:last-path";
-/** Solid surface colour of each destination page — the wipe lands on it. */
-const DEST_SURFACE: Record<PathKey, string> = { build: "rgb(2 6 23)", books: "rgb(12 10 9)" };
 const DEST_GRADIENT: Record<PathKey, string> = {
   build: "linear-gradient(90deg, rgb(103 232 249), rgb(59 130 246))",
   books: "linear-gradient(90deg, rgb(253 224 71), rgb(16 185 129))",
@@ -102,7 +101,7 @@ export default function Gateway() {
   const words = gateway.question.split(" ");
 
   return (
-    <main className="relative flex min-h-[100svh] flex-col overflow-hidden bg-[#020617] text-slate-100">
+    <main className="relative flex min-h-[100svh] flex-col overflow-hidden bg-surface text-ink">
       {/* Ambient glows: cool on the build side, warm on the books side */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute -start-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-cyan-500/10 blur-3xl" />
@@ -113,11 +112,12 @@ export default function Gateway() {
       <header className="relative z-10 flex items-center justify-between px-5 pt-3 sm:px-8 sm:pt-6">
         <span className="font-display text-lg font-semibold tracking-tight">{site.logo}</span>
         <div className="flex items-center gap-1">
-          <LangSwitch compact className="me-1" />
+          <LangSwitch compact />
+          <ThemeToggle className="mx-1" />
           <a
             href={`mailto:${site.email}`}
             aria-label={ui.emailLabel}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink"
           >
             <Mail aria-hidden className="h-[18px] w-[18px]" />
           </a>
@@ -126,7 +126,7 @@ export default function Gateway() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={ui.githubLabel}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink"
           >
             <Github aria-hidden className="h-[18px] w-[18px]" />
           </a>
@@ -136,7 +136,7 @@ export default function Gateway() {
       {/* The question */}
       <div className="relative z-10 px-5 pb-4 pt-1 text-center sm:px-8 md:pb-8 md:pt-6">
         <motion.p
-          className="font-display text-sm font-medium text-slate-400 sm:text-base"
+          className="font-display text-sm font-medium text-ink-muted sm:text-base"
           initial={{ opacity: 0, y: reduce ? 0 : 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE }}
@@ -165,7 +165,7 @@ export default function Gateway() {
           ))}
         </h1>
         <motion.p
-          className="mt-1.5 text-xs text-slate-500 sm:mt-2 sm:text-sm"
+          className="mt-1.5 text-xs text-ink-faint sm:mt-2 sm:text-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.7 }}
@@ -288,8 +288,8 @@ export default function Gateway() {
           <motion.div
             key="burst"
             aria-hidden
-            className="fixed inset-0 z-[90] flex items-center justify-center"
-            style={{ background: DEST_SURFACE[chosen.path] }}
+            data-path={chosen.path}
+            className="fixed inset-0 z-[90] flex items-center justify-center bg-surface"
             initial={{ clipPath: `circle(0px at ${chosen.x}px ${chosen.y}px)` }}
             animate={{ clipPath: `circle(150vmax at ${chosen.x}px ${chosen.y}px)` }}
             transition={{ duration: 0.75, ease: [0.7, 0, 0.2, 1] }}
@@ -300,10 +300,10 @@ export default function Gateway() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.4, ease: EASE }}
             >
-              <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+              <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-ink-faint">
                 {gateway.paths[chosen.path].eyebrow}
               </p>
-              <p className="mt-2 font-display text-3xl font-semibold tracking-tight text-white sm:text-5xl">
+              <p className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-5xl">
                 {gateway.paths[chosen.path].title}
               </p>
               <motion.div
@@ -354,7 +354,7 @@ function FragmentWithSeam({
               animate={reduce ? undefined : { rotate: 360 }}
               transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
             />
-            <span className="absolute inset-[2px] flex items-center justify-center rounded-full bg-[#020617] font-display text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
+            <span className="absolute inset-[2px] flex items-center justify-center rounded-full bg-surface font-display text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted">
               {label}
             </span>
           </motion.div>
