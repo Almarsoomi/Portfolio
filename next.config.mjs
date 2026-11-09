@@ -6,6 +6,8 @@ const nextConfig = {
   // Set by the GitHub Pages workflow ("/Portfolio"); empty for local dev and Vercel.
   basePath: process.env.PAGES_BASE_PATH || "",
   images: { unoptimized: true },
+  // /build/index.html rather than build.html — resolves cleanly on any static host.
+  trailingSlash: true,
 };
 
 export default nextConfig;

@@ -2,11 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Menu, X } from "lucide-react";
-import { nav, site } from "@/data/portfolio";
+import Link from "next/link";
+import { ArrowLeftRight, Menu, X } from "lucide-react";
+import { crossover, navByPath, site, type PathKey } from "@/data/portfolio";
 import { EASE } from "./motion-primitives";
 
-export default function Nav() {
+const SWITCH_LABEL: Record<PathKey, string> = { build: "Bookkeeping", books: "Web Dev" };
+
+export default function Nav({ path }: { path: PathKey }) {
+  const nav = navByPath[path];
+  const other = crossover[path];
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
@@ -47,12 +52,13 @@ export default function Nav() {
         aria-label="Main navigation"
         className="mx-auto flex h-[var(--nav-height)] max-w-content items-center justify-between px-5 sm:px-8"
       >
-        <a
-          href="#top"
+        <Link
+          href="/"
+          aria-label="Back to start — choose a path"
           className="font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-accent"
         >
           {site.logo}
-        </a>
+        </Link>
 
         {/* Desktop links */}
         <ul className="hidden items-center gap-1 md:flex">
@@ -66,6 +72,18 @@ export default function Nav() {
               </a>
             </li>
           ))}
+          <li className="ml-2">
+            <Link
+              href={other.href}
+              className="group inline-flex items-center gap-2 rounded-full border border-edge-strong px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent/60 hover:text-accent"
+            >
+              <ArrowLeftRight
+                aria-hidden
+                className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180"
+              />
+              {SWITCH_LABEL[path]}
+            </Link>
+          </li>
         </ul>
 
         {/* Mobile hamburger */}
@@ -157,6 +175,23 @@ export default function Nav() {
                   </motion.li>
                 ))}
               </motion.ul>
+              <div className="mt-auto flex flex-col gap-2 border-t border-edge pt-5">
+                <Link
+                  href={other.href}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-lg border border-edge-strong px-4 py-3 text-sm font-medium text-ink"
+                >
+                  <ArrowLeftRight aria-hidden className="h-4 w-4 text-accent" />
+                  Switch to {SWITCH_LABEL[path]}
+                </Link>
+                <Link
+                  href="/"
+                  onClick={() => setOpen(false)}
+                  className="px-4 py-2 text-sm text-ink-faint transition-colors hover:text-ink"
+                >
+                  ← Back to start
+                </Link>
+              </div>
             </motion.div>
           </>
         )}

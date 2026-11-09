@@ -10,7 +10,7 @@ const icons: Record<WorkCategory["icon"], typeof Globe> = {
 
 export default function WorkCategories() {
   return (
-    <section className="mx-auto max-w-content px-5 py-section-sm sm:px-8">
+    <section id="work" className="mx-auto max-w-content px-5 py-section-sm sm:px-8">
       <SectionHeading
         eyebrow="What I Do"
         title="Three kinds of work, one goal"

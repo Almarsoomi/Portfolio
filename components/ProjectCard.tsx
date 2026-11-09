@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import type { Project, ProjectStatus } from "@/data/portfolio";
 import { StaggerItem } from "./motion-primitives";
+import VisitButton from "./VisitButton";
 
 const statusStyles: Record<ProjectStatus, string> = {
   Live: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400",
@@ -32,23 +33,7 @@ export default function ProjectCard({ project }: { project: Project }) {
         </div>
 
         <h3 className="font-display text-xl font-semibold tracking-tight text-ink">
-          {project.link ? (
-            <a
-              href={project.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 transition-colors hover:text-accent"
-            >
-              {project.title}
-              <ArrowUpRight
-                aria-hidden
-                className="h-4 w-4 text-ink-faint transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
-              />
-              <span className="sr-only">(opens in a new tab)</span>
-            </a>
-          ) : (
-            project.title
-          )}
+          {project.title}
         </h3>
 
         <p className="mt-3 text-sm leading-relaxed text-ink-muted">
@@ -59,6 +44,12 @@ export default function ProjectCard({ project }: { project: Project }) {
           <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-accent/20 bg-accent/5 px-4 py-3">
             <Sparkles aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
             <p className="text-sm font-medium text-ink">{project.impact}</p>
+          </div>
+        ) : null}
+
+        {project.link ? (
+          <div className="mt-auto pt-5">
+            <VisitButton href={project.link} title={project.title} />
           </div>
         ) : null}
 

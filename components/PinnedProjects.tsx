@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
-  ArrowUpRight,
   ChevronDown,
   ChevronUp,
   Globe,
@@ -19,6 +18,7 @@ import { SectionHeading } from "./motion-primitives";
 import { useIsDesktop } from "./use-media-query";
 import { demos } from "./demos";
 import { smoothScrollTo } from "./lenis-store";
+import VisitButton from "./VisitButton";
 
 const statusStyles: Record<ProjectStatus, string> = {
   Live: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400",
@@ -297,6 +297,7 @@ export default function PinnedProjects() {
             const isActive = index === active;
             return (
               <li key={project.title}>
+                <div className="relative">
                 <button
                   ref={(el) => {
                     rowRefs.current[index] = el;
@@ -307,6 +308,8 @@ export default function PinnedProjects() {
                   onFocus={() => setActive(index)}
                   aria-pressed={isActive}
                   className={`group flex w-full gap-4 rounded-2xl border p-5 text-left transition-all duration-300 sm:p-6 ${
+                    project.link ? "pb-[5.25rem] sm:pb-[5.5rem]" : ""
+                  } ${
                     isActive
                       ? "border-accent/40 bg-surface-raised/80 shadow-glow"
                       : "border-edge bg-surface-raised/30 opacity-60 hover:opacity-100"
@@ -335,25 +338,7 @@ export default function PinnedProjects() {
                     </div>
 
                     <h3 className="mt-1.5 font-display text-lg font-semibold tracking-tight text-ink">
-                      {project.link ? (
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="transition-colors hover:text-accent"
-                        >
-                          {project.title}
-                          {/* Inline (not flex) so the arrow stays glued to the last word when the title wraps */}
-                          <ArrowUpRight
-                            aria-hidden
-                            className="ml-1 inline-block h-4 w-4 align-[-2px] text-ink-faint transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
-                          />
-                          <span className="sr-only">(opens in a new tab)</span>
-                        </a>
-                      ) : (
-                        project.title
-                      )}
+                      {project.title}
                     </h3>
 
                     {RowDemo ? (
@@ -374,6 +359,16 @@ export default function PinnedProjects() {
                     </p>
                   </div>
                 </button>
+                {/* Sits over the card's bottom edge, outside the <button> so the
+                    link isn't nested inside another interactive element. */}
+                {project.link ? (
+                  <VisitButton
+                    href={project.link}
+                    title={project.title}
+                    className="!absolute bottom-5 left-20 right-5 w-fit sm:bottom-6 sm:left-[84px]"
+                  />
+                ) : null}
+                </div>
 
                 {/* Mobile/tablet: the pinned panel is hidden, so show the demo under the row.
                     Kept outside the button because some demos have their own controls. */}

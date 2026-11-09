@@ -49,13 +49,64 @@ export const site = {
   github: "https://github.com/almarsoomi",
 };
 
-export const nav = [
-  { label: "Projects", href: "#projects" },
-  { label: "Services", href: "#services" },
-  { label: "Skills", href: "#skills" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
-];
+export type PathKey = "build" | "books";
+
+export interface NavItem {
+  label: string;
+  href: string;
+}
+
+/** Per-path navigation. Each path lives on its own page (/build, /books). */
+export const navByPath: Record<PathKey, NavItem[]> = {
+  build: [
+    { label: "Projects", href: "#projects" },
+    { label: "What I Do", href: "#work" },
+    { label: "Skills", href: "#skills" },
+    { label: "About", href: "#about" },
+    { label: "Contact", href: "#contact" },
+  ],
+  books: [
+    { label: "Services", href: "#services" },
+    { label: "Process", href: "#process" },
+    { label: "Finance Tools", href: "#tools" },
+    { label: "About", href: "#about" },
+    { label: "Contact", href: "#contact" },
+  ],
+};
+
+/**
+ * The homepage "fork": visitors pick the path that matches why they came.
+ * Order here is the order the two doors appear in (left/top first).
+ */
+export const gateway = {
+  greeting: "Hi, I'm Ahmed",
+  question: "What brings you here?",
+  hint: "Pick a path — you can switch anytime.",
+  paths: {
+    build: {
+      href: "/build",
+      index: "01",
+      eyebrow: "Build",
+      title: "Websites & Tools",
+      description:
+        "Fast websites, web apps and automation that remove the busywork from your business.",
+      chips: ["Websites", "Web apps", "Automation"],
+      cta: "Show me the work",
+      switchLabel: "Need bookkeeping?",
+    },
+    books: {
+      href: "/books",
+      index: "02",
+      eyebrow: "Books",
+      title: "Accounting & Bookkeeping",
+      description:
+        "Clean, VAT-ready books in Zoho Books — reconciled monthly, so you always know your numbers.",
+      chips: ["Zoho Books", "UAE VAT", "Corporate Tax"],
+      cta: "Sort my books",
+      switchLabel: "Need a website?",
+    },
+  } satisfies Record<PathKey, unknown>,
+};
 
 export const hero = {
   badge: "Builder & Bookkeeper • Dubai",
@@ -67,6 +118,19 @@ export const hero = {
   subheadline:
     "Full-stack developer and bookkeeping specialist for UAE businesses. I build web apps, financial automation, and accounting systems — and keep the books behind them clean, VAT-ready, and audit-friendly.",
   primaryCta: { label: "View Projects", href: "#projects" },
+  secondaryCta: { label: "Get in Touch", href: "#contact" },
+};
+
+/** Hero for the bookkeeping path — same shape as `hero`. */
+export const booksHero: typeof hero = {
+  badge: "Zoho Books Specialist • Dubai",
+  greeting: "Hi, I'm Ahmed",
+  headline: "Books You Can Trust",
+  lead: "I keep",
+  typewriter: ["books clean.", "VAT on time.", "accounts reconciled.", "audits calm."],
+  subheadline:
+    "Bookkeeping and accounting for UAE businesses, done inside Zoho Books. Monthly reconciliations, VAT filing support and Corporate Tax readiness — so you spend your time running the business, not chasing receipts.",
+  primaryCta: { label: "See Services", href: "#services" },
   secondaryCta: { label: "Get in Touch", href: "#contact" },
 };
 
@@ -240,7 +304,53 @@ export const about = {
   ],
 };
 
+/** How a bookkeeping engagement runs, step by step. */
+export const process = {
+  heading: "From messy to month-end ready",
+  intro:
+    "A simple, repeatable rhythm. You send documents; I keep everything reconciled, filed and reported.",
+  steps: [
+    {
+      title: "Review & setup",
+      text: "I review your current books, set up or clean up Zoho Books, and import opening balances and history.",
+    },
+    {
+      title: "Monthly bookkeeping",
+      text: "Sales, bills and expenses recorded; every bank and card account reconciled to the statement.",
+    },
+    {
+      title: "VAT & compliance",
+      text: "VAT returns prepared on schedule, Corporate Tax records kept ready — no last-minute scramble.",
+    },
+    {
+      title: "Reports & insight",
+      text: "Clear monthly P&L, balance sheet and cash view, with a short note on what the numbers mean.",
+    },
+  ],
+};
+
+/** Finance tools I've built — shown on the bookkeeping path as proof of depth. */
+export const financeToolTitles = ["PreStatement", "ZeroG Invoices"];
+
 export const contact = {
   heading: "Let's build something useful",
   text: "Whether you need a tool built, books cleaned up, or both — I'm one message away. Based in Dubai, working with businesses across the UAE.",
 };
+
+export const booksContact = {
+  heading: "Let's get your books in order",
+  text: "Tell me about your business and where your books are today. I'll reply with a clear plan and a fixed monthly quote — no jargon.",
+};
+
+export const crossover = {
+  build: {
+    text: "Also need your books kept? I'm a Zoho Books bookkeeper too.",
+    label: "See bookkeeping",
+    href: "/books",
+  },
+  books: {
+    text: "I also build the software — websites, web apps and finance tools.",
+    label: "See the dev work",
+    href: "/build",
+  },
+} satisfies Record<PathKey, { text: string; label: string; href: string }>;

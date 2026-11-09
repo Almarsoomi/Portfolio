@@ -2,7 +2,7 @@
 
 Personal portfolio for Ahmed, a Dubai-based builder of practical business tools: web apps, financial automation, and accounting systems for UAE businesses — plus professional Zoho Books bookkeeping services.
 
-A single-page Next.js site with a motion-rich, interactive front end. Every effect is data-driven where possible and degrades gracefully under `prefers-reduced-motion`.
+A Next.js site built around a **two-path entrance**: the homepage asks visitors why they came, and sends them down one of two themed paths — **Websites & Tools** (`/build`) or **Accounting & Bookkeeping** (`/books`). Every effect is data-driven where possible and degrades gracefully under `prefers-reduced-motion`.
 
 **Live:** https://almarsoomi.github.io/Portfolio
 
@@ -38,6 +38,18 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Features
 
+### The fork (homepage)
+- **"What brings you here?"** — a full-screen choice between two animated doors. Desktop: side by side; hovering a door grows it and dims the other. Phones: stacked, with both choices on one screen.
+- **Live door visuals** — the Build door shows a website assembling itself and taking a booking; the Books door shows a ledger posting, reconciling and getting stamped. Both loop and are drawn on a fixed canvas scaled to fit (`FitStage`).
+- **Colour-burst transition** — choosing a door floods the screen from the click point in the destination's colour, then the destination page lifts a matching curtain (`.path-curtain`).
+- **Remembers the last path** (a "Last visited" tag, via `localStorage`) and redirects old single-page links like `/#services` to the right path.
+
+### Two themed paths
+- **`/build`** — cool slate + cyan. Hero, pinned projects, what I do, skills, about, contact.
+- **`/books`** — warm stone + gold → emerald. Hero, services & industries, a 4-step process with a scroll-filling rail, finance tools I've built, about, contact.
+- The theme is a single `data-path` attribute that swaps the CSS tokens, so every shared component re-colours itself.
+- The nav on each path has a **switch** pill to jump to the other path; the logo returns to the fork.
+
 ### Layout & content
 - **Hero** — two-column layout: typewriter headline + CTAs on the left, framed portrait with floating SVG shapes on the right.
 - **Projects** — a *pinned scrollytelling* layout: a scrolling list of projects on the left activates items as they cross the viewport, while a sticky panel on the right updates to the active project.
@@ -63,7 +75,7 @@ All of the above are disabled or simplified when the visitor has `prefers-reduce
 
 ## Editing content
 
-All copy — projects, services, skills, links, hero text, typewriter phrases — lives in one file:
+All copy — the fork's doors, both heroes, projects, services, process steps, skills, links — lives in one file:
 
 ```
 data/portfolio.ts
@@ -72,6 +84,8 @@ data/portfolio.ts
 Edit that file to add projects, change text, or update contact details. No component changes needed. Notable fields:
 
 - `hero.greeting`, `hero.lead`, `hero.typewriter[]` — control the hero headline and the words the typewriter cycles through.
+- `gateway` — the homepage question and the two doors (title, description, chips, button text).
+- `booksHero`, `process`, `booksContact`, `crossover`, `navByPath` — bookkeeping-path copy and per-path navigation.
 - `projects[]` — each project has `category`, `title`, `description`, optional `impact`, `tech[]`, `status`, and optional `link`.
 
 Replace the portrait by swapping `app/Ahmed.png` (keep the filename, or update the import in `components/Hero.tsx`).
@@ -80,7 +94,7 @@ Replace the portrait by swapping `app/Ahmed.png` (keep the filename, or update t
 
 ## Theming
 
-Colors, spacing, and layout tokens are CSS variables in `app/globals.css` (`:root` block), consumed by `tailwind.config.ts`. Change the variables to retheme the whole site — the accent (cyan → blue) drives every highlight, glow, cursor, and motion-path color.
+Colors, spacing, and layout tokens are CSS variables in `app/globals.css` (`:root` block), consumed by `tailwind.config.ts`. Change the variables to retheme the whole site — the accent (cyan → blue) drives every highlight, glow, cursor, and motion-path color. The bookkeeping path overrides the same tokens under `[data-path="books"]` (gold → emerald on warm stone).
 
 ---
 
@@ -88,11 +102,16 @@ Colors, spacing, and layout tokens are CSS variables in `app/globals.css` (`:roo
 
 ```
 app/
-  globals.css        Theme tokens, background textures, cursor + Lenis CSS
+  globals.css        Theme tokens (+ books theme), textures, fork + curtain, cursor + Lenis CSS
   layout.tsx         Root layout; mounts SmoothScroll, CustomCursor, ScrollToTop
-  page.tsx           Section composition
+  page.tsx           Homepage: the fork
+  build/page.tsx     Websites & Tools path
+  books/page.tsx     Accounting & Bookkeeping path
   Ahmed.png          Hero portrait
 components/
+  fork/              Gateway (the homepage choice), BuildVisual, BooksVisual, FitStage, useLoop
+  PathShell.tsx      Per-path wrapper: theme, entry curtain, nav, footer
+  Process.tsx / FinanceTools.tsx / Crossover.tsx   Bookkeeping-path sections + cross-path banner
   Hero.tsx           Two-column hero: typewriter, portrait, shapes, parallax, tilt
   Typewriter.tsx     Looping typewriter with reduced-motion fallback
   PinnedProjects.tsx Pinned scrollytelling projects + connector pulse

@@ -50,7 +50,7 @@ function Float({
   );
 }
 
-export default function Hero() {
+export default function Hero({ content = hero }: { content?: typeof hero }) {
   const reduce = useReducedMotion();
   const isDesktop = useIsDesktop();
   // Scroll/pointer-linked effects are desktop-only: on phones they add
@@ -140,7 +140,7 @@ export default function Hero() {
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-edge-strong bg-surface-raised/60 px-4 py-2 text-sm font-medium text-ink-muted backdrop-blur"
           >
             <MapPin aria-hidden className="h-4 w-4 text-accent" />
-            {hero.badge}
+            {content.badge}
           </motion.p>
 
           <motion.p
@@ -150,7 +150,7 @@ export default function Hero() {
             <span aria-hidden className="mr-1">
               👋
             </span>
-            {hero.greeting}
+            {content.greeting}
           </motion.p>
 
           <motion.h1
@@ -158,9 +158,9 @@ export default function Hero() {
             className="font-display font-semibold tracking-tight text-ink"
             style={{ fontSize: "clamp(2.25rem, 6.5vw, 4.25rem)", lineHeight: 1.08 }}
           >
-            {hero.lead}{" "}
+            {content.lead}{" "}
             <Typewriter
-              words={hero.typewriter}
+              words={content.typewriter}
               className="text-gradient inline-block min-h-[1.15em]"
             />
           </motion.h1>
@@ -169,7 +169,7 @@ export default function Hero() {
             variants={item}
             className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-ink-muted sm:text-lg lg:mx-0"
           >
-            {hero.subheadline}
+            {content.subheadline}
           </motion.p>
 
           <motion.div
@@ -177,21 +177,21 @@ export default function Hero() {
             className="mt-10 flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:justify-center lg:justify-start"
           >
             <motion.a
-              href={hero.primaryCta.href}
+              href={content.primaryCta.href}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-deep px-7 font-display text-sm font-semibold text-surface shadow-glow sm:w-auto"
             >
-              {hero.primaryCta.label}
+              {content.primaryCta.label}
               <ArrowRight aria-hidden className="h-4 w-4" />
             </motion.a>
             <motion.a
-              href={hero.secondaryCta.href}
+              href={content.secondaryCta.href}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="inline-flex h-12 w-full items-center justify-center rounded-xl border border-edge-strong bg-surface-raised/60 px-7 font-display text-sm font-semibold text-ink backdrop-blur transition-colors hover:border-accent/50 sm:w-auto"
             >
-              {hero.secondaryCta.label}
+              {content.secondaryCta.label}
             </motion.a>
           </motion.div>
         </motion.div>
