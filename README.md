@@ -75,7 +75,8 @@ Open [http://localhost:3000](http://localhost:3000).
 ### Layout & content
 - **Hero** — two-column layout: typewriter headline + CTAs on the left, framed portrait with floating SVG shapes on the right.
 - **Projects** — a *pinned scrollytelling* layout: a scrolling list of projects on the left activates items as they cross the viewport, while a sticky panel on the right updates to the active project.
-- **Work categories, Accounting/Bookkeeping, Skills, About, Contact, Footer** — standard content sections driven from `data/portfolio.ts`.
+- **Skills** — one compact, self-playing card: a spotlight moves through the skill groups, the active tab opens and fills a progress line while its skills pop in. Tapping a tab stops the autoplay.
+- **Work categories, Accounting/Bookkeeping, About, Contact, Footer** — standard content sections driven from `data/portfolio.ts`.
 
 ### Motion & interaction
 - **Typewriter headline** — cycles through data-driven phrases with a blinking caret (`Typewriter`).
