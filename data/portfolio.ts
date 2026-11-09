@@ -5,12 +5,16 @@
 
 export type ProjectStatus = "Live" | "In Progress" | "Planning" | "Archived";
 
+/** Keys of the animated mini-demos in components/demos. */
+export type ProjectDemo = "prestatement" | "myboatlog" | "careplus" | "thewalls" | "metaleast";
+
 export interface Project {
+  /** Optional animated demo shown in the card's visual panel. */
+  demo?: ProjectDemo;
   category: string;
   title: string;
   description: string;
   impact?: string;
-  tech: string[];
   status: ProjectStatus;
   link?: string;
 }
@@ -69,55 +73,68 @@ export const hero = {
 export const projects: Project[] = [
   {
     category: "Financial Tools",
-    title: "Personal Finance Tracker",
+    title: "PreStatement",
     description:
-      "A full-stack app that imports bank statements, categorizes transactions into a flexible hierarchy, and surfaces financial insights over time.",
-    impact: "Automated transaction tracking across 3+ credit cards.",
-    tech: ["Next.js", "Express", "SQLite"],
-    status: "In Progress",
+      "See your UAE credit card bill build in real time from the SMS alerts your bank already sends, then check it line by line against the statement when it arrives.",
+    impact: "Know your bill before the bank sends it — and catch every mismatch.",
+    demo: "prestatement",
+    status: "Live",
+    link: "https://prestatement.com",
   },
   {
-    category: "Financial Tools",
-    title: "Bank Statement Analyzer",
+    category: "Web Development",
+    title: "MyBoatLog",
     description:
-      "Analyzes UAE credit card statements and categorizes 200+ transactions in under 30 seconds, producing clean PDF summaries.",
-    impact: "Reduced manual analysis from 2 hours to 30 seconds.",
-    tech: ["Python", "OCR", "ReportLab"],
+      "Mobile-first marine management app: logbook, inventory, maintenance tracking, and crew management for boat owners and operators.",
+    impact: "Every hour, every part, every service — tracked from the phone in your pocket.",
+    demo: "myboatlog",
     status: "Live",
+    link: "https://myboatlog.app",
+  },
+  {
+    category: "Web Development",
+    title: "Care Plus Auto Repairing Website",
+    description:
+      "Website for a Dubai car repair and paint workshop covering denting & painting, electrical, and mechanical services, with online and WhatsApp booking.",
+    impact: "Customers book a repair in seconds — the workshop gets it straight on WhatsApp.",
+    demo: "careplus",
+    status: "Live",
+    link: "https://careplusauto.com",
   },
   {
     category: "Web Development",
     title: "The Walls Carpentry Website",
     description:
-      "Marketing site for a Dubai carpentry firm with parametric wave animations, a live Instagram Graph API feed, bilingual Arabic/English content, and Cloudflare-served media.",
-    tech: ["Next.js", "Instagram API", "Cloudflare", "i18n"],
+      "Premium website for a Dubai carpentry and joinery firm, with animated wave design, a live Instagram feed, and full Arabic/English content.",
+    impact: "A premium bilingual site that turns visitors into quote requests.",
     status: "Live",
+    demo: "thewalls",
     link: "https://thewalls.ae",
   },
   {
-    category: "Business Operations",
-    title: "Invoice Reconciliation Tool",
+    category: "Web Development",
+    title: "Metal East Records",
     description:
-      "Compares supplier invoices against Zoho Books exports and generates color-coded Excel discrepancy reports for fast month-end review.",
-    impact: "Reconciles 100+ invoices monthly across 4 suppliers.",
-    tech: ["Python", "Zoho Books", "Excel"],
+      "A virtual record store for Dubai's Metal East Records: walk into the shop, flip through the crates, pull out a record and play it on the shop turntable.",
+    impact: "Turns a local record shop into an experience people can visit from anywhere.",
+    demo: "metaleast",
     status: "Live",
+    link: "https://metal-east-records.vercel.app",
+  },
+  {
+    category: "Web Development",
+    title: "Build It Contracting",
+    description:
+      "Website for Build It, a Dubai building contracting company. A coming-soon page is live while the full site is being built.",
+    status: "In Progress",
+    link: "https://builditdxb.ae",
   },
   {
     category: "Business Operations",
     title: "ZeroG Invoices",
     description:
-      "Offline-first invoice processing pipeline combining Node.js with Python OCR (pdfplumber + EasyOCR) and local SQLite storage.",
-    tech: ["Node.js", "Python", "EasyOCR", "SQLite"],
-    status: "Archived",
-  },
-  {
-    category: "Business Operations",
-    title: "UAE HR & Payroll System",
-    description:
-      "Payroll engine built around UAE labour law: gratuity calculation, WPS salary file export, and document expiry alerts for visas and permits.",
-    tech: ["UAE Labour Law", "WPS", "Payroll"],
-    status: "Planning",
+      "Invoice processing tool that reads supplier invoices automatically — scanned or PDF — and turns them into clean, organised records, even offline.",
+    status: "In Progress",
   },
 ];
 
@@ -132,13 +149,13 @@ export const workCategories: WorkCategory[] = [
     icon: "wallet",
     title: "Financial Tools",
     description:
-      "Statement analyzers, finance trackers, and reporting pipelines that turn messy financial data into clear, actionable numbers.",
+      "Fintech apps like PreStatement and reporting pipelines that turn messy financial data into clear, actionable numbers.",
   },
   {
     icon: "workflow",
     title: "Business Automation",
     description:
-      "Invoice reconciliation, OCR pipelines, payroll logic — automating the repetitive back-office work UAE businesses do by hand.",
+      "Invoice processing, OCR pipelines, online booking and maintenance tracking — automating the repetitive work UAE businesses do by hand.",
   },
 ];
 
@@ -209,7 +226,7 @@ export const skills: SkillColumn[] = [
       "Web Dev",
       "Fintech",
       "Accounting & Bookkeeping",
-      "HR/Legal",
+      "Bilingual AR/EN",
       "UAE Compliance",
     ],
   },
@@ -218,7 +235,7 @@ export const skills: SkillColumn[] = [
 export const about = {
   heading: "Solve the problem first. Pick the tech second.",
   paragraphs: [
-    "I build tailored tools around real UAE business requirements — VAT filing, compliance deadlines, payroll rules, WPS exports. The starting point is never a framework; it's the actual problem a business is losing hours to every week.",
+    "I build tailored tools around real UAE business requirements — VAT filing, compliance deadlines, bilingual customers, bookings and maintenance schedules. The starting point is never a framework; it's the actual problem a business is losing hours to every week.",
     "The offering is deliberately dual: I develop the software and I keep the books. Working inside Zoho Books daily for real clients means the tools I build come from firsthand knowledge of how UAE bookkeeping actually works — not guesses about it.",
   ],
 };

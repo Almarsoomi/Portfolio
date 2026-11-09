@@ -62,16 +62,6 @@ export default function ProjectCard({ project }: { project: Project }) {
           </div>
         ) : null}
 
-        <ul className="mt-auto flex flex-wrap gap-2 pt-5" aria-label="Tech stack">
-          {project.tech.map((t) => (
-            <li
-              key={t}
-              className="rounded-md border border-edge bg-surface px-2.5 py-1 text-xs font-medium text-ink-muted"
-            >
-              {t}
-            </li>
-          ))}
-        </ul>
       </motion.article>
     </StaggerItem>
   );

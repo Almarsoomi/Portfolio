@@ -96,16 +96,6 @@ function StackCard({
             </div>
           ) : null}
 
-          <ul className="mt-auto flex flex-wrap gap-2 pt-7" aria-label="Tech stack">
-            {project.tech.map((t) => (
-              <li
-                key={t}
-                className="rounded-md border border-edge bg-surface px-2.5 py-1 text-xs font-medium text-ink-muted"
-              >
-                {t}
-              </li>
-            ))}
-          </ul>
         </div>
 
         {/* Decorative panel */}
