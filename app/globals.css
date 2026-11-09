@@ -35,6 +35,25 @@
   --nav-height: 4.5rem;
 }
 
+/* Bookkeeping path: warm stone surfaces, gold → emerald accent. Every
+   component reads the same tokens, so the whole page re-themes from here. */
+[data-path="books"] {
+  --color-surface: 12 10 9; /* stone-950 */
+  --color-surface-raised: 28 25 23; /* stone-900 */
+  --color-surface-overlay: 41 37 36; /* stone-800 */
+
+  --color-ink: 250 250 249;
+  --color-ink-muted: 168 162 158;
+  --color-ink-faint: 120 113 108;
+
+  --color-accent: 251 191 36; /* amber-400 */
+  --color-accent-bright: 253 224 71; /* yellow-300 */
+  --color-accent-deep: 16 185 129; /* emerald-500 */
+
+  --color-edge: 41 37 36;
+  --color-edge-strong: 68 64 60;
+}
+
 html {
   scroll-behavior: smooth;
   /* Anchored sections stop below the sticky nav */
@@ -137,6 +156,102 @@ body {
   color: transparent;
 }
 
+/* Ledger-paper texture for the bookkeeping path (replaces the dev grid). */
+[data-path="books"] .bg-grid {
+  background-image:
+    linear-gradient(rgb(var(--color-edge) / 0.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--color-accent) / 0.08) 1px, transparent 1px);
+  background-size: 100% 40px, 25% 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   Path entry curtain: the colour wash from the homepage fork lifts away to
+   reveal the page. Pure CSS so it never blocks content if JS is slow.
+--------------------------------------------------------------------------- */
+.path-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  background: rgb(var(--color-surface));
+  animation: curtain-lift 0.75s cubic-bezier(0.7, 0, 0.2, 1) 0.05s forwards;
+}
+.path-curtain::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 3px;
+  background: linear-gradient(90deg, rgb(var(--color-accent-bright)), rgb(var(--color-accent-deep)));
+}
+@keyframes curtain-lift {
+  to {
+    transform: translateY(-101%);
+  }
+}
+
+@keyframes wave {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  15%, 45% { transform: rotate(16deg); }
+  30% { transform: rotate(-8deg); }
+}
+
+/* ---------------------------------------------------------------------------
+   Homepage fork
+--------------------------------------------------------------------------- */
+.fork-door {
+  --mx: 50%;
+  --my: 50%;
+}
+/* Pointer spotlight (desktop) */
+.fork-door::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    28rem circle at var(--mx) var(--my),
+    rgb(var(--door-accent) / 0.16),
+    transparent 60%
+  );
+  pointer-events: none;
+}
+.fork-door:hover::before {
+  opacity: 1;
+}
+.door-build {
+  --door-accent: 34 211 238;
+  --door-deep: 59 130 246;
+  background:
+    radial-gradient(120% 80% at 0% 100%, rgb(59 130 246 / 0.14), transparent 60%),
+    rgb(15 23 42);
+}
+.door-books {
+  --door-accent: 251 191 36;
+  --door-deep: 16 185 129;
+  background:
+    radial-gradient(120% 80% at 100% 100%, rgb(16 185 129 / 0.12), transparent 60%),
+    rgb(28 25 23);
+}
+.door-build .door-texture {
+  background-image:
+    linear-gradient(rgb(148 163 184 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(148 163 184 / 0.07) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+.door-books .door-texture {
+  background-image:
+    repeating-linear-gradient(0deg, rgb(168 162 158 / 0.08) 0 1px, transparent 1px 32px),
+    linear-gradient(90deg, transparent calc(100% - 4.5rem), rgb(251 191 36 / 0.1) calc(100% - 4.5rem), rgb(251 191 36 / 0.1) calc(100% - 4.5rem + 1px), transparent calc(100% - 4.5rem + 1px));
+}
+.door-text-gradient {
+  background: linear-gradient(100deg, rgb(var(--door-accent)), rgb(var(--door-deep)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 /* ---------------------------------------------------------------------------
    Mobile performance: phones pay the most for the least-visible decoration.
    Drop the masked grid, freeze the large glow layer (and un-promote it), and
@@ -177,6 +292,9 @@ body {
   .hero-glow,
   .animate-glow-drift {
     animation: none !important;
+  }
+  .path-curtain {
+    display: none;
   }
   *,
   *::before,

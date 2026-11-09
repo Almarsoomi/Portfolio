@@ -67,16 +67,15 @@ export default function CustomCursor() {
         style={{ x: ringX, y: ringY }}
       >
         <motion.div
-          className="rounded-full border border-accent"
+          className={`rounded-full border border-accent transition-colors duration-300 ${
+            hovering ? "bg-accent/[0.08]" : "bg-transparent"
+          }`}
           style={{ translateX: "-50%", translateY: "-50%" }}
           animate={{
             width: hovering ? 56 : 32,
             height: hovering ? 56 : 32,
             opacity: hovering ? 1 : 0.55,
             scale: pressed ? 0.82 : 1,
-            backgroundColor: hovering
-              ? "rgb(34 211 238 / 0.08)"
-              : "rgb(34 211 238 / 0)",
           }}
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
         />

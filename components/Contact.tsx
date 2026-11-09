@@ -9,7 +9,13 @@ import { Reveal } from "./motion-primitives";
 // Comet path (160×80 box): arcs from upper-left down to the button's top-center.
 const COMET_PATH = "M 24 12 C 74 4, 104 42, 80 74";
 
-export default function Contact() {
+export default function Contact({
+  heading = contact.heading,
+  text = contact.text,
+}: {
+  heading?: string;
+  text?: string;
+}) {
   const reduce = useReducedMotion();
   const [hovered, setHovered] = useState(false);
 
@@ -23,10 +29,10 @@ export default function Contact() {
           />
           <div className="relative">
             <h2 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-              {contact.heading}
+              {heading}
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-ink-muted sm:text-lg">
-              {contact.text}
+              {text}
             </p>
             <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <div
