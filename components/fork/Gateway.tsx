@@ -218,12 +218,12 @@ export default function Gateway() {
 
                   {/* Live visual */}
                   <FitStage
-                    width={340}
-                    height={240}
-                    max={1.5}
-                    className="relative my-2 h-[clamp(64px,10svh,180px)] max-md:[@media(max-height:720px)]:hidden transition-transform duration-700 ease-out group-hover:scale-[1.03] md:my-6 md:h-auto md:min-h-[96px] md:flex-1"
+                    width={330}
+                    height={232}
+                    max={1.6}
+                    className="relative -mx-2 mb-2 mt-5 h-[clamp(170px,30svh,260px)] transition-transform duration-700 ease-out group-hover:scale-[1.03] md:my-6 md:h-auto md:min-h-[96px] md:flex-1"
                   >
-                    <div className="p-[10px]">
+                    <div className="p-[6px]">
                       <Visual />
                     </div>
                   </FitStage>
