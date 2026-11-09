@@ -1,10 +1,13 @@
 "use client";
 
+import type { PathKey } from "@/data/portfolio";
 import { useContent } from "./i18n";
 import { Reveal, SectionHeading } from "./motion-primitives";
 
-export default function About() {
-  const { about, ui } = useContent();
+export default function About({ path }: { path: PathKey }) {
+  const c = useContent();
+  const { ui } = c;
+  const about = path === "books" ? c.booksAbout : c.about;
   return (
     <section id="about" className="mx-auto max-w-content px-5 py-section-sm sm:px-8">
       <SectionHeading eyebrow={ui.sections.about.eyebrow} title={about.heading} />

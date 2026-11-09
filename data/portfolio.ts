@@ -72,7 +72,6 @@ export const navByPath: Record<PathKey, NavItem[]> = {
   books: [
     { label: "Services", href: "#services" },
     { label: "Process", href: "#process" },
-    { label: "Finance Tools", href: "#tools" },
     { label: "About", href: "#about" },
     { label: "Contact", href: "#contact" },
   ],
@@ -113,14 +112,14 @@ export const gateway = {
 };
 
 export const hero = {
-  badge: "Builder & Bookkeeper • Dubai",
+  badge: "Web Developer • Dubai",
   greeting: "Hi, I'm Ahmed",
   headline: "Building Tools That Solve Real Problems",
   // Lead-in + the words the typewriter cycles through after it.
   lead: "I build",
-  typewriter: ["web apps.", "financial tools.", "automation.", "clean books."],
+  typewriter: ["websites.", "web apps.", "automation.", "AI tools."],
   subheadline:
-    "Full-stack developer and bookkeeping specialist for UAE businesses. I build web apps, financial automation, and accounting systems — and keep the books behind them clean, VAT-ready, and audit-friendly.",
+    "Full-stack developer for UAE businesses. I build fast websites, web apps, automation and AI-powered tools that take the busywork off your team — bilingual, mobile-first and built to grow with you.",
   primaryCta: { label: "View Projects", href: "#projects" },
   secondaryCta: { label: "Get in Touch", href: "#contact" },
 };
@@ -228,9 +227,9 @@ export const workCategories: WorkCategory[] = [
   },
   {
     icon: "workflow",
-    title: "Business Automation",
+    title: "Automation & AI Tools",
     description:
-      "Invoice processing, OCR pipelines, online booking and maintenance tracking — automating the repetitive work UAE businesses do by hand.",
+      "AI-powered tools, invoice processing, document reading, online booking and maintenance tracking — automating the repetitive work UAE businesses do by hand.",
   },
 ];
 
@@ -293,16 +292,16 @@ export const skills: SkillColumn[] = [
   },
   {
     title: "Platforms",
-    skills: ["Vercel", "Cloudflare", "cPanel", "GitHub", "Zoho Books"],
+    skills: ["Vercel", "Cloudflare", "cPanel", "GitHub"],
   },
   {
     title: "Domains",
     skills: [
-      "Web Dev",
-      "Fintech",
-      "Accounting & Bookkeeping",
+      "Websites",
+      "Web apps",
+      "Automation",
+      "AI tools",
       "Bilingual AR/EN",
-      "UAE Compliance",
     ],
   },
 ];
@@ -310,8 +309,17 @@ export const skills: SkillColumn[] = [
 export const about = {
   heading: "Solve the problem first. Pick the tech second.",
   paragraphs: [
-    "I build tailored tools around real UAE business requirements — VAT filing, compliance deadlines, bilingual customers, bookings and maintenance schedules. The starting point is never a framework; it's the actual problem a business is losing hours to every week.",
-    "The offering is deliberately dual: I develop the software and I keep the books. Working inside Zoho Books daily for real clients means the tools I build come from firsthand knowledge of how UAE bookkeeping actually works — not guesses about it.",
+    "I build tailored websites and tools around real UAE business needs — bilingual customers, online bookings, invoices that pile up, schedules kept on paper. The starting point is never a framework; it's the actual problem a business is losing hours to every week.",
+    "Every project ships fast, works on the phone first, and speaks Arabic and English. Where AI genuinely saves time — reading documents, answering routine questions, sorting data — I build it in; where it doesn't, I keep things simple.",
+  ],
+};
+
+/** About section on the bookkeeping path — same shape as `about`. */
+export const booksAbout: typeof about = {
+  heading: "Accurate books. No surprises at month-end.",
+  paragraphs: [
+    "I keep the books for UAE businesses inside Zoho Books — recording sales, bills and expenses, reconciling every bank and card account, and keeping VAT and Corporate Tax records ready before they are due.",
+    "My clients span manufacturing, retail and services, so I know how project costing, inventory and service revenue each need to be handled. You get clear monthly reports and a straight answer whenever you ask what the numbers mean.",
   ],
 };
 
@@ -340,12 +348,9 @@ export const process = {
   ],
 };
 
-/** Finance tools I've built — shown on the bookkeeping path as proof of depth. */
-export const financeToolTitles = ["PreStatement", "ZeroG Invoices"];
-
 export const contact = {
   heading: "Let's build something useful",
-  text: "Whether you need a tool built, books cleaned up, or both — I'm one message away. Based in Dubai, working with businesses across the UAE.",
+  text: "Need a website, a web app or a tool that saves your team hours? I'm one message away. Based in Dubai, working with businesses across the UAE.",
 };
 
 export const booksContact = {
@@ -410,6 +415,10 @@ export const ui = {
   scrollTop: "Scroll back to top",
   step: "Step",
   footer: "Built in Dubai.",
+  footerRole: {
+    build: "Web Developer • Dubai",
+    books: "Zoho Books Bookkeeper • Dubai",
+  } as Record<PathKey, string>,
   sections: {
     projects: {
       eyebrow: "Featured Projects",
@@ -422,12 +431,6 @@ export const ui = {
     about: { eyebrow: "About / Approach" },
     accounting: { eyebrow: "UAE Bookkeeping Specialist", handles: "What I handle" },
     process: { eyebrow: "How It Works" },
-    tools: {
-      eyebrow: "Beyond Bookkeeping",
-      title: "A bookkeeper who builds finance tools",
-      intro:
-        "Working in the books every day shows me where the hours go. So I build software to win them back.",
-    },
     testimonials: {
       eyebrow: "Clients",
       title: "Businesses I work with",

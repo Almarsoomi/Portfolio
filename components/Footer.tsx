@@ -1,8 +1,9 @@
 "use client";
 
+import type { PathKey } from "@/data/portfolio";
 import { useContent } from "./i18n";
 
-export default function Footer() {
+export default function Footer({ path }: { path: PathKey }) {
   const { site, ui } = useContent();
   return (
     <footer className="border-t border-edge">
@@ -10,7 +11,7 @@ export default function Footer() {
         <p>
           © {new Date().getFullYear()} {site.name}. {ui.footer}
         </p>
-        <p className="font-display tracking-tight">{site.role}</p>
+        <p className="font-display tracking-tight">{ui.footerRole[path]}</p>
       </div>
     </footer>
   );

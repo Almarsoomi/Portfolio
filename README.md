@@ -46,8 +46,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Two themed paths
 - **`/build`** — cool slate + cyan. Hero, pinned projects, what I do, skills, about, contact.
-- **`/books`** — warm stone + gold → emerald. Hero, services & industries, a 4-step process with a scroll-filling rail, finance tools I've built, about, contact.
+- **`/books`** — warm stone + gold → emerald. Hero, services & industries, a 4-step process with a scroll-filling rail, about, contact.
 - The theme is a single `data-path` attribute that swaps the CSS tokens, so every shared component re-colours itself.
+- Each path talks only about its own field — no bookkeeping on `/build`, no development on `/books` (each has its own hero, about text and footer line).
 - The nav on each path has a **switch** pill to jump to the other path; the logo returns to the fork.
 
 ### Arabic / English
@@ -107,7 +108,7 @@ Edit that file to add projects, change text, or update contact details. The Arab
 
 - `hero.greeting`, `hero.lead`, `hero.typewriter[]` — control the hero headline and the words the typewriter cycles through.
 - `gateway` — the homepage question and the two doors (title, description, chips, button text).
-- `booksHero`, `process`, `booksContact`, `crossover`, `navByPath` — bookkeeping-path copy and per-path navigation.
+- `booksHero`, `booksAbout`, `process`, `booksContact`, `navByPath` — bookkeeping-path copy and per-path navigation.
 - `projects[]` — each project has `category`, `title`, `description`, optional `impact`, `tech[]`, `status`, and optional `link`.
 
 Replace the portrait by swapping `app/Ahmed.png` (keep the filename, or update the import in `components/Hero.tsx`).
@@ -137,7 +138,7 @@ components/
   pages/             Build and Books page bodies, shared by both languages
   fork/              Gateway (the homepage choice), BuildVisual, BooksVisual, FitStage, useLoop
   PathShell.tsx      Per-path wrapper: theme, entry curtain, nav, footer
-  Process.tsx / FinanceTools.tsx / Crossover.tsx   Bookkeeping-path sections + cross-path banner
+  Process.tsx        Bookkeeping-path process steps
   Hero.tsx           Two-column hero: typewriter, portrait, shapes, parallax, tilt
   Typewriter.tsx     Looping typewriter with reduced-motion fallback
   PinnedProjects.tsx Pinned scrollytelling projects + connector pulse
