@@ -54,6 +54,29 @@
   --color-edge-strong: 68 64 60;
 }
 
+/* Arabic pages: one Arabic family for headings and text. Letter-spacing
+   breaks the joins between Arabic letters, so it is switched off there. */
+html[lang="ar"] {
+  --font-display: var(--font-arabic);
+  --font-body: var(--font-arabic);
+}
+html[lang="ar"] body * {
+  letter-spacing: 0 !important;
+}
+html[lang="ar"] body {
+  line-height: 1.7;
+}
+
+/* Client name strip: two identical copies slide by exactly one copy width. */
+.client-marquee {
+  animation: client-marquee 38s linear infinite;
+}
+@keyframes client-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 html {
   scroll-behavior: smooth;
   /* Anchored sections stop below the sticky nav */

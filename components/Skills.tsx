@@ -1,12 +1,15 @@
-import { skills } from "@/data/portfolio";
+"use client";
+
+import { useContent } from "./i18n";
 import { SectionHeading, StaggerGroup, StaggerItem } from "./motion-primitives";
 
 export default function Skills() {
+  const { skills, ui } = useContent();
   return (
     <section id="skills" className="mx-auto max-w-content px-5 py-section-sm sm:px-8">
       <SectionHeading
-        eyebrow="Skills"
-        title="The stack behind the work"
+        eyebrow={ui.sections.skills.eyebrow}
+        title={ui.sections.skills.title}
       />
       <StaggerGroup className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
         {skills.map((col) => (

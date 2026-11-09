@@ -5,7 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Github, Mail } from "lucide-react";
-import { gateway, site, type PathKey } from "@/data/portfolio";
+import type { PathKey } from "@/data/portfolio";
+import { localHref } from "@/data/content";
+import { useContent, useLang } from "../i18n";
+import LangSwitch, { LANG_KEY } from "../LangSwitch";
 import { useMediaQuery } from "../use-media-query";
 import FitStage from "./FitStage";
 import BuildVisual from "./BuildVisual";
@@ -39,23 +42,33 @@ export default function Gateway() {
   const [hovered, setHovered] = useState<PathKey | null>(null);
   const [chosen, setChosen] = useState<Choice | null>(null);
   const [lastPath, setLastPath] = useState<PathKey | null>(null);
+  const { gateway, site, ui } = useContent();
+  const lang = useLang();
+  const rtl = lang === "ar";
+  const L = (path: string) => localHref(lang, path);
 
   useEffect(() => {
     // Old shared links like /#projects keep working.
     const hash = window.location.hash.slice(1);
     const legacy = LEGACY_HASHES[hash];
     if (legacy) {
-      router.replace(`${gateway.paths[legacy].href}#${hash}`);
+      router.replace(`${L(gateway.paths[legacy].href)}#${hash}`);
       return;
     }
     try {
+      // Returning visitor who chose Arabic last time: open the Arabic homepage.
+      if (lang === "en" && window.localStorage.getItem(LANG_KEY) === "ar") {
+        router.replace(localHref("ar", "/"));
+        return;
+      }
       const saved = window.localStorage.getItem(LAST_PATH_KEY);
       if (saved === "build" || saved === "books") setLastPath(saved);
     } catch {
       /* storage unavailable — no "last visited" hint */
     }
-    ORDER.forEach((p) => router.prefetch(gateway.paths[p].href));
-  }, [router]);
+    ORDER.forEach((p) => router.prefetch(L(gateway.paths[p].href)));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router, lang]);
 
   const choose = (path: PathKey, e: React.MouseEvent<HTMLAnchorElement>) => {
     // Let new-tab / modified clicks behave like normal links.
@@ -67,7 +80,7 @@ export default function Gateway() {
     } catch {
       /* ignore */
     }
-    const href = gateway.paths[path].href;
+    const href = L(gateway.paths[path].href);
     if (reduce) {
       router.push(href);
       return;
@@ -92,17 +105,18 @@ export default function Gateway() {
     <main className="relative flex min-h-[100svh] flex-col overflow-hidden bg-[#020617] text-slate-100">
       {/* Ambient glows: cool on the build side, warm on the books side */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute -right-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-amber-500/10 blur-3xl" />
+        <div className="absolute -start-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-cyan-500/10 blur-3xl" />
+        <div className="absolute -end-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-amber-500/10 blur-3xl" />
       </div>
 
       {/* Top bar */}
       <header className="relative z-10 flex items-center justify-between px-5 pt-3 sm:px-8 sm:pt-6">
         <span className="font-display text-lg font-semibold tracking-tight">{site.logo}</span>
         <div className="flex items-center gap-1">
+          <LangSwitch compact className="me-1" />
           <a
             href={`mailto:${site.email}`}
-            aria-label="Email Ahmed"
+            aria-label={ui.emailLabel}
             className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
           >
             <Mail aria-hidden className="h-[18px] w-[18px]" />
@@ -111,7 +125,7 @@ export default function Gateway() {
             href={site.github}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="GitHub (opens in a new tab)"
+            aria-label={ui.githubLabel}
             className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
           >
             <Github aria-hidden className="h-[18px] w-[18px]" />
@@ -127,7 +141,7 @@ export default function Gateway() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          <span aria-hidden className="mr-1.5 inline-block origin-[70%_70%] animate-[wave_2.2s_ease-in-out_0.6s_2]">
+          <span aria-hidden className="me-1.5 inline-block origin-[70%_70%] animate-[wave_2.2s_ease-in-out_0.6s_2]">
             👋
           </span>
           {gateway.greeting}
@@ -168,10 +182,10 @@ export default function Gateway() {
         {ORDER.map((p, i) => {
           const d = gateway.paths[p];
           const Visual = p === "build" ? BuildVisual : BooksVisual;
-          const fromX = isRow ? (i === 0 ? -60 : 60) : 0;
+          const fromX = isRow ? ((i === 0) !== rtl ? -60 : 60) : 0;
           const fromY = isRow ? 30 : 40;
           return (
-            <FragmentWithSeam key={p} showSeam={i === 1} reduce={reduce} dimmed={!!chosen}>
+            <FragmentWithSeam key={p} showSeam={i === 1} reduce={reduce} dimmed={!!chosen} label={ui.or}>
               <motion.div
                 className="flex min-w-0 md:min-h-0 md:basis-0"
                 initial={{ opacity: 0, x: reduce ? 0 : fromX, y: reduce ? 0 : fromY }}
@@ -184,7 +198,7 @@ export default function Gateway() {
                 }}
               >
                 <Link
-                  href={d.href}
+                  href={L(d.href)}
                   onClick={(e) => choose(p, e)}
                   onMouseEnter={() => canHover && setHovered(p)}
                   onFocus={() => canHover && setHovered(p)}
@@ -211,7 +225,7 @@ export default function Gateway() {
                     </span>
                     {lastPath === p ? (
                       <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-slate-300">
-                        Last visited
+                        {ui.lastVisited}
                       </span>
                     ) : null}
                   </div>
@@ -224,7 +238,9 @@ export default function Gateway() {
                     className="relative -mx-2 mb-2 mt-5 h-[clamp(170px,30svh,260px)] transition-transform duration-700 ease-out group-hover:scale-[1.03] md:my-6 md:h-auto md:min-h-[96px] md:flex-1"
                   >
                     <div className="p-[6px]">
-                      <Visual />
+                      <div dir="ltr">
+                        <Visual />
+                      </div>
                     </div>
                   </FitStage>
 
@@ -253,8 +269,8 @@ export default function Gateway() {
                       </ul>
                       <span className="inline-flex items-center gap-2 font-display text-sm font-semibold text-white">
                         {d.cta}
-                        <span className="flex h-8 w-8 items-center sm:h-9 sm:w-9 justify-center rounded-full bg-[rgb(var(--door-accent))] text-slate-950 transition-transform duration-300 group-hover:translate-x-1">
-                          <ArrowRight aria-hidden className="h-4 w-4" />
+                        <span className="flex h-8 w-8 items-center sm:h-9 sm:w-9 justify-center rounded-full bg-[rgb(var(--door-accent))] text-slate-950 transition-transform duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
+                          <ArrowRight aria-hidden className="h-4 w-4 rtl:-scale-x-100" />
                         </span>
                       </span>
                     </div>
@@ -291,7 +307,7 @@ export default function Gateway() {
                 {gateway.paths[chosen.path].title}
               </p>
               <motion.div
-                className="mx-auto mt-4 h-[3px] w-40 origin-left rounded-full"
+                className="mx-auto mt-4 h-[3px] w-40 origin-left rounded-full rtl:origin-right"
                 style={{ background: DEST_GRADIENT[chosen.path] }}
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
@@ -311,7 +327,9 @@ function FragmentWithSeam({
   showSeam,
   reduce,
   dimmed,
+  label,
 }: {
+  label: string;
   children: React.ReactNode;
   showSeam: boolean;
   reduce: boolean;
@@ -337,7 +355,7 @@ function FragmentWithSeam({
               transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
             />
             <span className="absolute inset-[2px] flex items-center justify-center rounded-full bg-[#020617] font-display text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
-              or
+              {label}
             </span>
           </motion.div>
         </div>

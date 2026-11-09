@@ -8,7 +8,11 @@ export type ProjectStatus = "Live" | "In Progress" | "Planning" | "Archived";
 /** Keys of the animated mini-demos in components/demos. */
 export type ProjectDemo = "prestatement" | "myboatlog" | "careplus" | "thewalls" | "metaleast";
 
+/** Drives the project's icon; independent of the (translated) category text. */
+export type ProjectKind = "finance" | "web" | "ops";
+
 export interface Project {
+  kind: ProjectKind;
   /** Optional animated demo shown in the card's visual panel. */
   demo?: ProjectDemo;
   category: string;
@@ -136,6 +140,7 @@ export const booksHero: typeof hero = {
 
 export const projects: Project[] = [
   {
+    kind: "finance",
     category: "Financial Tools",
     title: "PreStatement",
     description:
@@ -146,6 +151,7 @@ export const projects: Project[] = [
     link: "https://prestatement.com",
   },
   {
+    kind: "web",
     category: "Web Development",
     title: "MyBoatLog",
     description:
@@ -156,6 +162,7 @@ export const projects: Project[] = [
     link: "https://myboatlog.app",
   },
   {
+    kind: "web",
     category: "Web Development",
     title: "Care Plus Auto Repairing Website",
     description:
@@ -166,6 +173,7 @@ export const projects: Project[] = [
     link: "https://careplusauto.com",
   },
   {
+    kind: "web",
     category: "Web Development",
     title: "The Walls Carpentry Website",
     description:
@@ -176,6 +184,7 @@ export const projects: Project[] = [
     link: "https://thewalls.ae",
   },
   {
+    kind: "web",
     category: "Web Development",
     title: "Metal East Records",
     description:
@@ -186,6 +195,7 @@ export const projects: Project[] = [
     link: "https://metal-east-records.vercel.app",
   },
   {
+    kind: "web",
     category: "Web Development",
     title: "Build It Contracting",
     description:
@@ -194,6 +204,7 @@ export const projects: Project[] = [
     link: "https://builditdxb.ae",
   },
   {
+    kind: "ops",
     category: "Business Operations",
     title: "ZeroG Invoices",
     description:
@@ -354,3 +365,71 @@ export const crossover = {
     href: "/build",
   },
 } satisfies Record<PathKey, { text: string; label: string; href: string }>;
+
+/** Interface text used by components (labels, buttons, section headings). */
+export const ui = {
+  langName: "English",
+  otherLangName: "العربية",
+  otherLangShort: "ع",
+  switchLangLabel: "Switch to Arabic",
+  portraitAlt: "Ahmed",
+  emailLabel: "Email Ahmed",
+  githubLabel: "GitHub (opens in a new tab)",
+  lastVisited: "Last visited",
+  or: "or",
+  nav: {
+    main: "Main navigation",
+    backToStart: "Back to start — choose a path",
+    backToStartText: "Back to start",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
+    mobileMenu: "Mobile menu",
+    switchPrefix: "Switch to",
+    switchTo: { build: "Bookkeeping", books: "Web Dev" } as Record<PathKey, string>,
+  },
+  status: {
+    Live: "Live",
+    "In Progress": "In Progress",
+    Planning: "Planning",
+    Archived: "Archived",
+  } as Record<ProjectStatus, string>,
+  liveDemo: "Live demo",
+  liveDemoPlaying: "Live demo playing",
+  prevProject: "Previous project",
+  nextProject: "Next project",
+  visit: "Visit the website",
+  opensNewTab: "opens in a new tab",
+  scrollTop: "Scroll back to top",
+  step: "Step",
+  footer: "Built in Dubai.",
+  sections: {
+    projects: {
+      eyebrow: "Featured Projects",
+      title: "Tools built for real businesses",
+      intro:
+        "Web apps, financial automation, and back-office tooling — each one built to remove a specific, recurring pain.",
+    },
+    work: { eyebrow: "What I Do", title: "Three kinds of work, one goal" },
+    skills: { eyebrow: "Skills", title: "The stack behind the work" },
+    about: { eyebrow: "About / Approach" },
+    accounting: { eyebrow: "UAE Bookkeeping Specialist", handles: "What I handle" },
+    process: { eyebrow: "How It Works" },
+    tools: {
+      eyebrow: "Beyond Bookkeeping",
+      title: "A bookkeeper who builds finance tools",
+      intro:
+        "Working in the books every day shows me where the hours go. So I build software to win them back.",
+    },
+    testimonials: {
+      eyebrow: "Clients",
+      title: "Businesses I work with",
+      trustedBy: "Trusted by businesses across the UAE",
+    },
+  },
+  speed: {
+    loadedIn: "Loaded in",
+    seconds: "s",
+    cached: "from cache",
+    title: "How long this page took to load on your device",
+  },
+};

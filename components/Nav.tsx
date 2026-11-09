@@ -4,14 +4,18 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { ArrowLeftRight, Menu, X } from "lucide-react";
-import { crossover, navByPath, site, type PathKey } from "@/data/portfolio";
+import type { PathKey } from "@/data/portfolio";
 import { EASE } from "./motion-primitives";
-
-const SWITCH_LABEL: Record<PathKey, string> = { build: "Bookkeeping", books: "Web Dev" };
+import { useContent, useLang, useLocalHref } from "./i18n";
+import LangSwitch from "./LangSwitch";
 
 export default function Nav({ path }: { path: PathKey }) {
+  const { navByPath, crossover, site, ui } = useContent();
+  const rtl = useLang() === "ar";
+  const href = useLocalHref();
   const nav = navByPath[path];
   const other = crossover[path];
+  const offscreen = rtl ? "-100%" : "100%";
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
@@ -49,12 +53,12 @@ export default function Nav({ path }: { path: PathKey }) {
       }`}
     >
       <nav
-        aria-label="Main navigation"
+        aria-label={ui.nav.main}
         className="mx-auto flex h-[var(--nav-height)] max-w-content items-center justify-between px-5 sm:px-8"
       >
         <Link
-          href="/"
-          aria-label="Back to start — choose a path"
+          href={href("/")}
+          aria-label={ui.nav.backToStart}
           className="font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-accent"
         >
           {site.logo}
@@ -72,31 +76,37 @@ export default function Nav({ path }: { path: PathKey }) {
               </a>
             </li>
           ))}
-          <li className="ml-2">
+          <li className="ms-2">
             <Link
-              href={other.href}
+              href={href(other.href)}
               className="group inline-flex items-center gap-2 rounded-full border border-edge-strong px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent/60 hover:text-accent"
             >
               <ArrowLeftRight
                 aria-hidden
                 className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180"
               />
-              {SWITCH_LABEL[path]}
+              {ui.nav.switchTo[path]}
             </Link>
+          </li>
+          <li className="ms-1">
+            <LangSwitch compact />
           </li>
         </ul>
 
-        {/* Mobile hamburger */}
+        {/* Mobile: language + hamburger */}
+        <div className="flex items-center gap-1 md:hidden">
+        <LangSwitch compact />
         <button
           type="button"
           onClick={() => setOpen(true)}
-          aria-label="Open menu"
+          aria-label={ui.nav.openMenu}
           aria-expanded={open}
           aria-controls="mobile-menu"
           className="flex h-11 w-11 items-center justify-center rounded-lg text-ink transition-colors hover:bg-surface-raised md:hidden"
         >
           <Menu aria-hidden className="h-6 w-6" />
         </button>
+        </div>
       </nav>
     </header>
 
@@ -120,11 +130,11 @@ export default function Nav({ path }: { path: PathKey }) {
               id="mobile-menu"
               role="dialog"
               aria-modal="true"
-              aria-label="Mobile menu"
-              className="fixed inset-y-0 right-0 z-[70] flex w-72 max-w-[85vw] flex-col border-l border-edge bg-surface-raised p-6 md:hidden"
-              initial={{ x: reduce ? 0 : "100%", opacity: reduce ? 0 : 1 }}
+              aria-label={ui.nav.mobileMenu}
+              className="fixed inset-y-0 end-0 z-[70] flex w-72 max-w-[85vw] flex-col border-s border-edge bg-surface-raised p-6 md:hidden"
+              initial={{ x: reduce ? 0 : offscreen, opacity: reduce ? 0 : 1 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: reduce ? 0 : "100%", opacity: reduce ? 0 : 1 }}
+              exit={{ x: reduce ? 0 : offscreen, opacity: reduce ? 0 : 1 }}
               transition={
                 reduce
                   ? { duration: 0.15 }
@@ -138,7 +148,7 @@ export default function Nav({ path }: { path: PathKey }) {
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  aria-label="Close menu"
+                  aria-label={ui.nav.closeMenu}
                   className="flex h-11 w-11 items-center justify-center rounded-lg text-ink transition-colors hover:bg-surface-overlay"
                 >
                   <X aria-hidden className="h-6 w-6" />
@@ -157,7 +167,7 @@ export default function Nav({ path }: { path: PathKey }) {
                   <motion.li
                     key={item.href}
                     variants={{
-                      hidden: { opacity: 0, x: reduce ? 0 : 16 },
+                      hidden: { opacity: 0, x: reduce ? 0 : rtl ? -16 : 16 },
                       visible: {
                         opacity: 1,
                         x: 0,
@@ -177,19 +187,19 @@ export default function Nav({ path }: { path: PathKey }) {
               </motion.ul>
               <div className="mt-auto flex flex-col gap-2 border-t border-edge pt-5">
                 <Link
-                  href={other.href}
+                  href={href(other.href)}
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-2 rounded-lg border border-edge-strong px-4 py-3 text-sm font-medium text-ink"
                 >
                   <ArrowLeftRight aria-hidden className="h-4 w-4 text-accent" />
-                  Switch to {SWITCH_LABEL[path]}
+                  {ui.nav.switchPrefix} {ui.nav.switchTo[path]}
                 </Link>
                 <Link
-                  href="/"
+                  href={href("/")}
                   onClick={() => setOpen(false)}
                   className="px-4 py-2 text-sm text-ink-faint transition-colors hover:text-ink"
                 >
-                  ← Back to start
+                  <span aria-hidden className="inline-block rtl:-scale-x-100">←</span> {ui.nav.backToStartText}
                 </Link>
               </div>
             </motion.div>

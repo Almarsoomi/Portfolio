@@ -12,7 +12,8 @@ import {
   type Variants,
 } from "framer-motion";
 import { ArrowRight, MapPin } from "lucide-react";
-import { hero } from "@/data/portfolio";
+import type { PathKey } from "@/data/portfolio";
+import { useContent } from "./i18n";
 import { EASE } from "./motion-primitives";
 import Typewriter from "./Typewriter";
 import { useIsDesktop, useMediaQuery } from "./use-media-query";
@@ -50,7 +51,9 @@ function Float({
   );
 }
 
-export default function Hero({ content = hero }: { content?: typeof hero }) {
+export default function Hero({ path }: { path: PathKey }) {
+  const c = useContent();
+  const content = path === "books" ? c.booksHero : c.hero;
   const reduce = useReducedMotion();
   const isDesktop = useIsDesktop();
   // Scroll/pointer-linked effects are desktop-only: on phones they add
@@ -134,7 +137,7 @@ export default function Hero({ content = hero }: { content?: typeof hero }) {
         }}
       >
         {/* Text column */}
-        <motion.div style={{ y: textY }} className="text-center lg:text-left">
+        <motion.div style={{ y: textY }} className="text-center lg:text-start">
           <motion.p
             variants={item}
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-edge-strong bg-surface-raised/60 px-4 py-2 text-sm font-medium text-ink-muted backdrop-blur"
@@ -147,7 +150,7 @@ export default function Hero({ content = hero }: { content?: typeof hero }) {
             variants={item}
             className="mb-3 font-display text-lg font-medium text-ink-muted"
           >
-            <span aria-hidden className="mr-1">
+            <span aria-hidden className="me-1">
               👋
             </span>
             {content.greeting}
@@ -183,7 +186,7 @@ export default function Hero({ content = hero }: { content?: typeof hero }) {
               className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-deep px-7 font-display text-sm font-semibold text-surface shadow-glow sm:w-auto"
             >
               {content.primaryCta.label}
-              <ArrowRight aria-hidden className="h-4 w-4" />
+              <ArrowRight aria-hidden className="h-4 w-4 rtl:-scale-x-100" />
             </motion.a>
             <motion.a
               href={content.secondaryCta.href}
@@ -223,7 +226,7 @@ export default function Hero({ content = hero }: { content?: typeof hero }) {
           <div className="absolute inset-[9%] overflow-hidden rounded-full border border-edge-strong bg-surface-raised shadow-glow">
             <Image
               src={ahmedPhoto}
-              alt="Ahmed"
+              alt={c.ui.portraitAlt}
               priority
               className="h-full w-full object-cover"
             />

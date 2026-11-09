@@ -3,6 +3,7 @@
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import type { MouseEvent } from "react";
+import { useContent } from "./i18n";
 
 /**
  * "Visit the website" pill: a pulsing live dot, the label, and an
@@ -20,6 +21,7 @@ export default function VisitButton({
   className?: string;
 }) {
   const reduce = useReducedMotion();
+  const { ui } = useContent();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const sx = useSpring(x, { stiffness: 260, damping: 18, mass: 0.4 });
@@ -47,12 +49,12 @@ export default function VisitButton({
       style={{ x: sx, y: sy }}
       whileTap={{ scale: 0.95 }}
       data-cursor="hover"
-      className={`group/visit visit-shine relative inline-flex h-11 max-w-full items-center gap-2.5 overflow-hidden rounded-full border border-accent/40 bg-surface pl-4 pr-1.5 shadow-[0_0_24px_-10px_rgb(var(--color-accent)/0.8)] outline-none transition-[border-color,box-shadow] duration-300 hover:border-transparent hover:shadow-glow focus-visible:ring-2 focus-visible:ring-accent ${className ?? ""}`}
+      className={`group/visit visit-shine relative inline-flex h-11 max-w-full items-center gap-2.5 overflow-hidden rounded-full border border-accent/40 bg-surface ps-4 pe-1.5 shadow-[0_0_24px_-10px_rgb(var(--color-accent)/0.8)] outline-none transition-[border-color,box-shadow] duration-300 hover:border-transparent hover:shadow-glow focus-visible:ring-2 focus-visible:ring-accent ${className ?? ""}`}
     >
       {/* Gradient flood */}
       <span
         aria-hidden
-        className="absolute inset-0 -translate-x-[101%] rounded-full bg-gradient-to-r from-accent-bright to-accent-deep transition-transform duration-500 ease-[cubic-bezier(0.7,0,0.2,1)] group-hover/visit:translate-x-0 group-focus-visible/visit:translate-x-0"
+        className="absolute inset-0 -translate-x-[101%] rtl:translate-x-[101%] rounded-full bg-gradient-to-r from-accent-bright to-accent-deep transition-transform duration-500 ease-[cubic-bezier(0.7,0,0.2,1)] group-hover/visit:translate-x-0 group-focus-visible/visit:translate-x-0"
       />
 
       {/* Live dot */}
@@ -62,14 +64,14 @@ export default function VisitButton({
       </span>
 
       <span className="relative whitespace-nowrap font-display text-sm font-semibold text-ink transition-colors duration-300 group-hover/visit:text-surface">
-        Visit the website
+        {ui.visit}
       </span>
-      <span className="sr-only">— open {title} in a new tab</span>
+      <span className="sr-only">— {title} ({ui.opensNewTab})</span>
 
       {/* Arrow badge: arrow exits top-right, a fresh one enters bottom-left */}
       <span
         aria-hidden
-        className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent text-surface transition-colors duration-300 group-hover/visit:bg-surface group-hover/visit:text-accent"
+        className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent text-surface rtl:-scale-x-100 transition-colors duration-300 group-hover/visit:bg-surface group-hover/visit:text-accent"
       >
         <ArrowUpRight className="h-4 w-4 transition-transform duration-300 ease-out group-hover/visit:-translate-y-6 group-hover/visit:translate-x-6" />
         <ArrowUpRight className="absolute h-4 w-4 -translate-x-6 translate-y-6 transition-transform delay-75 duration-300 ease-out group-hover/visit:translate-x-0 group-hover/visit:translate-y-0" />

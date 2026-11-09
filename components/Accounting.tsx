@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { CheckCircle2, Factory, Store, Waves, ArrowRight } from "lucide-react";
-import { accounting, type IndustryCard } from "@/data/portfolio";
+import type { IndustryCard } from "@/data/portfolio";
+import { useContent } from "./i18n";
 import { Reveal, SectionHeading, StaggerGroup, StaggerItem } from "./motion-primitives";
 
 const icons: Record<IndustryCard["icon"], typeof Factory> = {
@@ -12,12 +13,13 @@ const icons: Record<IndustryCard["icon"], typeof Factory> = {
 };
 
 export default function Accounting() {
+  const { accounting, ui } = useContent();
   return (
     <section id="services" className="relative">
       <div className="absolute inset-0 bg-surface-raised/30" aria-hidden />
       <div className="relative mx-auto max-w-content px-5 py-section-sm sm:px-8">
         <SectionHeading
-          eyebrow="UAE Bookkeeping Specialist"
+          eyebrow={ui.sections.accounting.eyebrow}
           title={accounting.heading}
           intro={accounting.intro}
         />
@@ -55,7 +57,7 @@ export default function Accounting() {
           <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
             <div className="md:max-w-xl">
               <h3 className="font-display text-xl font-semibold tracking-tight text-ink">
-                What I handle
+                {ui.sections.accounting.handles}
               </h3>
               <ul className="mt-5 grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
                 {accounting.handles.map((item) => (
@@ -73,7 +75,7 @@ export default function Accounting() {
               className="inline-flex h-12 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-gradient-to-r from-accent to-accent-deep px-7 font-display text-sm font-semibold text-surface shadow-glow md:self-center"
             >
               {accounting.cta.label}
-              <ArrowRight aria-hidden className="h-4 w-4" />
+              <ArrowRight aria-hidden className="h-4 w-4 rtl:-scale-x-100" />
             </motion.a>
           </div>
         </Reveal>

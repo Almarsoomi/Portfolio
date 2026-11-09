@@ -50,6 +50,19 @@ Open [http://localhost:3000](http://localhost:3000).
 - The theme is a single `data-path` attribute that swaps the CSS tokens, so every shared component re-colours itself.
 - The nav on each path has a **switch** pill to jump to the other path; the logo returns to the fork.
 
+### Arabic / English
+- Every page exists in both languages: `/`, `/build`, `/books` and `/ar`, `/ar/build`, `/ar/books`. Arabic pages are served with `lang="ar" dir="rtl"` from their own root layout, so they load already right-to-left (no flash) and can be indexed.
+- The **language button** (nav and homepage header) wipes across in the new reading direction and opens the same page and section in the other language. The choice is remembered: a returning Arabic visitor landing on `/` is taken to `/ar`.
+- Layout uses logical properties (`start`/`end`, `ps`/`pe`, `text-start`) and `rtl:` variants; arrows mirror, the project connector and drawers flip sides. Product mock-ups (door visuals, project demos) stay LTR on purpose.
+- Arabic text uses IBM Plex Sans Arabic; letter-spacing is disabled on Arabic pages because it breaks the joins between letters.
+
+### Clients & testimonials
+- Each path shows a moving strip of client names (pauses on hover).
+- A swipeable quote carousel appears automatically once real testimonials are added to `data/testimonials.ts`. Only add quotes clients have agreed to share.
+
+### Speed badge
+- On the path pages, a small badge shows how long the page actually took to load on the visitor's device (browser navigation timing) and how many KB were transferred. It counts up, tucks away after a few seconds, and expands on hover or tap.
+
 ### Layout & content
 - **Hero** — two-column layout: typewriter headline + CTAs on the left, framed portrait with floating SVG shapes on the right.
 - **Projects** — a *pinned scrollytelling* layout: a scrolling list of projects on the left activates items as they cross the viewport, while a sticky panel on the right updates to the active project.
@@ -81,7 +94,7 @@ All copy — the fork's doors, both heroes, projects, services, process steps, s
 data/portfolio.ts
 ```
 
-Edit that file to add projects, change text, or update contact details. No component changes needed. Notable fields:
+Edit that file to add projects, change text, or update contact details. The Arabic text lives in `data/portfolio.ar.ts` with exactly the same shape (TypeScript flags any field you forget), and interface labels are in the `ui` object of each file. Testimonials and the client strip are in `data/testimonials.ts`. No component changes needed. Notable fields:
 
 - `hero.greeting`, `hero.lead`, `hero.typewriter[]` — control the hero headline and the words the typewriter cycles through.
 - `gateway` — the homepage question and the two doors (title, description, chips, button text).
@@ -102,13 +115,17 @@ Colors, spacing, and layout tokens are CSS variables in `app/globals.css` (`:roo
 
 ```
 app/
-  globals.css        Theme tokens (+ books theme), textures, fork + curtain, cursor + Lenis CSS
-  layout.tsx         Root layout; mounts SmoothScroll, CustomCursor, ScrollToTop
-  page.tsx           Homepage: the fork
-  build/page.tsx     Websites & Tools path
-  books/page.tsx     Accounting & Bookkeeping path
+  globals.css        Theme tokens (+ books theme), textures, fork + curtain, Arabic rules, cursor + Lenis CSS
+  fonts.ts           Latin + Arabic fonts
+  (en)/              English root layout (lang="en") + /, /build, /books
+  (ar)/ar/           Arabic root layout (lang="ar" dir="rtl") + /ar, /ar/build, /ar/books
   Ahmed.png          Hero portrait
 components/
+  RootDocument.tsx   <html> shell shared by both languages
+  i18n.tsx           LangProvider, useContent(), useLocalHref()
+  LangSwitch.tsx     Language button + direction-aware wipe
+  Testimonials.tsx / SpeedBadge.tsx
+  pages/             Build and Books page bodies, shared by both languages
   fork/              Gateway (the homepage choice), BuildVisual, BooksVisual, FitStage, useLoop
   PathShell.tsx      Per-path wrapper: theme, entry curtain, nav, footer
   Process.tsx / FinanceTools.tsx / Crossover.tsx   Bookkeeping-path sections + cross-path banner
@@ -123,7 +140,11 @@ components/
   ScrollToTop.tsx    Floating back-to-top control
   motion-primitives.tsx  Reveal, StaggerGroup, SectionHeading, HeadingFlourish, lag
 data/
-  portfolio.ts       All site content
+  portfolio.ts       All English content (+ `ui` labels)
+  portfolio.ar.ts    Arabic content, same shape
+  content.ts         Language map + path helpers
+  meta.ts            Page titles/descriptions per language
+  testimonials.ts    Client quotes + client strip
 ```
 
 ---
