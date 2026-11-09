@@ -129,7 +129,7 @@ export default function TheWallsDemo() {
             transition={{ duration: 0.25, ease }}
             className={`absolute inset-x-0 top-0 flex h-[2.4rem] items-center gap-2 rounded-xl border px-2.5 shadow-lg backdrop-blur ${
               toast.ok
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 light:text-emerald-600"
                 : "border-edge-strong bg-surface-overlay/90 text-ink-muted"
             }`}
           >

@@ -377,6 +377,14 @@ export const ui = {
   githubLabel: "GitHub (opens in a new tab)",
   lastVisited: "Last visited",
   or: "or",
+  themeLabel: "Switch between light and dark theme",
+  availability: {
+    open: {
+      build: "Available for new projects",
+      books: "Taking on new clients",
+    } as Record<PathKey, string>,
+    busy: "Fully booked right now",
+  },
   nav: {
     main: "Main navigation",
     backToStart: "Back to start — choose a path",

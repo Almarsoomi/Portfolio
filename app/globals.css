@@ -33,6 +33,30 @@
 
   /* Sticky nav height, used for scroll offset */
   --nav-height: 4.5rem;
+
+  color-scheme: dark;
+}
+
+/* Light theme (data-theme="light" on <html>, set by ThemeToggle and the
+   inline script in RootDocument). Accents are darkened so accent-coloured
+   text keeps its contrast on a pale surface. */
+:root[data-theme="light"] {
+  --color-surface: 248 250 252; /* slate-50 */
+  --color-surface-raised: 255 255 255;
+  --color-surface-overlay: 226 232 240; /* slate-200 */
+
+  --color-ink: 15 23 42; /* slate-900 */
+  --color-ink-muted: 71 85 105; /* slate-600 */
+  --color-ink-faint: 100 116 139; /* slate-500 */
+
+  --color-accent: 14 116 144; /* cyan-700 */
+  --color-accent-bright: 6 182 212; /* cyan-500 */
+  --color-accent-deep: 37 99 235; /* blue-600 */
+
+  --color-edge: 226 232 240; /* slate-200 */
+  --color-edge-strong: 203 213 225; /* slate-300 */
+
+  color-scheme: light;
 }
 
 /* Bookkeeping path: warm stone surfaces, gold → emerald accent. Every
@@ -52,6 +76,44 @@
 
   --color-edge: 41 37 36;
   --color-edge-strong: 68 64 60;
+}
+
+/* Bookkeeping path, light theme: warm paper, deep amber → emerald. */
+[data-theme="light"][data-path="books"],
+[data-theme="light"] [data-path="books"] {
+  --color-surface: 250 248 244;
+  --color-surface-raised: 255 255 255;
+  --color-surface-overlay: 231 229 228; /* stone-200 */
+
+  --color-ink: 28 25 23; /* stone-900 */
+  --color-ink-muted: 87 83 78; /* stone-600 */
+  --color-ink-faint: 120 113 108; /* stone-500 */
+
+  --color-accent: 180 83 9; /* amber-700 */
+  --color-accent-bright: 217 119 6; /* amber-600 */
+  --color-accent-deep: 4 120 87; /* emerald-700 */
+
+  --color-edge: 231 229 228;
+  --color-edge-strong: 214 211 209; /* stone-300 */
+}
+
+/* Theme switch: the new theme grows as a circle from the toggle button
+   (View Transitions API; browsers without it just swap instantly). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html.theme-switching::view-transition-new(root) {
+  animation: theme-reveal 0.6s cubic-bezier(0.7, 0, 0.2, 1) both;
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--theme-x, 50%) var(--theme-y, 0%));
+  }
+  to {
+    clip-path: circle(var(--theme-r, 150vmax) at var(--theme-x, 50%) var(--theme-y, 0%));
+  }
 }
 
 /* Arabic pages: one Arabic family for headings and text. Letter-spacing

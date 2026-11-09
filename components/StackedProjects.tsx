@@ -14,9 +14,9 @@ import type { Project, ProjectStatus } from "@/data/portfolio";
 import { SectionHeading } from "./motion-primitives";
 
 const statusStyles: Record<ProjectStatus, string> = {
-  Live: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400",
+  Live: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 light:text-emerald-700",
   "In Progress": "border-accent/40 bg-accent/10 text-accent",
-  Planning: "border-amber-500/40 bg-amber-500/10 text-amber-400",
+  Planning: "border-amber-500/40 bg-amber-500/10 text-amber-400 light:text-amber-700",
   Archived: "border-edge-strong bg-surface-overlay/60 text-ink-faint",
 };
 

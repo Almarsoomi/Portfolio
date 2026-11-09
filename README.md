@@ -60,13 +60,23 @@ Open [http://localhost:3000](http://localhost:3000).
 - Each path shows a moving strip of client names (pauses on hover).
 - A swipeable quote carousel appears automatically once real testimonials are added to `data/testimonials.ts`. Only add quotes clients have agreed to share.
 
+### Light / dark theme
+- A sun/moon button in the nav and on the homepage switches the theme. The new theme grows as a circle out of the button (View Transitions API; other browsers and reduced-motion visitors get an instant swap).
+- Dark is the default. The choice is remembered (`localStorage`) and applied by a tiny inline script before first paint, so there is no flash.
+- The light palette is the `[data-theme="light"]` blocks in `app/globals.css`. Use the `light:` Tailwind variant for one-off overrides. The homepage doors and their mock-ups stay dark on purpose.
+
+### Availability badge
+- A pill with a pulsing green dot ("Available for new projects" / "Taking on new clients") sits beside the logo on desktop and in the hero on smaller screens; it links to the contact section.
+- Set `AVAILABLE` to `false` in `data/availability.ts` when fully booked — the badge turns amber. The wording is in `ui.availability` in each language file.
+
 ### Speed badge
 - On the path pages, a small badge shows how long the page actually took to load on the visitor's device (browser navigation timing) and how many KB were transferred. It counts up, tucks away after a few seconds, and expands on hover or tap.
 
 ### Layout & content
-- **Hero** — two-column layout: typewriter headline + CTAs on the left, framed portrait with floating SVG shapes on the right.
+- **Hero** — two-column layout: typewriter headline + CTAs on the left, framed portrait on the right, surrounded by small floating pieces of the work (`HeroProps`): on Build a page assembling itself, a "Site live" chip, a booking arriving and a phone layout; on Books a ledger being ticked off, VAT, a "Reconciled" stamp and a monthly chart.
 - **Projects** — a *pinned scrollytelling* layout: a scrolling list of projects on the left activates items as they cross the viewport, while a sticky panel on the right updates to the active project.
-- **Work categories, Accounting/Bookkeeping, Skills, About, Contact, Footer** — standard content sections driven from `data/portfolio.ts`.
+- **Skills** — one compact, self-playing card: a spotlight moves through the skill groups, the active tab opens and fills a progress line while its skills pop in. Tapping a tab stops the autoplay.
+- **Work categories, Accounting/Bookkeeping, About, Contact, Footer** — standard content sections driven from `data/portfolio.ts`.
 
 ### Motion & interaction
 - **Typewriter headline** — cycles through data-driven phrases with a blinking caret (`Typewriter`).
@@ -74,10 +84,9 @@ Open [http://localhost:3000](http://localhost:3000).
 - **Lenis smooth scrolling** — smooths the real scroll position (so `position: sticky` and scroll measurement keep working), with touch smoothing for mobile (`SmoothScroll`).
 - **ScrollTo** — a shared helper (`lenis-store`) to smooth-scroll to any element, selector, or pixel with configurable duration/easing/offset; hash-links route through it, and a floating **back-to-top** button demos it (`ScrollToTop`).
 - **Scroll parallax** — hero background, text, and portrait move at different rates as the hero scrolls away.
-- **Cursor-move parallax + tilt** — the hero portrait leans toward the pointer while the shapes drift further, for layered depth.
+- **Cursor-move parallax + tilt** — the hero portrait leans toward the pointer while the floating cards drift further, for layered depth.
 - **Heading lag** — section headings gently trail the scroll via a spring.
 - **MotionPath effects:**
-  - a dot rides the hand-drawn arrow curve in the hero;
   - a self-drawing gradient underline flourish under every section heading;
   - a pulse travels along a measured connector from the active project row into the pinned panel;
   - a comet streaks into the Contact CTA on hover and lands with a ripple.

@@ -8,6 +8,8 @@ import type { PathKey } from "@/data/portfolio";
 import { EASE } from "./motion-primitives";
 import { useContent, useLang, useLocalHref } from "./i18n";
 import LangSwitch from "./LangSwitch";
+import ThemeToggle from "./ThemeToggle";
+import AvailabilityBadge from "./AvailabilityBadge";
 
 export default function Nav({ path }: { path: PathKey }) {
   const { navByPath, crossover, site, ui } = useContent();
@@ -63,6 +65,7 @@ export default function Nav({ path }: { path: PathKey }) {
         >
           {site.logo}
         </Link>
+        <AvailabilityBadge path={path} className="ms-4 me-auto hidden lg:inline-flex" />
 
         {/* Desktop links */}
         <ul className="hidden items-center gap-1 md:flex">
@@ -91,11 +94,15 @@ export default function Nav({ path }: { path: PathKey }) {
           <li className="ms-1">
             <LangSwitch compact />
           </li>
+          <li>
+            <ThemeToggle />
+          </li>
         </ul>
 
         {/* Mobile: language + hamburger */}
         <div className="flex items-center gap-1 md:hidden">
         <LangSwitch compact />
+        <ThemeToggle className="ms-1" />
         <button
           type="button"
           onClick={() => setOpen(true)}

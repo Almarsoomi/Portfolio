@@ -33,7 +33,7 @@ function Chip({ label, on, reduce }: { label: string; on: boolean; reduce: boole
       animate={on && !reduce ? { scale: [1, 1.08, 1] } : { scale: 1 }}
       transition={{ duration: 0.3, ease }}
       className={`whitespace-nowrap rounded-md border px-2 py-0.5 text-[0.65rem] font-medium transition-colors duration-200 ${
-        on ? "border-red-500/60 bg-red-500/15 text-red-300" : "border-edge bg-surface-raised/60 text-ink-faint"
+        on ? "border-red-500/60 bg-red-500/15 text-red-300 light:text-red-600" : "border-edge bg-surface-raised/60 text-ink-faint"
       }`}
     >
       {label}
@@ -76,13 +76,13 @@ export default function CarePlusDemo() {
             transition={{ duration: 0.25, ease }}
             className={`absolute inset-x-0 top-0 flex h-[2.4rem] items-center gap-2 rounded-xl border px-2.5 shadow-lg backdrop-blur ${
               toast.tone === "ok"
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 light:text-emerald-600"
                 : "border-edge-strong bg-surface-overlay/90 text-ink-muted"
             }`}
           >
             <span
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-                toast.tone === "ok" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/15 text-red-400"
+                toast.tone === "ok" ? "bg-emerald-500/20 text-emerald-400 light:text-emerald-600" : "bg-red-500/15 text-red-400 light:text-red-600"
               }`}
             >
               <ToastIcon aria-hidden className="h-3 w-3" />
@@ -100,7 +100,7 @@ export default function CarePlusDemo() {
               C+
             </span>
             <div className="leading-tight">
-              <p className="text-[0.55rem] font-semibold uppercase tracking-wider text-red-400">
+              <p className="text-[0.55rem] font-semibold uppercase tracking-wider text-red-400 light:text-red-600">
                 Care Plus · Dubai
               </p>
               <p className="text-[0.78rem] font-semibold text-ink">Book a service</p>
@@ -156,7 +156,7 @@ export default function CarePlusDemo() {
           transition={{ duration: 0.3, ease }}
           className={`mt-3 flex h-8 items-center justify-center gap-1.5 rounded-lg text-[0.75rem] font-semibold transition-colors duration-300 ${
             booked
-              ? "bg-emerald-500/15 text-emerald-400"
+              ? "bg-emerald-500/15 text-emerald-400 light:text-emerald-600"
               : hasSlot
                 ? "bg-red-600 text-white shadow-[0_0_20px_-4px_rgb(220_38_38/0.6)]"
                 : "bg-red-600/30 text-white/60"

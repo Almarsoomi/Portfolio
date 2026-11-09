@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 const config: Config = {
   content: [
@@ -58,7 +59,12 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // `light:` styles apply under the light theme (data-theme on <html>).
+    plugin(({ addVariant }) => {
+      addVariant("light", '[data-theme="light"] &');
+    }),
+  ],
 };
 
 export default config;

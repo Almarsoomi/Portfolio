@@ -302,6 +302,14 @@ export const ui: typeof EN.ui = {
   githubLabel: "GitHub (يفتح في نافذة جديدة)",
   lastVisited: "آخر زيارة",
   or: "أو",
+  themeLabel: "التبديل بين الوضع الفاتح والداكن",
+  availability: {
+    open: {
+      build: "متاح لمشاريع جديدة",
+      books: "أستقبل عملاء جدد",
+    },
+    busy: "محجوز بالكامل حالياً",
+  },
   nav: {
     main: "التنقل الرئيسي",
     backToStart: "العودة إلى البداية — اختر مساراً",

@@ -62,13 +62,13 @@ export default function MyBoatLogDemo() {
 
   const toneCls = {
     info: "border-edge-strong bg-surface-overlay/90 text-ink-muted",
-    warn: "border-amber-500/40 bg-amber-500/10 text-amber-300",
-    ok: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
+    warn: "border-amber-500/40 bg-amber-500/10 text-amber-300 light:text-amber-600",
+    ok: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 light:text-emerald-600",
   }[toast.tone];
   const iconCls = {
-    info: "bg-amber-500/15 text-amber-400",
-    warn: "bg-amber-500/20 text-amber-400",
-    ok: "bg-emerald-500/20 text-emerald-400",
+    info: "bg-amber-500/15 text-amber-400 light:text-amber-600",
+    warn: "bg-amber-500/20 text-amber-400 light:text-amber-600",
+    ok: "bg-emerald-500/20 text-emerald-400 light:text-emerald-600",
   }[toast.tone];
   const ToastIcon = toast.icon;
 
@@ -105,7 +105,7 @@ export default function MyBoatLogDemo() {
       <div className="rounded-2xl border border-edge bg-surface/80 p-3.5 shadow-card backdrop-blur">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-amber-500/15 text-amber-400">
+            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-amber-500/15 text-amber-400 light:text-amber-600">
               <Anchor aria-hidden className="h-3.5 w-3.5" />
             </span>
             <div className="leading-tight">
@@ -121,7 +121,7 @@ export default function MyBoatLogDemo() {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.25, ease }}
             className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.6rem] font-medium ${
-              due ? "bg-amber-500/15 text-amber-400" : "bg-emerald-500/10 text-emerald-400"
+              due ? "bg-amber-500/15 text-amber-400 light:text-amber-600" : "bg-emerald-500/10 text-emerald-400 light:text-emerald-600"
             }`}
           >
             <span
@@ -135,7 +135,7 @@ export default function MyBoatLogDemo() {
         <div className="mt-2.5 flex items-end justify-between gap-3">
           <div>
             <p className="flex items-center gap-1 text-[0.62rem] text-ink-faint">
-              <Gauge aria-hidden className="h-3 w-3 text-amber-400" />
+              <Gauge aria-hidden className="h-3 w-3 text-amber-400 light:text-amber-600" />
               Engine hours
             </p>
             <p className="font-display text-2xl font-semibold tracking-tight text-ink">
@@ -176,7 +176,7 @@ export default function MyBoatLogDemo() {
                 className="flex items-center justify-between gap-2 rounded-lg border border-edge bg-surface-raised/60 px-2.5 py-1"
               >
                 <span className="flex min-w-0 items-center gap-2">
-                  <Navigation aria-hidden className="h-3 w-3 shrink-0 text-amber-400" />
+                  <Navigation aria-hidden className="h-3 w-3 shrink-0 text-amber-400 light:text-amber-600" />
                   <span className="truncate text-[0.72rem] font-medium text-ink">{t.route}</span>
                 </span>
                 <span className="shrink-0 text-[0.72rem] tabular-nums text-ink-muted">
@@ -207,7 +207,7 @@ export default function MyBoatLogDemo() {
                   <span className="text-[0.72rem] font-medium text-ink">Oil change</span>
                 </span>
                 <span
-                  className={`text-[0.65rem] font-medium ${done ? "text-emerald-400" : "text-amber-400"}`}
+                  className={`text-[0.65rem] font-medium ${done ? "text-emerald-400 light:text-emerald-600" : "text-amber-400 light:text-amber-600"}`}
                 >
                   {done ? "Done · Rashid" : assigned ? "Assigned · Rashid" : "Due"}
                 </span>
