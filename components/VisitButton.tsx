@@ -4,17 +4,8 @@ import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-moti
 import { ArrowUpRight } from "lucide-react";
 import type { MouseEvent } from "react";
 
-/** "prestatement.com" from "https://www.prestatement.com/..." */
-function hostOf(url: string) {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
-}
-
 /**
- * "Visit the live site" pill: a pulsing live dot, the real domain, and an
+ * "Visit the website" pill: a pulsing live dot, the label, and an
  * arrow badge. On hover a gradient floods in, the arrow flies out and a new
  * one flies in, and the whole pill leans toward the pointer (magnetic).
  * On touch screens a soft shine sweeps across it every few seconds instead.
@@ -70,13 +61,8 @@ export default function VisitButton({
         <span className="relative h-2 w-2 rounded-full bg-emerald-400 transition-colors group-hover/visit:bg-surface" />
       </span>
 
-      <span className="relative min-w-0 truncate text-sm transition-colors duration-300 group-hover/visit:text-surface">
-        <span className="font-display font-semibold text-ink transition-colors duration-300 group-hover/visit:text-surface">
-          Visit
-        </span>{" "}
-        <span className="font-mono text-[0.8rem] text-ink-muted transition-colors duration-300 group-hover/visit:text-surface/80">
-          {hostOf(href)}
-        </span>
+      <span className="relative whitespace-nowrap font-display text-sm font-semibold text-ink transition-colors duration-300 group-hover/visit:text-surface">
+        Visit the website
       </span>
       <span className="sr-only">— open {title} in a new tab</span>
 
