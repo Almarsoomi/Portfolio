@@ -3,19 +3,16 @@
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Github, Mail } from "lucide-react";
-import { contact, site } from "@/data/portfolio";
+import type { PathKey } from "@/data/portfolio";
+import { useContent } from "./i18n";
 import { Reveal } from "./motion-primitives";
 
 // Comet path (160×80 box): arcs from upper-left down to the button's top-center.
 const COMET_PATH = "M 24 12 C 74 4, 104 42, 80 74";
 
-export default function Contact({
-  heading = contact.heading,
-  text = contact.text,
-}: {
-  heading?: string;
-  text?: string;
-}) {
+export default function Contact({ path }: { path: PathKey }) {
+  const { contact, booksContact, site } = useContent();
+  const { heading, text } = path === "books" ? booksContact : contact;
   const reduce = useReducedMotion();
   const [hovered, setHovered] = useState(false);
 

@@ -5,6 +5,7 @@ import { Sparkles } from "lucide-react";
 import type { Project, ProjectStatus } from "@/data/portfolio";
 import { StaggerItem } from "./motion-primitives";
 import VisitButton from "./VisitButton";
+import { useContent } from "./i18n";
 
 const statusStyles: Record<ProjectStatus, string> = {
   Live: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400",
@@ -14,6 +15,7 @@ const statusStyles: Record<ProjectStatus, string> = {
 };
 
 export default function ProjectCard({ project }: { project: Project }) {
+  const { ui } = useContent();
   return (
     <StaggerItem className="h-full">
       <motion.article
@@ -28,7 +30,7 @@ export default function ProjectCard({ project }: { project: Project }) {
           <span
             className={`rounded-full border px-3 py-1 text-xs font-medium ${statusStyles[project.status]}`}
           >
-            {project.status}
+            {ui.status[project.status]}
           </span>
         </div>
 

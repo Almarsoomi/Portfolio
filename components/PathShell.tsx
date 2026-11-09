@@ -4,6 +4,7 @@ import { useEffect, type ReactNode } from "react";
 import type { PathKey } from "@/data/portfolio";
 import Nav from "./Nav";
 import Footer from "./Footer";
+import SpeedBadge from "./SpeedBadge";
 
 /**
  * Wraps a path page: applies its theme (via data-path → CSS tokens), plays the
@@ -26,6 +27,7 @@ export default function PathShell({ path, children }: { path: PathKey; children:
       <Nav path={path} />
       <main>{children}</main>
       <Footer />
+      <SpeedBadge />
     </div>
   );
 }

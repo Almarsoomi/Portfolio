@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { smoothScrollTo } from "./lenis-store";
+import { useContent } from "./i18n";
 
 /** Ease in-out cubic: starts slow, accelerates, settles gently. */
 const easeInOutCubic = (t: number) =>
@@ -15,6 +16,7 @@ const easeInOutCubic = (t: number) =>
  */
 export default function ScrollToTop() {
   const reduce = useReducedMotion();
+  const { ui } = useContent();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export default function ScrollToTop() {
       {show ? (
         <motion.button
           type="button"
-          aria-label="Scroll back to top"
+          aria-label={ui.scrollTop}
           onClick={() =>
             smoothScrollTo(0, { duration: 1.2, easing: easeInOutCubic })
           }
@@ -39,7 +41,7 @@ export default function ScrollToTop() {
           whileHover={reduce ? undefined : { y: -3 }}
           whileTap={reduce ? undefined : { scale: 0.92 }}
           transition={{ duration: 0.25 }}
-          className="fixed bottom-6 right-6 z-[60] flex h-12 w-12 items-center justify-center rounded-full border border-accent/40 bg-surface-raised/80 text-accent shadow-glow backdrop-blur transition-colors hover:border-accent hover:bg-surface-overlay"
+          className="fixed bottom-6 end-6 z-[60] flex h-12 w-12 items-center justify-center rounded-full border border-accent/40 bg-surface-raised/80 text-accent shadow-glow backdrop-blur transition-colors hover:border-accent hover:bg-surface-overlay"
         >
           <ArrowUp aria-hidden className="h-5 w-5" />
         </motion.button>

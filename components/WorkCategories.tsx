@@ -1,5 +1,8 @@
+"use client";
+
 import { Globe, Wallet, Workflow } from "lucide-react";
-import { workCategories, type WorkCategory } from "@/data/portfolio";
+import type { WorkCategory } from "@/data/portfolio";
+import { useContent } from "./i18n";
 import { SectionHeading, StaggerGroup, StaggerItem } from "./motion-primitives";
 
 const icons: Record<WorkCategory["icon"], typeof Globe> = {
@@ -9,11 +12,12 @@ const icons: Record<WorkCategory["icon"], typeof Globe> = {
 };
 
 export default function WorkCategories() {
+  const { workCategories, ui } = useContent();
   return (
     <section id="work" className="mx-auto max-w-content px-5 py-section-sm sm:px-8">
       <SectionHeading
-        eyebrow="What I Do"
-        title="Three kinds of work, one goal"
+        eyebrow={ui.sections.work.eyebrow}
+        title={ui.sections.work.title}
       />
       <StaggerGroup className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
         {workCategories.map((cat) => {

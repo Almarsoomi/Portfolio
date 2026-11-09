@@ -19,6 +19,7 @@ import { useIsDesktop } from "./use-media-query";
 import { demos } from "./demos";
 import { smoothScrollTo } from "./lenis-store";
 import VisitButton from "./VisitButton";
+import { useContent } from "./i18n";
 
 const statusStyles: Record<ProjectStatus, string> = {
   Live: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400",
@@ -28,11 +29,7 @@ const statusStyles: Record<ProjectStatus, string> = {
 };
 
 /** Map a project category to a representative icon for the pinned panel + list. */
-function iconFor(category: string): LucideIcon {
-  if (category.startsWith("Financial")) return Wallet;
-  if (category.startsWith("Web")) return Globe;
-  return Workflow;
-}
+const ICONS: Record<Project["kind"], LucideIcon> = { finance: Wallet, web: Globe, ops: Workflow };
 
 /** Viewport line rows are judged against (a bit above centre = reading position). */
 const readingLine = () => window.innerHeight * 0.42;
@@ -71,8 +68,10 @@ export default function PinnedProjects() {
   const reduce = useReducedMotion();
   const isDesktop = useIsDesktop();
   const [active, setActive] = useState(0);
-  const current = projects[active];
-  const ActiveIcon = iconFor(current.category);
+  // `projects` (module) drives counts/indices; `list` is the same projects in the page language.
+  const { projects: list, ui } = useContent();
+  const current = list[active];
+  const ActiveIcon = ICONS[current.kind];
   const ActiveDemo = current.demo ? demos[current.demo] : null;
 
   const gridRef = useRef<HTMLDivElement>(null);
@@ -111,9 +110,11 @@ export default function PinnedProjects() {
     const g = grid.getBoundingClientRect();
     const r = row.getBoundingClientRect();
     const p = panel.getBoundingClientRect();
-    const x1 = r.right - g.left;
+    // In Arabic (RTL) the list sits on the right and the panel on the left.
+    const rtl = getComputedStyle(grid).direction === "rtl";
+    const x1 = (rtl ? r.left : r.right) - g.left;
     const y1 = r.top + r.height / 2 - g.top;
-    const x2 = p.left - g.left;
+    const x2 = (rtl ? p.right : p.left) - g.left;
     const y2 = p.top + Math.min(p.height / 2, 150) - g.top;
     const cx = x1 + (x2 - x1) * 0.5;
     const d = `M ${x1} ${y1} C ${cx} ${y1}, ${cx} ${y2}, ${x2} ${y2}`;
@@ -258,9 +259,9 @@ export default function PinnedProjects() {
   return (
     <section id="projects" className="mx-auto max-w-content px-5 py-section-sm sm:px-8">
       <SectionHeading
-        eyebrow="Featured Projects"
-        title="Tools built for real businesses"
-        intro="Web apps, financial automation, and back-office tooling — each one built to remove a specific, recurring pain."
+        eyebrow={ui.sections.projects.eyebrow}
+        title={ui.sections.projects.title}
+        intro={ui.sections.projects.intro}
       />
 
       <div ref={gridRef} className="relative grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:gap-14">
@@ -291,8 +292,8 @@ export default function PinnedProjects() {
 
         {/* Scrolling list */}
         <ol ref={listRef} className="flex flex-col gap-4">
-          {projects.map((project, index) => {
-            const Icon = iconFor(project.category);
+          {list.map((project, index) => {
+            const Icon = ICONS[project.kind];
             const RowDemo = project.demo ? demos[project.demo] : null;
             const isActive = index === active;
             return (
@@ -307,7 +308,7 @@ export default function PinnedProjects() {
                   onClick={() => goTo(index)}
                   onFocus={() => setActive(index)}
                   aria-pressed={isActive}
-                  className={`group flex w-full gap-4 rounded-2xl border p-5 text-left transition-all duration-300 sm:p-6 ${
+                  className={`group flex w-full gap-4 rounded-2xl border p-5 text-start transition-all duration-300 sm:p-6 ${
                     project.link ? "pb-[5.25rem] sm:pb-[5.5rem]" : ""
                   } ${
                     isActive
@@ -333,7 +334,7 @@ export default function PinnedProjects() {
                       <span
                         className={`shrink-0 rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium ${statusStyles[project.status]}`}
                       >
-                        {project.status}
+                        {ui.status[project.status]}
                       </span>
                     </div>
 
@@ -350,7 +351,7 @@ export default function PinnedProjects() {
                         }`}
                       >
                         <Play aria-hidden className="h-3 w-3 fill-current" />
-                        {isActive ? "Live demo playing →" : "Live demo"}
+                        {isActive ? ui.liveDemoPlaying : ui.liveDemo}
                       </span>
                     ) : null}
 
@@ -365,7 +366,7 @@ export default function PinnedProjects() {
                   <VisitButton
                     href={project.link}
                     title={project.title}
-                    className="!absolute bottom-5 left-20 right-5 w-fit sm:bottom-6 sm:left-[84px]"
+                    className="!absolute bottom-5 start-20 w-fit sm:bottom-6 sm:start-[84px]"
                   />
                 ) : null}
                 </div>
@@ -374,7 +375,9 @@ export default function PinnedProjects() {
                     Kept outside the button because some demos have their own controls. */}
                 {RowDemo ? (
                   <div className="mt-2 flex justify-center rounded-2xl border border-edge bg-gradient-to-br from-accent/10 via-surface-raised to-surface px-4 py-5 lg:hidden">
-                    <RowDemo />
+                    <div dir="ltr">
+                      <RowDemo />
+                    </div>
                   </div>
                 ) : null}
               </li>
@@ -410,7 +413,9 @@ export default function PinnedProjects() {
                   className="absolute inset-0 flex w-full flex-col items-center justify-center gap-4 px-6 text-center"
                 >
                   {ActiveDemo ? (
-                    <ActiveDemo />
+                    <div dir="ltr">
+                      <ActiveDemo />
+                    </div>
                   ) : (
                     <>
                       <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/40 bg-accent/10 text-accent">
@@ -428,8 +433,8 @@ export default function PinnedProjects() {
             {/* Detail footer */}
             <div className="relative border-t border-edge p-6">
               {/* Project counter + step controls */}
-              <div className="absolute right-5 top-4 z-10 flex items-center gap-1.5">
-                <span className="mr-1 font-display text-xs tabular-nums text-ink-faint">
+              <div className="absolute end-5 top-4 z-10 flex items-center gap-1.5">
+                <span dir="ltr" className="me-1 font-display text-xs tabular-nums text-ink-faint">
                   <span className="text-ink">{String(active + 1).padStart(2, "0")}</span> /{" "}
                   {String(projects.length).padStart(2, "0")}
                 </span>
@@ -437,7 +442,7 @@ export default function PinnedProjects() {
                   type="button"
                   onClick={() => goTo(active - 1)}
                   disabled={active === 0}
-                  aria-label="Previous project"
+                  aria-label={ui.prevProject}
                   className="flex h-7 w-7 items-center justify-center rounded-full border border-edge text-ink-muted transition-colors hover:border-accent/50 hover:text-accent disabled:pointer-events-none disabled:opacity-30"
                 >
                   <ChevronUp aria-hidden className="h-4 w-4" />
@@ -446,7 +451,7 @@ export default function PinnedProjects() {
                   type="button"
                   onClick={() => goTo(active + 1)}
                   disabled={active === projects.length - 1}
-                  aria-label="Next project"
+                  aria-label={ui.nextProject}
                   className="flex h-7 w-7 items-center justify-center rounded-full border border-edge text-ink-muted transition-colors hover:border-accent/50 hover:text-accent disabled:pointer-events-none disabled:opacity-30"
                 >
                   <ChevronDown aria-hidden className="h-4 w-4" />
