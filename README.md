@@ -73,7 +73,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - On the path pages, a small badge shows how long the page actually took to load on the visitor's device (browser navigation timing) and how many KB were transferred. It counts up, tucks away after a few seconds, and expands on hover or tap.
 
 ### Layout & content
-- **Hero** — two-column layout: typewriter headline + CTAs on the left, framed portrait with floating SVG shapes on the right.
+- **Hero** — two-column layout: typewriter headline + CTAs on the left, framed portrait on the right, surrounded by small floating pieces of the work (`HeroProps`): on Build a page assembling itself, a "Site live" chip, a booking arriving and a phone layout; on Books a ledger being ticked off, VAT, a "Reconciled" stamp and a monthly chart.
 - **Projects** — a *pinned scrollytelling* layout: a scrolling list of projects on the left activates items as they cross the viewport, while a sticky panel on the right updates to the active project.
 - **Skills** — one compact, self-playing card: a spotlight moves through the skill groups, the active tab opens and fills a progress line while its skills pop in. Tapping a tab stops the autoplay.
 - **Work categories, Accounting/Bookkeeping, About, Contact, Footer** — standard content sections driven from `data/portfolio.ts`.
@@ -84,10 +84,9 @@ Open [http://localhost:3000](http://localhost:3000).
 - **Lenis smooth scrolling** — smooths the real scroll position (so `position: sticky` and scroll measurement keep working), with touch smoothing for mobile (`SmoothScroll`).
 - **ScrollTo** — a shared helper (`lenis-store`) to smooth-scroll to any element, selector, or pixel with configurable duration/easing/offset; hash-links route through it, and a floating **back-to-top** button demos it (`ScrollToTop`).
 - **Scroll parallax** — hero background, text, and portrait move at different rates as the hero scrolls away.
-- **Cursor-move parallax + tilt** — the hero portrait leans toward the pointer while the shapes drift further, for layered depth.
+- **Cursor-move parallax + tilt** — the hero portrait leans toward the pointer while the floating cards drift further, for layered depth.
 - **Heading lag** — section headings gently trail the scroll via a spring.
 - **MotionPath effects:**
-  - a dot rides the hand-drawn arrow curve in the hero;
   - a self-drawing gradient underline flourish under every section heading;
   - a pulse travels along a measured connector from the active project row into the pinned panel;
   - a comet streaks into the Contact CTA on hover and lands with a ripple.

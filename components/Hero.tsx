@@ -16,41 +16,10 @@ import type { PathKey } from "@/data/portfolio";
 import { useContent } from "./i18n";
 import { EASE } from "./motion-primitives";
 import Typewriter from "./Typewriter";
+import HeroProps from "./HeroProps";
 import AvailabilityBadge from "./AvailabilityBadge";
 import { useIsDesktop, useMediaQuery } from "./use-media-query";
 import ahmedPhoto from "@/app/ahmed.webp";
-
-/** A shape that gently bobs up and down (disabled under reduced motion). */
-function Float({
-  children,
-  className,
-  dy = 10,
-  duration = 4.5,
-  delay = 0,
-  reduce,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  dy?: number;
-  duration?: number;
-  delay?: number;
-  reduce: boolean;
-}) {
-  return (
-    <motion.div
-      aria-hidden
-      className={className}
-      animate={reduce ? undefined : { y: [0, -dy, 0] }}
-      transition={
-        reduce
-          ? undefined
-          : { duration, delay, repeat: Infinity, ease: "easeInOut" }
-      }
-    >
-      {children}
-    </motion.div>
-  );
-}
 
 export default function Hero({ path }: { path: PathKey }) {
   const c = useContent();
@@ -60,9 +29,9 @@ export default function Hero({ path }: { path: PathKey }) {
   // Scroll/pointer-linked effects are desktop-only: on phones they add
   // main-thread work per scroll frame for effects nobody can trigger anyway.
   const motionOff = reduce || !isDesktop;
-  // Shapes are *not rendered* below md (rather than CSS-hidden) so their 7
-  // infinite animations never tick on phones.
-  const showShapes = useMediaQuery("(min-width: 768px)");
+  // The floating cards only bob from md up; on phones they stay put so fewer
+  // infinite animations tick.
+  const isMd = useMediaQuery("(min-width: 768px)");
 
   // Parallax: elements move at different rates as the hero scrolls away.
   const heroRef = useRef<HTMLElement>(null);
@@ -237,120 +206,10 @@ export default function Hero({ path }: { path: PathKey }) {
             />
           </div>
 
-          {/* ── Floating geometric shapes (extra cursor parallax) ── */}
-          {showShapes ? (
+          {/* Floating pieces of the work (extra cursor parallax on desktop) */}
           <motion.div style={{ x: shapeX, y: shapeY }} className="absolute inset-0">
-
-          {/* Filled accent circle, top-right */}
-          <Float
-            reduce={!!reduce}
-            dy={12}
-            duration={5}
-            className="absolute right-[4%] top-[8%] h-6 w-6 rounded-full bg-accent shadow-glow"
-          >
-            <span className="sr-only" />
-          </Float>
-
-          {/* Small deep-blue square, upper-left */}
-          <Float
-            reduce={!!reduce}
-            dy={9}
-            duration={4}
-            delay={0.4}
-            className="absolute left-[2%] top-[24%] h-4 w-4 rotate-12 rounded-[3px] bg-accent-deep"
-          >
-            <span className="sr-only" />
-          </Float>
-
-          {/* Hollow outline square, bottom-right */}
-          <Float
-            reduce={!!reduce}
-            dy={14}
-            duration={5.5}
-            delay={0.2}
-            className="absolute bottom-[6%] right-[0%] h-12 w-12 rotate-12 rounded-md border-2 border-ink/70"
-          >
-            <span className="sr-only" />
-          </Float>
-
-          {/* Squiggle, top-left */}
-          <Float
-            reduce={!!reduce}
-            dy={8}
-            duration={4.8}
-            delay={0.6}
-            className="absolute left-[6%] top-[2%] text-accent"
-          >
-            <svg width="62" height="20" viewBox="0 0 62 20" fill="none">
-              <path
-                d="M2 12 Q 9 2, 16 12 T 30 12 T 44 12 T 58 12"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-            </svg>
-          </Float>
-
-          {/* Curved arrow pointing at the portrait, lower-left */}
-          <Float
-            reduce={!!reduce}
-            dy={7}
-            duration={5.2}
-            delay={0.3}
-            className="absolute bottom-[20%] -left-2 text-ink-muted"
-          >
-            <div className="relative h-14 w-14">
-              <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-                <path
-                  d="M8 44 C 12 22, 32 14, 48 20"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M40 14 L 49 20 L 42 28"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              {/* MotionPath: a dot rides the arrow curve, then repeats. */}
-              {reduce ? null : (
-                <motion.span
-                  className="absolute left-0 top-0 h-2 w-2 rounded-full bg-accent shadow-glow"
-                  style={{ offsetPath: "path('M8 44 C 12 22, 32 14, 48 20')" }}
-                  initial={{ offsetDistance: "0%", opacity: 0 }}
-                  animate={{
-                    offsetDistance: ["0%", "100%"],
-                    opacity: [0, 1, 1, 0],
-                  }}
-                  transition={{
-                    duration: 2,
-                    ease: "easeInOut",
-                    repeat: Infinity,
-                    repeatDelay: 0.7,
-                    times: [0, 0.1, 0.9, 1],
-                  }}
-                />
-              )}
-            </div>
-          </Float>
-
-          {/* Dot cluster, mid-right */}
-          <Float
-            reduce={!!reduce}
-            dy={10}
-            duration={4.4}
-            delay={0.5}
-            className="absolute -right-2 top-[46%] flex gap-1.5"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-accent/70" />
-            <span className="h-1.5 w-1.5 rounded-full bg-accent/50" />
-            <span className="h-1.5 w-1.5 rounded-full bg-accent/30" />
-          </Float>
+            <HeroProps path={path} reduce={!!reduce} bob={isMd} />
           </motion.div>
-          ) : null}
           </motion.div>
         </motion.div>
       </motion.div>
