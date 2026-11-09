@@ -80,6 +80,38 @@ html.lenis body {
   pointer-events: none;
 }
 
+/* Scrollbar in the path's colours: cyan → blue on Build, gold → emerald on
+   Books (tokens swap via data-path on <html>). Firefox takes a solid colour;
+   Chrome, Edge and desktop Safari get the gradient. Phone browsers draw their
+   own overlay scrollbar, which can't be styled. */
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-color: rgb(var(--color-accent)) rgb(var(--color-surface));
+  }
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgb(var(--color-surface));
+}
+::-webkit-scrollbar-thumb {
+  border: 2px solid rgb(var(--color-surface));
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--color-accent-bright)),
+    rgb(var(--color-accent-deep))
+  );
+}
+::-webkit-scrollbar-thumb:hover {
+  border-width: 1px;
+}
+::-webkit-scrollbar-corner {
+  background: rgb(var(--color-surface));
+}
+
 body {
   @apply bg-surface text-ink font-body antialiased;
   text-rendering: optimizeLegibility;
