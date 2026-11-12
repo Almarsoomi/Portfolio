@@ -2,7 +2,13 @@
 
 import { motion } from "framer-motion";
 import { Check, MousePointer2 } from "lucide-react";
+import { useLang } from "../i18n";
 import { useLoop } from "./useLoop";
+
+const TEXT = {
+  en: { cta: "Book now", toast: "New booking received" },
+  ar: { cta: "احجز الآن", toast: "وصل حجز جديد" },
+};
 
 const URL_TEXT = "yourbusiness.ae";
 
@@ -13,6 +19,8 @@ const URL_TEXT = "yourbusiness.ae";
  */
 export default function BuildVisual() {
   const { key, reduce, at } = useLoop(6200);
+  const lang = useLang();
+  const t = TEXT[lang];
 
   return (
     <div className="relative h-[220px] w-[320px]">
@@ -99,7 +107,7 @@ export default function BuildVisual() {
                   : { delay: 1.65, duration: 2.1, times: [0, 0.12, 0.2, 0.62, 0.68, 0.76] }
               }
             >
-              Book now
+              {t.cta}
             </motion.div>
           </div>
 
@@ -138,12 +146,13 @@ export default function BuildVisual() {
 
           {/* Booking toast */}
           <motion.div
+            dir={lang === "ar" ? "rtl" : "ltr"}
             className="absolute bottom-2 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border border-emerald-400/40 bg-slate-900 px-3 py-1 text-[10px] font-semibold text-emerald-300"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={at(3.5, { type: "spring", stiffness: 300, damping: 20 })}
           >
-            <Check className="h-3 w-3" /> New booking received
+            <Check className="h-3 w-3" /> {t.toast}
           </motion.div>
         </div>
       </div>
