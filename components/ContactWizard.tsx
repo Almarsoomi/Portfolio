@@ -151,6 +151,10 @@ export default function ContactWizard({ path }: { path: PathKey }) {
 
   const [step, setStep] = useState(0);
   const [dir, setDir] = useState(1);
+  /** Furthest step reached — earlier ones can be jumped to from the progress bar. */
+  const [maxStep, setMaxStep] = useState(0);
+  /** Set while editing an earlier answer: where "Back to summary" returns to. */
+  const [returnTo, setReturnTo] = useState<number | null>(null);
   const [answers, setAnswers] = useState<Answers>({});
   const [details, setDetails] = useState<Details>(EMPTY_DETAILS);
   const [errors, setErrors] = useState<Partial<Record<ErrorKey, string>>>({});
@@ -172,10 +176,22 @@ export default function ContactWizard({ path }: { path: PathKey }) {
     (next: number) => {
       clearTimer();
       interacted.current = true;
-      setDir(next > step ? 1 : -1);
-      setStep(Math.max(0, Math.min(total - 1, next)));
+      const target = Math.max(0, Math.min(total - 1, next));
+      setDir(target > step ? 1 : -1);
+      setStep(target);
+      setMaxStep((m) => Math.max(m, target));
+      setReturnTo((r) => (r !== null && target >= r ? null : r));
     },
     [step, total],
+  );
+
+  /** Jump back to an earlier answer, remembering where to come back to. */
+  const editStep = useCallback(
+    (target: number) => {
+      if (target < step) setReturnTo((r) => Math.max(r ?? 0, step));
+      goTo(target);
+    },
+    [goTo, step],
   );
 
   const panelRef = useRef<HTMLDivElement>(null);
@@ -208,7 +224,9 @@ export default function ContactWizard({ path }: { path: PathKey }) {
     const step_ = steps[step];
     const allSingle = step_.groups.every((g) => !g.multi);
     if (!group.multi && allSingle && step_.groups.every((g) => isAnswered(g, nextAnswers))) {
-      advanceTimer.current = window.setTimeout(() => goTo(step + 1), reduce ? 150 : 480);
+      // While editing, a pick goes straight back to the summary.
+      const target = returnTo ?? step + 1;
+      advanceTimer.current = window.setTimeout(() => goTo(target), reduce ? 150 : 480);
     }
   }
 
@@ -313,6 +331,8 @@ export default function ContactWizard({ path }: { path: PathKey }) {
     setReference("");
     setDir(-1);
     setStep(0);
+    setMaxStep(0);
+    setReturnTo(null);
     setStatus("idle");
   }
 
@@ -327,7 +347,18 @@ export default function ContactWizard({ path }: { path: PathKey }) {
   return (
     <div className="grid gap-6 text-start lg:grid-cols-[minmax(0,1fr)_17rem]">
       <div ref={panelRef} className="min-w-0 rounded-2xl border border-edge bg-surface/70 p-4 sm:p-6">
-        {!done ? <Progress step={step} total={total} ui={ui} /> : null}
+        {!done ? (
+          <Progress
+            step={step}
+            total={total}
+            titles={[...steps.map((s) => s.title), ui.detailsTitle]}
+            canReach={(i) =>
+              i !== step && i <= maxStep && steps.slice(0, i).every((s) => s.groups.every((g) => isAnswered(g, answers)))
+            }
+            onJump={(i) => (i < step ? editStep(i) : goTo(i))}
+            ui={ui}
+          />
+        ) : null}
 
         <AutoHeight>
           {done ? (
@@ -373,7 +404,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
                     shake={shake}
                     headingRef={headingRef}
                     brief={brief}
-                    onEdit={goTo}
+                    onEdit={editStep}
                     onSubmit={submit}
                     status={status}
                     ui={ui}
@@ -398,9 +429,9 @@ export default function ContactWizard({ path }: { path: PathKey }) {
             {current ? (
               <NextButton
                 enabled={stepComplete}
-                label={ui.next}
+                label={returnTo !== null ? ui.backToSummary : ui.next}
                 icon={<NextIcon aria-hidden className="h-4 w-4" />}
-                onClick={() => goTo(step + 1)}
+                onClick={() => goTo(returnTo ?? step + 1)}
               />
             ) : (
               <SendButton status={status} ui={ui} onClick={() => submit()} rtl={rtl} />
@@ -434,7 +465,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
         ) : null}
       </div>
 
-      <Brief brief={brief} ui={ui} label={flow.label} done={done} onEdit={goTo} />
+      <Brief brief={brief} ui={ui} label={flow.label} done={done} onEdit={editStep} />
     </div>
   );
 }
@@ -469,7 +500,21 @@ function AutoHeight({ children }: { children: ReactNode }) {
   );
 }
 
-function Progress({ step, total, ui }: { step: number; total: number; ui: UI }) {
+function Progress({
+  step,
+  total,
+  titles,
+  canReach,
+  onJump,
+  ui,
+}: {
+  step: number;
+  total: number;
+  titles: string[];
+  canReach: (i: number) => boolean;
+  onJump: (i: number) => void;
+  ui: UI;
+}) {
   return (
     <div>
       <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.14em] text-ink-faint rtl:tracking-normal">
@@ -482,19 +527,42 @@ function Progress({ step, total, ui }: { step: number; total: number; ui: UI }) 
         </span>
         <span className="hidden normal-case tracking-normal sm:inline">{ui.hoursNote}</span>
       </div>
-      <div className="mt-3 flex gap-1.5" aria-hidden>
-        {Array.from({ length: total }, (_, i) => (
-          <div key={i} className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-edge">
-            <motion.div
-              className="absolute inset-0 origin-left rounded-full bg-gradient-to-r from-accent to-accent-deep rtl:origin-right"
-              initial={false}
-              animate={{ scaleX: i < step ? 1 : i === step ? 0.5 : 0 }}
-              transition={{ duration: 0.45, ease: EASE }}
-              style={i === step ? { boxShadow: "0 0 12px rgb(var(--color-accent) / 0.7)" } : undefined}
-            />
-          </div>
-        ))}
-      </div>
+      {/* Each segment is a button: tap any step you've already reached to jump to it. */}
+      <nav aria-label={ui.goToStep} className="mt-1.5 flex gap-1.5">
+        {Array.from({ length: total }, (_, i) => {
+          const reachable = canReach(i);
+          return (
+            <button
+              key={i}
+              type="button"
+              disabled={!reachable}
+              onClick={() => onJump(i)}
+              aria-current={i === step ? "step" : undefined}
+              aria-label={`${ui.step} ${i + 1} ${ui.of} ${total}: ${titles[i]}`}
+              title={titles[i]}
+              className={`group/seg relative flex-1 py-2 ${reachable ? "cursor-pointer" : "cursor-default"}`}
+            >
+              <span
+                className={`relative block h-1.5 overflow-hidden rounded-full bg-edge transition-transform ${
+                  reachable ? "group-hover/seg:scale-y-[1.6]" : ""
+                }`}
+              >
+                <motion.span
+                  className="absolute inset-0 origin-left rounded-full bg-gradient-to-r from-accent to-accent-deep rtl:origin-right"
+                  initial={false}
+                  animate={{ scaleX: i < step ? 1 : i === step ? 0.5 : 0 }}
+                  transition={{ duration: 0.45, ease: EASE }}
+                  style={i === step ? { boxShadow: "0 0 12px rgb(var(--color-accent) / 0.7)" } : undefined}
+                />
+                {/* Reached steps ahead of you stay softly lit, so it's clear you can jump back to them. */}
+                {i > step && reachable ? (
+                  <span aria-hidden className="absolute inset-0 rounded-full bg-accent/35" />
+                ) : null}
+              </span>
+            </button>
+          );
+        })}
+      </nav>
     </div>
   );
 }
@@ -759,7 +827,7 @@ function NextButton({
       whileHover={enabled ? { scale: 1.03 } : undefined}
       whileTap={enabled ? { scale: 0.97 } : undefined}
       animate={{ opacity: enabled ? 1 : 0.45 }}
-      className="relative inline-flex h-11 items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-accent to-accent-deep px-6 font-display text-sm font-semibold text-surface shadow-glow disabled:cursor-not-allowed disabled:shadow-none"
+      className="relative inline-flex h-11 shrink-0 items-center gap-2 overflow-hidden whitespace-nowrap rounded-xl bg-gradient-to-r from-accent to-accent-deep px-5 font-display sm:px-6 text-sm font-semibold text-surface shadow-glow disabled:cursor-not-allowed disabled:shadow-none"
     >
       {enabled ? <span aria-hidden className="wizard-shine" /> : null}
       <span className="relative">{label}</span>
@@ -847,7 +915,7 @@ function Field({
 }
 
 const inputCls =
-  "h-11 w-full rounded-xl border border-edge-strong bg-surface-raised/70 px-3.5 text-[0.95rem] text-ink placeholder:text-ink-faint outline-none transition-[border-color,box-shadow] focus:border-accent focus:shadow-[0_0_0_3px_rgb(var(--color-accent)/0.18)] aria-[invalid=true]:border-red-400/70";
+  "h-11 w-full rounded-xl border border-edge-strong bg-surface-raised/70 px-3.5 text-base text-ink placeholder:text-ink-faint outline-none transition-[border-color,box-shadow] focus:border-accent focus:shadow-[0_0_0_3px_rgb(var(--color-accent)/0.18)] aria-[invalid=true]:border-red-400/70";
 
 function DetailsStep({
   details,
@@ -1010,7 +1078,7 @@ function DetailsStep({
       </motion.div>
 
       {/* Honeypot: hidden from people and screen readers, tempting to bots. */}
-      <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+      <div aria-hidden className="pointer-events-none absolute h-px w-px overflow-hidden opacity-0 [clip:rect(0,0,0,0)]">
         <label htmlFor="cf-website">Website</label>
         <input
           id="cf-website"

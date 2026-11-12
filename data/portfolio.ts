@@ -417,6 +417,8 @@ export const contactForm = {
     of: "of",
     back: "Back",
     next: "Next",
+    backToSummary: "Back to summary",
+    goToStep: "Jump to a step",
     send: "Send request",
     sending: "Sending…",
     optional: "optional",
