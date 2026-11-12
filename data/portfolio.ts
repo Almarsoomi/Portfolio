@@ -84,7 +84,7 @@ export const navByPath: Record<PathKey, NavItem[]> = {
 export const gateway = {
   greeting: "Hi, I'm Ahmed",
   question: "How can I help you?",
-  hint: "I build websites and keep books. Pick what you need.",
+  hint: "Two services, one person: websites and accounting. Pick what you need.",
   paths: {
     build: {
       href: "/build",

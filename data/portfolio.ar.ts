@@ -35,7 +35,7 @@ export const navByPath: typeof EN.navByPath = {
 export const gateway: typeof EN.gateway = {
   greeting: "مرحباً، أنا أحمد",
   question: "كيف يمكنني مساعدتك؟",
-  hint: "أبني المواقع وأمسك الدفاتر. اختر ما تحتاجه.",
+  hint: "خدمتان وشخص واحد: المواقع والمحاسبة. اختر ما تحتاجه.",
   paths: {
     build: {
       href: "/build",
