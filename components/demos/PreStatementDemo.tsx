@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, CreditCard, FileText, MessageSquare } from "lucide-react";
+import DirhamSign from "../DirhamSign";
 import { DemoShell, ease, useCountUp, useDemoTimeline } from "./shared";
 
 /**
@@ -139,7 +140,7 @@ export default function PreStatementDemo() {
         </div>
 
         <p className="mt-1.5 font-display text-2xl font-semibold tracking-tight text-ink">
-          <span className="mr-1 text-sm font-medium text-ink-faint">AED</span>
+          <DirhamSign className="mr-1 inline-block h-[0.8em] w-[0.8em] align-[-0.02em] text-ink-faint" />
           <span ref={totalRef} className="tabular-nums">
             {fmt(total)}
           </span>
