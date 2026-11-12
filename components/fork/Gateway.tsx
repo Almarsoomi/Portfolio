@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Github, Mail } from "lucide-react";
+import { ArrowRight, Calculator, Code2, Github, Mail } from "lucide-react";
 import type { PathKey } from "@/data/portfolio";
 import { localHref } from "@/data/content";
 import { useContent, useLang } from "../i18n";
@@ -176,12 +176,13 @@ export default function Gateway() {
 
       {/* The two doors */}
       <div
-        className="relative z-10 flex flex-1 flex-col gap-3 px-3 pb-3 sm:px-5 sm:pb-5 md:flex-row md:gap-4 md:px-6 md:pb-6"
+        className="relative z-10 flex flex-col gap-2 px-3 pb-6 sm:px-5 md:flex-1 md:flex-row md:gap-4 md:px-6 md:pb-6"
         onMouseLeave={() => setHovered(null)}
       >
         {ORDER.map((p, i) => {
           const d = gateway.paths[p];
           const Visual = p === "build" ? BuildVisual : BooksVisual;
+          const Icon = p === "build" ? Code2 : Calculator;
           const fromX = isRow ? ((i === 0) !== rtl ? -60 : 60) : 0;
           const fromY = isRow ? 30 : 40;
           return (
@@ -189,7 +190,7 @@ export default function Gateway() {
               <motion.div
                 className="flex min-w-0 md:min-h-0 md:basis-0"
                 initial={{ opacity: 0, x: reduce ? 0 : fromX, y: reduce ? 0 : fromY }}
-                animate={{ opacity: 1, x: 0, y: 0, flexGrow: growFor(p) }}
+                animate={{ opacity: 1, x: 0, y: 0, flexGrow: isRow ? growFor(p) : 0 }}
                 transition={{
                   opacity: { duration: 0.6, delay: 0.35 + i * 0.12 },
                   x: { type: "spring", stiffness: 120, damping: 20, delay: 0.35 + i * 0.12 },
@@ -215,27 +216,36 @@ export default function Gateway() {
                 >
                   <span aria-hidden className="door-texture pointer-events-none absolute inset-0 opacity-80" />
 
-                  {/* Top row */}
+                  {/* Top row: what this is, in plain words */}
                   <div className="relative flex items-center justify-between gap-3">
-                    <span className="flex items-center gap-2.5">
-                      <span className="font-mono text-xs text-slate-500">{d.index}</span>
-                      <span className="rounded-full border border-[rgb(var(--door-accent)/0.35)] bg-[rgb(var(--door-accent)/0.08)] px-3 py-1 font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-[rgb(var(--door-accent))]">
-                        {d.eyebrow}
+                    <span className="flex min-w-0 items-center gap-3">
+                      <span className="flex h-10 w-10 flex-none items-center justify-center rounded-xl border border-[rgb(var(--door-accent)/0.3)] bg-[rgb(var(--door-accent)/0.1)] text-[rgb(var(--door-accent))] md:h-11 md:w-11">
+                        <Icon aria-hidden className="h-5 w-5" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block font-display text-sm font-semibold text-[rgb(var(--door-accent))]">
+                          {d.eyebrow}
+                        </span>
+                        {lastPath === p ? (
+                          <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-400">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[rgb(var(--door-accent))]" />
+                            {ui.lastVisited}
+                          </span>
+                        ) : null}
                       </span>
                     </span>
-                    {lastPath === p ? (
-                      <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-slate-300">
-                        {ui.lastVisited}
-                      </span>
-                    ) : null}
+                    {/* Mobile: the whole card is the button — show just the arrow */}
+                    <span className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-[rgb(var(--door-accent))] text-slate-950 md:hidden">
+                      <ArrowRight aria-hidden className="h-4 w-4 rtl:-scale-x-100" />
+                    </span>
                   </div>
 
-                  {/* Live visual */}
+                  {/* Live visual — kept short on phones so the second choice still peeks in */}
                   <FitStage
                     width={330}
                     height={232}
                     max={1.6}
-                    className="relative -mx-2 mb-2 mt-5 h-[clamp(170px,30svh,260px)] transition-transform duration-700 ease-out group-hover:scale-[1.03] md:my-6 md:h-auto md:min-h-[96px] md:flex-1"
+                    className="relative -mx-2 mt-3 h-[clamp(120px,19svh,180px)] transition-transform duration-700 ease-out group-hover:scale-[1.03] md:my-6 md:h-auto md:min-h-[96px] md:flex-1"
                   >
                     <div className="p-[6px]">
                       <div dir="ltr">
@@ -245,19 +255,19 @@ export default function Gateway() {
                   </FitStage>
 
                   {/* Copy */}
-                  <div className="relative mt-auto">
+                  <div className="relative mt-2 md:mt-auto">
                     <h2
                       className="font-display font-semibold tracking-tight text-white"
-                      style={{ fontSize: "clamp(1.5rem, 3vw, 2.6rem)", lineHeight: 1.05 }}
+                      style={{ fontSize: "clamp(1.4rem, 3vw, 2.6rem)", lineHeight: 1.1 }}
                     >
                       <span className="door-text-gradient">{d.title}</span>
                     </h2>
-                    <p className="mt-1.5 line-clamp-2 max-w-md text-sm leading-relaxed text-slate-400 sm:line-clamp-none sm:text-[15px]">
+                    <p className="mt-1.5 hidden max-w-md text-[15px] leading-relaxed text-slate-400 sm:block">
                       {d.description}
                     </p>
 
-                    <div className="mt-2.5 flex flex-wrap items-center justify-between gap-3 sm:mt-4">
-                      <ul className="hidden flex-wrap gap-1.5 sm:flex">
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-3 md:mt-5">
+                      <ul className="flex flex-wrap gap-1.5">
                         {d.chips.map((c) => (
                           <li
                             key={c}
@@ -267,9 +277,9 @@ export default function Gateway() {
                           </li>
                         ))}
                       </ul>
-                      <span className="inline-flex items-center gap-2 font-display text-sm font-semibold text-white">
+                      <span className="hidden items-center gap-2 font-display text-sm font-semibold text-white md:inline-flex">
                         {d.cta}
-                        <span className="flex h-8 w-8 items-center sm:h-9 sm:w-9 justify-center rounded-full bg-[rgb(var(--door-accent))] text-slate-950 transition-transform duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[rgb(var(--door-accent))] text-slate-950 transition-transform duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
                           <ArrowRight aria-hidden className="h-4 w-4 rtl:-scale-x-100" />
                         </span>
                       </span>
@@ -300,11 +310,8 @@ export default function Gateway() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.4, ease: EASE }}
             >
-              <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-ink-faint">
+              <p className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-5xl">
                 {gateway.paths[chosen.path].eyebrow}
-              </p>
-              <p className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-5xl">
-                {gateway.paths[chosen.path].title}
               </p>
               <motion.div
                 className="mx-auto mt-4 h-[3px] w-40 origin-left rounded-full rtl:origin-right"
@@ -321,7 +328,7 @@ export default function Gateway() {
   );
 }
 
-/** Renders the glowing "or" seam before the second door. */
+/** Renders the "or" divider before the second door: a thin rule on phones, a glowing seam on desktop. */
 function FragmentWithSeam({
   children,
   showSeam,
@@ -338,9 +345,22 @@ function FragmentWithSeam({
   return (
     <>
       {showSeam ? (
-        <div aria-hidden className="relative z-20 h-0 w-full flex-none md:h-auto md:w-0">
+        <motion.div
+          aria-hidden
+          className="flex items-center gap-3 px-6 md:hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: dimmed ? 0 : 1 }}
+          transition={{ duration: 0.4, delay: dimmed ? 0 : 0.6 }}
+        >
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent to-ink/15 rtl:bg-gradient-to-l" />
+          <span className="font-display text-xs font-medium text-ink-faint">{label}</span>
+          <span className="h-px flex-1 bg-gradient-to-l from-transparent to-ink/15 rtl:bg-gradient-to-r" />
+        </motion.div>
+      ) : null}
+      {showSeam ? (
+        <div aria-hidden className="relative z-20 hidden flex-none md:block md:h-auto md:w-0">
           <motion.div
-            className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 md:h-14 md:w-14"
+            className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2"
             initial={{ scale: reduce ? 1 : 0, rotate: reduce ? 0 : -90 }}
             animate={{ scale: dimmed ? 0 : 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 260, damping: 18, delay: dimmed ? 0 : 0.75 }}
