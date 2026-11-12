@@ -99,7 +99,7 @@ export const gateway = {
     books: {
       href: "/books",
       eyebrow: "Accounting & bookkeeping",
-      title: "I need help with my accounts",
+      title: "I need an accountant or bookkeeper",
       description:
         "Clean, VAT-ready books in Zoho Books, reconciled monthly so you always know your numbers.",
       chips: ["Bookkeeping", "UAE VAT", "Corporate Tax", "Zoho Books"],

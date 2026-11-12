@@ -240,12 +240,12 @@ export default function Gateway() {
                     </span>
                   </div>
 
-                  {/* Live visual — desktop only, so phones see both choices at once */}
+                  {/* Live visual — kept short on phones so the second choice still peeks in */}
                   <FitStage
                     width={330}
                     height={232}
                     max={1.6}
-                    className="relative -mx-2 my-6 !hidden min-h-[96px] flex-1 transition-transform duration-700 ease-out group-hover:scale-[1.03] md:!flex"
+                    className="relative -mx-2 mt-3 h-[clamp(120px,19svh,180px)] transition-transform duration-700 ease-out group-hover:scale-[1.03] md:my-6 md:h-auto md:min-h-[96px] md:flex-1"
                   >
                     <div className="p-[6px]">
                       <div dir="ltr">
@@ -255,14 +255,14 @@ export default function Gateway() {
                   </FitStage>
 
                   {/* Copy */}
-                  <div className="relative mt-4 md:mt-auto">
+                  <div className="relative mt-2 md:mt-auto">
                     <h2
                       className="font-display font-semibold tracking-tight text-white"
                       style={{ fontSize: "clamp(1.4rem, 3vw, 2.6rem)", lineHeight: 1.1 }}
                     >
                       <span className="door-text-gradient">{d.title}</span>
                     </h2>
-                    <p className="mt-1.5 max-w-md text-sm leading-relaxed text-slate-400 sm:text-[15px]">
+                    <p className="mt-1.5 hidden max-w-md text-[15px] leading-relaxed text-slate-400 sm:block">
                       {d.description}
                     </p>
 
