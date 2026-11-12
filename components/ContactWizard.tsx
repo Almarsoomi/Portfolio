@@ -93,7 +93,7 @@ const ICONS: Record<FormIcon, ComponentType<LucideProps>> = {
 
 type Answers = Record<string, string[]>;
 type Preferred = "email" | "whatsapp" | "either";
-type Status = "idle" | "sending" | "sent" | "mailto" | "error";
+type Status = "idle" | "sending" | "sent" | "error";
 
 interface Details {
   name: string;
@@ -139,7 +139,7 @@ function makeRef() {
 }
 
 export default function ContactWizard({ path }: { path: PathKey }) {
-  const { contactForm, site } = useContent();
+  const { contactForm } = useContent();
   const lang = useLang();
   const reduce = useReducedMotion();
   const { ui } = contactForm;
@@ -273,24 +273,6 @@ export default function ContactWizard({ path }: { path: PathKey }) {
     };
   }
 
-  function openMailto(ref: string) {
-    const p = buildMessage(ref);
-    const body = [
-      `${p.request_type} — ${ui.reference} ${ref}`,
-      "",
-      p.answers,
-      "",
-      `${ui.name}: ${p.name}`,
-      `${ui.company}: ${p.company}`,
-      `${ui.email}: ${p.email || "—"}`,
-      `${ui.whatsapp}: ${p.whatsapp}`,
-      `${ui.preferred}: ${p.preferred_contact}`,
-      "",
-      p.message !== "—" ? p.message : "",
-    ].join("\n");
-    window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(p.title)}&body=${encodeURIComponent(body)}`;
-  }
-
   async function submit(e?: FormEvent) {
     e?.preventDefault();
     interacted.current = true;
@@ -303,9 +285,9 @@ export default function ContactWizard({ path }: { path: PathKey }) {
       setStatus("sent");
       return;
     }
+    // Not connected to EmailJS yet (see docs/emailjs-setup.md).
     if (!emailjsReady) {
-      openMailto(ref);
-      setStatus("mailto");
+      setStatus("error");
       return;
     }
     setStatus("sending");
@@ -333,7 +315,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
     setStatus("idle");
   }
 
-  const done = status === "sent" || status === "mailto";
+  const done = status === "sent";
   const slide = (reduce ? 0 : 48) * (rtl ? -1 : 1);
   const blur = reduce ? "blur(0px)" : "blur(6px)";
   // Variants read `custom` at exit time, so a step leaves in the new direction.
@@ -355,11 +337,9 @@ export default function ContactWizard({ path }: { path: PathKey }) {
             {done ? (
               <Success
                 key="done"
-                mode={status === "sent" ? "sent" : "mailto"}
                 name={details.name.trim().split(" ")[0]}
                 reference={reference}
                 hasEmail={Boolean(details.email.trim())}
-                email={site.email}
                 headingRef={headingRef}
                 onReset={reset}
                 ui={ui}
@@ -458,17 +438,6 @@ export default function ContactWizard({ path }: { path: PathKey }) {
               >
                 <RotateCcw aria-hidden className="h-3.5 w-3.5" />
                 {ui.retry}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  openMailto(reference);
-                  setStatus("mailto");
-                }}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-accent/15 px-3 font-semibold text-accent hover:bg-accent/25"
-              >
-                <Mail aria-hidden className="h-3.5 w-3.5" />
-                {ui.useEmail}
               </button>
             </div>
           </motion.div>
@@ -1141,20 +1110,16 @@ function Brief({
 }
 
 function Success({
-  mode,
   name,
   reference,
   hasEmail,
-  email,
   headingRef,
   onReset,
   ui,
 }: {
-  mode: "sent" | "mailto";
   name: string;
   reference: string;
   hasEmail: boolean;
-  email: string;
   headingRef: React.RefObject<HTMLHeadingElement>;
   onReset: () => void;
   ui: UI;
@@ -1169,7 +1134,6 @@ function Success({
       }),
     [],
   );
-  const sent = mode === "sent";
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.96 }}
@@ -1211,7 +1175,6 @@ function Success({
             animate={{ pathLength: 1 }}
             transition={{ duration: 0.5, ease: EASE }}
           />
-          {sent ? (
             <motion.path
               d="M15 27 l7 7 l15 -16"
               fill="none"
@@ -1223,12 +1186,6 @@ function Success({
               animate={{ pathLength: 1 }}
               transition={{ duration: 0.35, delay: 0.45, ease: "easeOut" }}
             />
-          ) : (
-            <motion.g initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-              <rect x="14" y="17" width="24" height="18" rx="3" fill="none" stroke="rgb(var(--color-accent))" strokeWidth="3" />
-              <path d="M15 19 l11 8 l11 -8" fill="none" stroke="rgb(var(--color-accent))" strokeWidth="3" strokeLinejoin="round" />
-            </motion.g>
-          )}
         </svg>
       </div>
 
@@ -1240,7 +1197,7 @@ function Success({
         transition={{ delay: 0.55 }}
         className="mt-6 font-display text-2xl font-semibold tracking-tight text-ink outline-none"
       >
-        {sent ? ui.successTitle : ui.mailtoTitle}
+        {ui.successTitle}
       </motion.h3>
       <motion.p
         initial={{ opacity: 0, y: 10 }}
@@ -1248,8 +1205,8 @@ function Success({
         transition={{ delay: 0.65 }}
         className="mt-2 max-w-md text-ink-muted"
       >
-        {sent ? ui.successText.replace("{name}", name) : ui.mailtoText.replace("{email}", email)}
-        {sent && hasEmail ? <span className="mt-1 block text-sm text-ink-faint">{ui.successCopy}</span> : null}
+        {ui.successText.replace("{name}", name)}
+        {hasEmail ? <span className="mt-1 block text-sm text-ink-faint">{ui.successCopy}</span> : null}
       </motion.p>
       {reference ? (
         <motion.p

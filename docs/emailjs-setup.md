@@ -3,8 +3,8 @@
 The contact section on `/build` and `/books` is a tap-through form. When a visitor
 sends it, EmailJS emails the request straight to you — no server, no database.
 
-Until you finish the steps below the form still works: it opens the visitor's own
-email app with the whole request already written, addressed to you.
+Your email address is never in the site's code. EmailJS delivers to the address
+in your template (step 2). Until you finish the steps below, the form can't send.
 
 ---
 

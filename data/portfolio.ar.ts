@@ -12,8 +12,6 @@ export const site: typeof EN.site = {
   description:
     "مطوّر في دبي يبني أدوات عملية للأعمال — تطبيقات ويب، وأتمتة مالية، وأنظمة محاسبية للشركات في الإمارات. متخصص في مسك الدفاتر على Zoho Books.",
   url: "https://almarsoomi.github.io/Portfolio",
-  email: "almarsoomi96@gmail.com",
-  github: "https://github.com/almarsoomi",
 };
 
 export const navByPath: typeof EN.navByPath = {
@@ -323,13 +321,9 @@ export const contactForm: typeof EN.contactForm = {
     successText: "شكراً يا {name}! سأعود إليك خلال يوم عمل واحد.",
     successCopy: "نسخة من طلبك في طريقها إلى بريدك.",
     reference: "رقم المرجع",
-    mailtoTitle: "اقتربت",
-    mailtoText:
-      "يُفترض أن تطبيق البريد قد فُتح وكل شيء مكتوب — فقط اضغط إرسال. إن لم يُفتح، راسلني على {email}.",
     errorTitle: "لم يتم الإرسال",
-    errorText: "حدث خطأ أثناء الإرسال. حاول مرة أخرى، أو أرسله من تطبيق البريد.",
+    errorText: "حدث خطأ أثناء الإرسال. الرجاء المحاولة مرة أخرى بعد قليل.",
     retry: "حاول مرة أخرى",
-    useEmail: "أرسل عبر البريد",
     startOver: "ابدأ طلباً جديداً",
     hoursNote: "أرد خلال يوم عمل واحد",
     emailSubject: "طلب جديد",
@@ -520,8 +514,6 @@ export const ui: typeof EN.ui = {
   otherLangShort: "EN",
   switchLangLabel: "التبديل إلى الإنجليزية",
   portraitAlt: "أحمد",
-  emailLabel: "راسل أحمد عبر البريد",
-  githubLabel: "GitHub (يفتح في نافذة جديدة)",
   lastVisited: "آخر زيارة",
   or: "أو",
   themeLabel: "التبديل بين الوضع الفاتح والداكن",

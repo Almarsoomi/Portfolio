@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Github, Mail } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { PathKey } from "@/data/portfolio";
 import { localHref } from "@/data/content";
 import { useContent, useLang } from "../i18n";
@@ -113,23 +113,7 @@ export default function Gateway() {
         <span className="font-display text-lg font-semibold tracking-tight">{site.logo}</span>
         <div className="flex items-center gap-1">
           <LangSwitch compact />
-          <ThemeToggle className="mx-1" />
-          <a
-            href={`mailto:${site.email}`}
-            aria-label={ui.emailLabel}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink"
-          >
-            <Mail aria-hidden className="h-[18px] w-[18px]" />
-          </a>
-          <a
-            href={site.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={ui.githubLabel}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink"
-          >
-            <Github aria-hidden className="h-[18px] w-[18px]" />
-          </a>
+          <ThemeToggle className="ms-1" />
         </div>
       </header>
 

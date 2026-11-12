@@ -49,8 +49,6 @@ export const site = {
   description:
     "Dubai-based developer building practical business tools — web apps, financial automation, and accounting systems for UAE businesses. Zoho Books bookkeeping specialist.",
   url: "https://almarsoomi.github.io/Portfolio",
-  email: "almarsoomi96@gmail.com",
-  github: "https://github.com/almarsoomi",
 };
 
 export type PathKey = "build" | "books";
@@ -454,13 +452,9 @@ export const contactForm = {
     successText: "Thanks, {name}! I'll get back to you within one working day.",
     successCopy: "A copy is on its way to your inbox.",
     reference: "Reference",
-    mailtoTitle: "Almost there",
-    mailtoText:
-      "Your email app should have opened with everything filled in — just press send. If it didn't, email me at {email}.",
     errorTitle: "That didn't go through",
-    errorText: "Something went wrong while sending. Try again, or send it from your email app instead.",
+    errorText: "Something went wrong while sending. Please try again in a moment.",
     retry: "Try again",
-    useEmail: "Send by email",
     startOver: "Start a new request",
     hoursNote: "Replies within one working day",
     emailSubject: "New request",
@@ -652,8 +646,6 @@ export const ui = {
   otherLangShort: "ع",
   switchLangLabel: "Switch to Arabic",
   portraitAlt: "Ahmed",
-  emailLabel: "Email Ahmed",
-  githubLabel: "GitHub (opens in a new tab)",
   lastVisited: "Last visited",
   or: "or",
   themeLabel: "Switch between light and dark theme",

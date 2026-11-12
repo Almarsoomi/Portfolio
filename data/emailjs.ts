@@ -5,8 +5,9 @@
  * from the domains you allow in its dashboard (Account → Security), so it's
  * safe to keep them in the site's code.
  *
- * Until the placeholders are replaced, the form still works: it opens the
- * visitor's email app with the whole request already written.
+ * Your own email address is never in the site's code: EmailJS knows where to
+ * deliver from the template you set up in its dashboard. Until the
+ * placeholders are replaced, the form can't send (it shows a "try again" note).
  */
 export const EMAILJS = {
   serviceId: "YOUR_SERVICE_ID",

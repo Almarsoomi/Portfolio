@@ -83,7 +83,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Each path ends with a short step-by-step form instead of a mailto link: **Build** asks project type → starting point & must-haves → budget & timeline; **Books** asks services → industry & volume → current setup & start date. The last step is name, company, email and/or WhatsApp, and how they'd like to be contacted.
 - Visitors tap cards and chips instead of typing. Single-choice steps move on by themselves, the selection highlight glides between cards, a live "Your brief" panel fills in beside the form (edit any line), and sending ends in a drawn checkmark with a burst of particles and a reference number.
 - Sent with **EmailJS** straight from the browser to your inbox (no server or database), with an optional auto-reply to the customer. UAE WhatsApp numbers are turned into a `wa.me` link in the email. Spam protection: honeypot, rate limit, headless-browser block.
-- Until the EmailJS IDs are set in `data/emailjs.ts`, the form opens the visitor's email app with the request already written. **Setup guide: [`docs/emailjs-setup.md`](docs/emailjs-setup.md).**
+- The owner's email address and GitHub profile appear nowhere on the site. EmailJS delivers to the address set in its dashboard template. Until the EmailJS IDs are set in `data/emailjs.ts`, the form can't send. **Setup guide: [`docs/emailjs-setup.md`](docs/emailjs-setup.md).**
 - Questions and options live in `contactForm` in `data/portfolio.ts` / `data/portfolio.ar.ts`.
 
 ### Motion & interaction
