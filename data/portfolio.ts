@@ -83,29 +83,27 @@ export const navByPath: Record<PathKey, NavItem[]> = {
  */
 export const gateway = {
   greeting: "Hi, I'm Ahmed",
-  question: "What brings you here?",
-  hint: "Pick a path — you can switch anytime.",
+  question: "How can I help you?",
+  hint: "I build websites and keep books. Pick what you need.",
   paths: {
     build: {
       href: "/build",
-      index: "01",
-      eyebrow: "Build",
-      title: "Websites & Tools",
+      eyebrow: "Web development",
+      title: "I need a website or app",
       description:
-        "Fast websites, web apps and automation that remove the busywork from your business.",
+        "Fast websites, web apps and automation that take the busywork off your business.",
       chips: ["Websites", "Web apps", "Automation"],
-      cta: "Show me the work",
+      cta: "See websites & apps",
       switchLabel: "Need bookkeeping?",
     },
     books: {
       href: "/books",
-      index: "02",
-      eyebrow: "Books",
-      title: "Accounting & Bookkeeping",
+      eyebrow: "Accounting & bookkeeping",
+      title: "I need help with my accounts",
       description:
-        "Clean, VAT-ready books in Zoho Books — reconciled monthly, so you always know your numbers.",
-      chips: ["Zoho Books", "UAE VAT", "Corporate Tax"],
-      cta: "Sort my books",
+        "Clean, VAT-ready books in Zoho Books, reconciled monthly so you always know your numbers.",
+      chips: ["Bookkeeping", "UAE VAT", "Corporate Tax", "Zoho Books"],
+      cta: "See accounting services",
       switchLabel: "Need a website?",
     },
   } satisfies Record<PathKey, unknown>,
