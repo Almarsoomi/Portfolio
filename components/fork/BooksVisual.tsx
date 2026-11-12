@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { animate, motion } from "framer-motion";
 import { TrendingUp } from "lucide-react";
+import DirhamSign from "../DirhamSign";
 import { useLang } from "../i18n";
 import { useLoop } from "./useLoop";
 
@@ -80,11 +81,11 @@ export default function BooksVisual() {
     <div className="relative h-[220px] w-[320px]">
       {/* Floating currency chip */}
       <motion.div
-        className={`absolute ${ar ? "-right-3" : "-left-3"} -top-4 z-20 rounded-lg border border-amber-400/40 bg-stone-950 px-2 py-1 font-mono text-[11px] font-semibold text-amber-300 shadow-[0_0_24px_-6px_rgb(251_191_36/0.6)]`}
+        className={`absolute ${ar ? "-right-3" : "-left-3"} -top-4 z-20 rounded-lg border border-amber-400/40 bg-stone-950 p-1.5 text-amber-300 shadow-[0_0_24px_-6px_rgb(251_191_36/0.6)]`}
         animate={reduce ? undefined : { y: [0, -6, 0], rotate: ar ? [6, 2, 6] : [-6, -2, -6] }}
         transition={{ duration: 4.4, repeat: Infinity, ease: "easeInOut" }}
       >
-        AED
+        <DirhamSign className="h-4 w-4" />
       </motion.div>
 
       <div
