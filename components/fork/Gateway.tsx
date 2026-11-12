@@ -171,7 +171,7 @@ export default function Gateway() {
           const fromX = isRow ? ((i === 0) !== rtl ? -60 : 60) : 0;
           const fromY = isRow ? 30 : 40;
           return (
-            <FragmentWithSeam key={p} showSeam={i === 1} reduce={reduce} dimmed={!!chosen} label={ui.or}>
+            <FragmentWithSeam key={p} showSeam={i === 1} reduce={reduce} rtl={rtl} dimmed={!!chosen} label={ui.or}>
               <motion.div
                 className="flex min-w-0 md:min-h-0 md:basis-0"
                 initial={{ opacity: 0, x: reduce ? 0 : fromX, y: reduce ? 0 : fromY }}
@@ -320,8 +320,10 @@ function FragmentWithSeam({
   reduce,
   dimmed,
   label,
+  rtl,
 }: {
   label: string;
+  rtl: boolean;
   children: React.ReactNode;
   showSeam: boolean;
   reduce: boolean;
@@ -332,14 +334,62 @@ function FragmentWithSeam({
       {showSeam ? (
         <motion.div
           aria-hidden
-          className="flex items-center gap-3 px-6 md:hidden"
+          className="relative flex items-center gap-2 px-4 py-1 md:hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: dimmed ? 0 : 1 }}
           transition={{ duration: 0.4, delay: dimmed ? 0 : 0.6 }}
         >
-          <span className="h-px flex-1 bg-gradient-to-r from-transparent to-ink/15 rtl:bg-gradient-to-l" />
-          <span className="font-display text-xs font-medium text-ink-faint">{label}</span>
-          <span className="h-px flex-1 bg-gradient-to-l from-transparent to-ink/15 rtl:bg-gradient-to-r" />
+          {/* Cyan rail from the web card, amber rail toward the books card; each draws in, then a glint runs along it */}
+          {(["build", "books"] as const).map((side, i) => (
+            <span key={side} className={`relative h-[2px] flex-1 overflow-hidden rounded-full ${i === 1 ? "order-3" : ""}`}>
+              <motion.span
+                className={`absolute inset-0 rounded-full ${
+                  side === "build"
+                    ? "bg-gradient-to-r from-transparent to-cyan-400/70 rtl:bg-gradient-to-l"
+                    : "bg-gradient-to-r from-amber-400/70 to-transparent rtl:bg-gradient-to-l"
+                } ${side === "build" ? "origin-right rtl:origin-left" : "origin-left rtl:origin-right"}`}
+                initial={{ scaleX: reduce ? 1 : 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.7, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
+              />
+              {reduce ? null : (
+                <motion.span
+                  className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/90 to-transparent"
+                  initial={{ left: (side === "build") !== rtl ? "-35%" : "100%" }}
+                  animate={{ left: (side === "build") !== rtl ? ["-35%", "100%"] : ["100%", "-35%"] }}
+                  transition={{ duration: 1.6, delay: 1.5, repeat: Infinity, repeatDelay: 1.4, ease: "easeInOut" }}
+                />
+              )}
+            </span>
+          ))}
+
+          {/* The badge: spinning two-tone ring, pulsing halo */}
+          <motion.span
+            className="relative order-2 flex h-10 w-10 flex-none items-center justify-center"
+            initial={{ scale: reduce ? 1 : 0, rotate: reduce ? 0 : -90 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.7 }}
+          >
+            {reduce ? null : (
+              <motion.span
+                className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400/40 to-amber-400/40 blur-md"
+                animate={{ scale: [0.85, 1.25, 0.85], opacity: [0.5, 0.9, 0.5] }}
+                transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+              />
+            )}
+            <motion.span
+              className="absolute inset-0 rounded-full"
+              style={{
+                background:
+                  "conic-gradient(from 0deg, rgb(34 211 238), rgb(59 130 246), rgb(16 185 129), rgb(251 191 36), rgb(34 211 238))",
+              }}
+              animate={reduce ? undefined : { rotate: 360 }}
+              transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+            />
+            <span className="absolute inset-[2px] flex items-center justify-center rounded-full bg-surface font-display text-[11px] font-semibold uppercase tracking-[0.15em] text-ink">
+              {label}
+            </span>
+          </motion.span>
         </motion.div>
       ) : null}
       {showSeam ? (
