@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { CalendarCheck, Check, Code2, Percent } from "lucide-react";
 import type { PathKey } from "@/data/portfolio";
+import DirhamSign from "./DirhamSign";
 
 /**
  * Small "pieces of the work" that float around the hero portrait, so the
@@ -188,7 +189,7 @@ function BooksProps(a: Anim) {
       {/* Monthly chart */}
       <Float {...a} className="right-0 bottom-[2%] origin-bottom-right md:-right-[3%]" dy={12} duration={5.5} delay={0.6}>
         <div className={`${CARD} w-[4.75rem] px-2 pb-2 pt-1.5`}>
-          <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-ink-faint">AED</p>
+          <DirhamSign className="h-2.5 w-2.5 text-ink-faint" />
           <div className="mt-1 flex h-9 items-end gap-1">
             {BARS.map((h, i) => (
               <motion.span
