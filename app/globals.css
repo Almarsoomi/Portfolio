@@ -397,6 +397,21 @@ body {
   45%, 100% { transform: translateX(120%); }
 }
 
+/* Contact form: a soft light sweep across active buttons. */
+.wizard-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgb(255 255 255 / 0.35) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  animation: visit-shine 3.2s ease-in-out 0.6s infinite;
+  pointer-events: none;
+}
+
 /* ---------------------------------------------------------------------------
    Mobile performance: phones pay the most for the least-visible decoration.
    Drop the masked grid, freeze the large glow layer (and un-promote it), and

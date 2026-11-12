@@ -276,12 +276,229 @@ export const process: typeof EN.process = {
 
 export const contact: typeof EN.contact = {
   heading: "لنبنِ شيئاً مفيداً",
-  text: "تحتاج موقعاً أو تطبيق ويب أو أداة توفّر على فريقك ساعات؟ أنا على بُعد رسالة. مقيم في دبي، وأعمل مع الشركات في جميع أنحاء الإمارات.",
+  text: "أجب عن بضعة أسئلة سريعة بلمسة — دون كتابة حتى الخطوة الأخيرة. سأرد بخطة واضحة وعرض سعر. مقيم في دبي، وأعمل مع الشركات في جميع أنحاء الإمارات.",
 };
 
 export const booksContact: typeof EN.booksContact = {
   heading: "لنرتّب حساباتك",
-  text: "أخبرني عن عملك وحال دفاترك اليوم. سأرد بخطة واضحة وعرض سعر شهري ثابت — دون مصطلحات معقدة.",
+  text: "أخبرني عن عملك ببضع لمسات. سأرد بخطة واضحة وعرض سعر شهري ثابت — دون مصطلحات معقدة.",
+};
+
+export const contactForm: typeof EN.contactForm = {
+  ui: {
+    step: "الخطوة",
+    of: "من",
+    back: "رجوع",
+    next: "التالي",
+    send: "أرسل الطلب",
+    sending: "جارٍ الإرسال…",
+    optional: "اختياري",
+    pickOne: "اختر واحداً",
+    pickAny: "اختر كل ما ينطبق",
+    brief: "ملخص طلبك",
+    briefEmpty: "ستظهر إجاباتك هنا أثناء اختيارك.",
+    edit: "تعديل",
+    detailsTitle: "أين أرد عليك؟",
+    detailsSubtitle: "الخطوة الأخيرة — اترك بريداً إلكترونياً أو رقم واتساب، أيهما يناسبك.",
+    name: "اسمك",
+    namePh: "مثال: سارة أحمد",
+    company: "الشركة",
+    companyPh: "اسم النشاط التجاري",
+    email: "البريد الإلكتروني",
+    emailPh: "you@company.com",
+    whatsapp: "واتساب",
+    whatsappPh: "+971 50 123 4567",
+    preferred: "أفضل طريقة للتواصل معك",
+    preferredOptions: { email: "البريد", whatsapp: "واتساب", either: "أيهما" },
+    message: "شيء آخر؟",
+    messagePh: "رابط موقعك الحالي، موعد نهائي، فكرة… (اختياري)",
+    errors: {
+      name: "الرجاء إضافة اسمك.",
+      contact: "أضف بريداً إلكترونياً أو رقم واتساب لأتمكن من الرد.",
+      email: "يبدو أن البريد الإلكتروني غير صحيح.",
+      whatsapp: "يبدو أن الرقم قصير جداً.",
+    },
+    privacy: "يُستخدم فقط للرد عليك. لا رسائل تسويقية أبداً.",
+    successTitle: "تم إرسال الطلب",
+    successText: "شكراً يا {name}! سأعود إليك خلال يوم عمل واحد.",
+    successCopy: "نسخة من طلبك في طريقها إلى بريدك.",
+    reference: "رقم المرجع",
+    mailtoTitle: "اقتربت",
+    mailtoText:
+      "يُفترض أن تطبيق البريد قد فُتح وكل شيء مكتوب — فقط اضغط إرسال. إن لم يُفتح، راسلني على {email}.",
+    errorTitle: "لم يتم الإرسال",
+    errorText: "حدث خطأ أثناء الإرسال. حاول مرة أخرى، أو أرسله من تطبيق البريد.",
+    retry: "حاول مرة أخرى",
+    useEmail: "أرسل عبر البريد",
+    startOver: "ابدأ طلباً جديداً",
+    hoursNote: "أرد خلال يوم عمل واحد",
+    emailSubject: "طلب جديد",
+  },
+  build: {
+    label: "موقع / تطبيق ويب",
+    steps: [
+      {
+        title: "ماذا سنبني؟",
+        subtitle: "اختر الأقرب — ونضبط التفاصيل معاً لاحقاً.",
+        groups: [
+          {
+            id: "type",
+            summary: "المشروع",
+            options: [
+              { id: "website", label: "موقع لنشاطك التجاري", icon: "globe", hint: "عرّف بنفسك واكسب العملاء" },
+              { id: "webapp", label: "تطبيق ويب أو بوابة", icon: "dashboard", hint: "تسجيل دخول ولوحات وبيانات" },
+              { id: "booking", label: "نظام حجوزات", icon: "calendar", hint: "يحجز العملاء أونلاين" },
+              { id: "store", label: "متجر إلكتروني", icon: "cart", hint: "بع منتجاتك أونلاين" },
+              { id: "automation", label: "أتمتة / أداة ذكاء اصطناعي", icon: "bot", hint: "توقف عن العمل اليدوي" },
+              { id: "other", label: "شيء آخر", icon: "sparkles", hint: "أخبرني في النهاية" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "من أين تبدأ؟",
+        subtitle: "والأساسيات المطلوبة، إن كنت تعرفها.",
+        groups: [
+          {
+            id: "stage",
+            label: "نقطة البداية",
+            summary: "نقطة البداية",
+            options: [
+              { id: "new", label: "جديد كلياً", icon: "rocket" },
+              { id: "redesign", label: "إعادة تصميم ما لدي", icon: "refresh" },
+              { id: "extend", label: "إضافة لما لدي", icon: "puzzle" },
+            ],
+          },
+          {
+            id: "features",
+            label: "الأساسيات",
+            summary: "الأساسيات",
+            multi: true,
+            optional: true,
+            options: [
+              { id: "bilingual", label: "عربي + إنجليزي" },
+              { id: "whatsapp", label: "واتساب" },
+              { id: "booking", label: "حجز أونلاين" },
+              { id: "payments", label: "دفع إلكتروني" },
+              { id: "admin", label: "لوحة تحكم" },
+              { id: "ai", label: "ذكاء اصطناعي" },
+              { id: "seo", label: "تحسين محركات البحث" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "الميزانية والتوقيت",
+        subtitle: "فكرة تقريبية تكفي — تساعدني على اقتراح النطاق المناسب.",
+        groups: [
+          {
+            id: "budget",
+            label: "الميزانية (درهم)",
+            summary: "الميزانية",
+            options: [
+              { id: "u5", label: "أقل من 5,000" },
+              { id: "5-15", label: "من 5,000 إلى 15,000" },
+              { id: "15-30", label: "من 15,000 إلى 30,000" },
+              { id: "30+", label: "أكثر من 30,000" },
+              { id: "unsure", label: "لست متأكداً بعد" },
+            ],
+          },
+          {
+            id: "timeline",
+            label: "المدة",
+            summary: "المدة",
+            options: [
+              { id: "asap", label: "بأسرع وقت" },
+              { id: "month", label: "خلال شهر" },
+              { id: "quarter", label: "من شهر إلى 3 أشهر" },
+              { id: "flexible", label: "مرن" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  books: {
+    label: "مسك الدفاتر",
+    steps: [
+      {
+        title: "بماذا تحتاج المساعدة؟",
+        subtitle: "اختر كل ما ينطبق.",
+        groups: [
+          {
+            id: "services",
+            summary: "الخدمات",
+            multi: true,
+            options: [
+              { id: "monthly", label: "مسك دفاتر شهري", icon: "book", hint: "تسجيل ومطابقة" },
+              { id: "zoho", label: "إعداد Zoho Books", icon: "settings", hint: "إعداد أو نقل بيانات" },
+              { id: "vat", label: "إقرارات ضريبة القيمة المضافة", icon: "percent", hint: "تسجيل وتقديم" },
+              { id: "ct", label: "الجاهزية لضريبة الشركات", icon: "landmark", hint: "سجلات منظمة" },
+              { id: "cleanup", label: "تحديث وتنظيف الدفاتر", icon: "eraser", hint: "معالجة المتأخرات" },
+              { id: "reports", label: "تقارير ورؤى", icon: "chart", hint: "أرباح وخسائر، نقد، ميزانية" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "أخبرني عن نشاطك",
+        subtitle: "لأعرف أي الحسابات والتقارير تهمك.",
+        groups: [
+          {
+            id: "industry",
+            label: "القطاع",
+            summary: "القطاع",
+            options: [
+              { id: "retail", label: "تجارة وتجزئة", icon: "store" },
+              { id: "manufacturing", label: "تصنيع", icon: "factory" },
+              { id: "services", label: "خدمات", icon: "briefcase" },
+              { id: "contracting", label: "مقاولات", icon: "hardhat" },
+              { id: "food", label: "مطاعم وضيافة", icon: "utensils" },
+              { id: "other", label: "أخرى", icon: "shapes" },
+            ],
+          },
+          {
+            id: "volume",
+            label: "عدد المعاملات شهرياً",
+            summary: "حجم المعاملات",
+            options: [
+              { id: "u100", label: "أقل من 100" },
+              { id: "100-500", label: "من 100 إلى 500" },
+              { id: "500+", label: "أكثر من 500" },
+              { id: "unsure", label: "لست متأكداً" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "أين دفاترك اليوم؟",
+        subtitle: "لا أحكام — صناديق الإيصالات مرحب بها.",
+        groups: [
+          {
+            id: "current",
+            label: "الوضع الحالي",
+            summary: "الدفاتر حالياً",
+            options: [
+              { id: "zoho", label: "Zoho Books", icon: "bookcheck" },
+              { id: "software", label: "برنامج آخر", icon: "laptop", hint: "QuickBooks، Xero، Tally…" },
+              { id: "excel", label: "Excel / جداول", icon: "sheet" },
+              { id: "none", label: "إيصالات وكشوفات", icon: "receipt", hint: "لم أبدأ بعد" },
+            ],
+          },
+          {
+            id: "start",
+            label: "متى تود البدء؟",
+            summary: "البدء",
+            options: [
+              { id: "now", label: "فوراً", icon: "zap" },
+              { id: "next", label: "الشهر القادم", icon: "clock" },
+              { id: "exploring", label: "أستكشف فقط", icon: "compass" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 };
 
 export const crossover: typeof EN.crossover = {

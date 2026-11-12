@@ -77,7 +77,14 @@ Open [http://localhost:3000](http://localhost:3000).
 - **Hero** — two-column layout: typewriter headline + CTAs on the left, framed portrait on the right, surrounded by small floating pieces of the work (`HeroProps`): on Build a page assembling itself, a "Site live" chip, a booking arriving and a phone layout; on Books a ledger being ticked off, VAT, a "Reconciled" stamp and a monthly chart.
 - **Projects** — a *pinned scrollytelling* layout: a scrolling list of projects on the left activates items as they cross the viewport, while a sticky panel on the right updates to the active project.
 - **Skills** — one compact, self-playing card: a spotlight moves through the skill groups, the active tab opens and fills a progress line while its skills pop in. Tapping a tab stops the autoplay.
-- **Work categories, Accounting/Bookkeeping, About, Contact, Footer** — standard content sections driven from `data/portfolio.ts`.
+- **Work categories, Accounting/Bookkeeping, About, Footer** — standard content sections driven from `data/portfolio.ts`.
+
+### Contact form (tap-through, EmailJS)
+- Each path ends with a short step-by-step form instead of a mailto link: **Build** asks project type → starting point & must-haves → budget & timeline; **Books** asks services → industry & volume → current setup & start date. The last step is name, company, email and/or WhatsApp, and how they'd like to be contacted.
+- Visitors tap cards and chips instead of typing. Single-choice steps move on by themselves, the selection highlight glides between cards, a live "Your brief" panel fills in beside the form (edit any line), and sending ends in a drawn checkmark with a burst of particles and a reference number.
+- Sent with **EmailJS** straight from the browser to your inbox (no server or database), with an optional auto-reply to the customer. UAE WhatsApp numbers are turned into a `wa.me` link in the email. Spam protection: honeypot, rate limit, headless-browser block.
+- Until the EmailJS IDs are set in `data/emailjs.ts`, the form opens the visitor's email app with the request already written. **Setup guide: [`docs/emailjs-setup.md`](docs/emailjs-setup.md).**
+- Questions and options live in `contactForm` in `data/portfolio.ts` / `data/portfolio.ar.ts`.
 
 ### Motion & interaction
 - **Typewriter headline** — cycles through data-driven phrases with a blinking caret (`Typewriter`).
@@ -90,7 +97,6 @@ Open [http://localhost:3000](http://localhost:3000).
 - **MotionPath effects:**
   - a self-drawing gradient underline flourish under every section heading;
   - a pulse travels along a measured connector from the active project row into the pinned panel;
-  - a comet streaks into the Contact CTA on hover and lands with a ripple.
 
 All of the above are disabled or simplified when the visitor has `prefers-reduced-motion: reduce` set.
 
