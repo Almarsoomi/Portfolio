@@ -3,6 +3,7 @@ import { arabic, body, display } from "@/app/fonts";
 import type { Lang } from "@/data/content";
 import { LangProvider } from "./i18n";
 import CustomCursor from "./CustomCursor";
+import MotionProvider from "./MotionProvider";
 import SmoothScroll from "./SmoothScroll";
 import ScrollToTop from "./ScrollToTop";
 import { THEME_INIT_SCRIPT } from "./ThemeToggle";
@@ -17,10 +18,12 @@ export default function RootDocument({ lang, children }: { lang: Lang; children:
       </head>
       <body>
         <LangProvider lang={lang}>
-          <SmoothScroll />
-          <CustomCursor />
-          {children}
-          <ScrollToTop />
+          <MotionProvider>
+            <SmoothScroll />
+            <CustomCursor />
+            {children}
+            <ScrollToTop />
+          </MotionProvider>
         </LangProvider>
       </body>
     </html>

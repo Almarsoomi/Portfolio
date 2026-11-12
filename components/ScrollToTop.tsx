@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import { ArrowUp } from "lucide-react";
 import { smoothScrollTo } from "./lenis-store";
 import { useContent } from "./i18n";

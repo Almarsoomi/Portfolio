@@ -5,9 +5,9 @@ import {
   motion,
   useScroll,
   useTransform,
-  useReducedMotion,
   type MotionValue,
 } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { projects } from "@/data/portfolio";
 import type { Project, ProjectStatus } from "@/data/portfolio";

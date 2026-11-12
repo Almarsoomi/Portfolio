@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import { ArrowUpRight } from "lucide-react";
 import type { MouseEvent } from "react";
 import { useContent } from "./i18n";

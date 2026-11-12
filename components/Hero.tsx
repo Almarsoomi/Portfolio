@@ -5,12 +5,12 @@ import Image from "next/image";
 import {
   motion,
   useMotionValue,
-  useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
   type Variants,
 } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import { ArrowRight, MapPin } from "lucide-react";
 import type { PathKey } from "@/data/portfolio";
 import { useContent } from "./i18n";

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { animate, AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { animate, AnimatePresence, motion } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import { Zap } from "lucide-react";
 import { useContent } from "./i18n";
 

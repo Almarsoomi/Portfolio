@@ -12,7 +12,8 @@ import {
   type ReactNode,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -316,14 +317,10 @@ export default function ContactWizard({ path }: { path: PathKey }) {
   }
 
   const done = status === "sent";
-  const slide = (reduce ? 0 : 48) * (rtl ? -1 : 1);
-  const blur = reduce ? "blur(0px)" : "blur(6px)";
-  // Variants read `custom` at exit time, so a step leaves in the new direction.
-  const stepVariants = {
-    enter: (d: number) => ({ opacity: 0, x: d * slide, filter: blur }),
-    center: { opacity: 1, x: 0, filter: "blur(0px)" },
-    exit: (d: number) => ({ opacity: 0, x: -d * slide, filter: blur }),
-  };
+  // Steps enter with a plain CSS animation (see .wizard-step in globals.css).
+  // Framer's hardware-accelerated opacity/filter animations could get stuck at
+  // their first frame on iOS Safari, leaving a step invisible.
+  const slide = 40 * dir * (rtl ? -1 : 1);
   const BackIcon = rtl ? ArrowRight : ArrowLeft;
   const NextIcon = rtl ? ArrowLeft : ArrowRight;
 
@@ -333,8 +330,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
         {!done ? <Progress step={step} total={total} ui={ui} /> : null}
 
         <AutoHeight>
-          <AnimatePresence mode="wait" initial={false} custom={dir}>
-            {done ? (
+          {done ? (
               <Success
                 key="done"
                 name={details.name.trim().split(" ")[0]}
@@ -345,15 +341,10 @@ export default function ContactWizard({ path }: { path: PathKey }) {
                 ui={ui}
               />
             ) : (
-              <motion.div
+              <div
                 key={step}
-                custom={dir}
-                variants={stepVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.32, ease: EASE }}
-                className="pt-5"
+                className={`pt-5 ${interacted.current ? "wizard-step" : ""}`}
+                style={{ "--wizard-dx": `${slide}px` } as React.CSSProperties}
               >
                 {current ? (
                   <>
@@ -388,9 +379,8 @@ export default function ContactWizard({ path }: { path: PathKey }) {
                     ui={ui}
                   />
                 )}
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
         </AutoHeight>
 
         {!done ? (
@@ -567,19 +557,17 @@ function OptionGroup({
         {group.options.map((o, i) => {
           const on = selected.includes(o.id);
           return (
-            <motion.div
+            <div
               key={o.id}
-              initial={{ opacity: 0, y: reduce ? 0 : 12, scale: reduce ? 1 : 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.3, delay: reduce ? 0 : 0.04 * i, ease: EASE }}
-              className={cards ? "h-full" : ""}
+              className={`wizard-rise ${cards ? "h-full" : ""}`}
+              style={{ animationDelay: `${0.04 * i + 0.08}s` }}
             >
               {cards ? (
                 <OptionCard option={o} on={on} multi={!!group.multi} groupId={group.id} onClick={() => onPick(o.id)} />
               ) : (
                 <OptionChip label={o.label} on={on} multi={!!group.multi} groupId={group.id} onClick={() => onPick(o.id)} />
               )}
-            </motion.div>
+            </div>
           );
         })}
       </div>
@@ -1135,11 +1123,8 @@ function Success({
     [],
   );
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4, ease: EASE }}
-      className="flex flex-col items-center py-8 text-center"
+    <div
+      className="wizard-rise flex flex-col items-center py-8 text-center"
       role="status"
     >
       <div className="relative grid h-24 w-24 place-items-center">
@@ -1189,49 +1174,41 @@ function Success({
         </svg>
       </div>
 
-      <motion.h3
+      <h3
         ref={headingRef}
         tabIndex={-1}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.55 }}
-        className="mt-6 font-display text-2xl font-semibold tracking-tight text-ink outline-none"
+        style={{ animationDelay: "0.55s" }}
+        className="wizard-rise mt-6 font-display text-2xl font-semibold tracking-tight text-ink outline-none"
       >
         {ui.successTitle}
-      </motion.h3>
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.65 }}
-        className="mt-2 max-w-md text-ink-muted"
+      </h3>
+      <p
+        style={{ animationDelay: "0.65s" }}
+        className="wizard-rise mt-2 max-w-md text-ink-muted"
       >
         {ui.successText.replace("{name}", name)}
         {hasEmail ? <span className="mt-1 block text-sm text-ink-faint">{ui.successCopy}</span> : null}
-      </motion.p>
+      </p>
       {reference ? (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.75 }}
-          className="mt-5 inline-flex items-center gap-2 rounded-full border border-dashed border-accent/40 px-4 py-1.5 text-xs text-ink-muted"
+        <p
+          style={{ animationDelay: "0.75s" }}
+          className="wizard-rise mt-5 inline-flex items-center gap-2 rounded-full border border-dashed border-accent/40 px-4 py-1.5 text-xs text-ink-muted"
         >
           {ui.reference}
           <span dir="ltr" className="font-mono font-semibold tracking-wider text-accent">
             {reference}
           </span>
-        </motion.p>
+        </p>
       ) : null}
-      <motion.button
+      <button
         type="button"
         onClick={onReset}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.85 }}
-        className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted transition-colors hover:text-accent"
+        style={{ animationDelay: "0.85s" }}
+        className="wizard-rise mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted transition-colors hover:text-accent"
       >
         <RotateCcw aria-hidden className="h-3.5 w-3.5" />
         {ui.startOver}
-      </motion.button>
-    </motion.div>
+      </button>
+    </div>
   );
 }

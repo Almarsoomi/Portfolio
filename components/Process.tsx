@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll, useSpring } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import { useRef } from "react";
 import { BarChart3, ClipboardCheck, FileSpreadsheet, Landmark } from "lucide-react";
 import { useContent } from "./i18n";

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import { Briefcase, Cloud, Monitor, Server, type LucideIcon } from "lucide-react";
 import { useContent } from "./i18n";
 import { EASE, SectionHeading } from "./motion-primitives";

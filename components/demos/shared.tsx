@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { animate, motion, useInView, useReducedMotion } from "framer-motion";
+import { animate, motion, useInView } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 
 export const ease = [0.25, 0.4, 0.25, 1] as const;
 

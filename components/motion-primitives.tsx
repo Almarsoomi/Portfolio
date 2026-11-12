@@ -2,12 +2,12 @@
 
 import {
   motion,
-  useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
   type Variants,
 } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import { useId, useRef, type ReactNode } from "react";
 import { useIsDesktop, useMediaQuery } from "./use-media-query";
 

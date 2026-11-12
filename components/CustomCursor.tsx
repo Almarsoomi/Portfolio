@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 
 /** Elements that should trigger the "hover" (enlarged) cursor state. */
 const INTERACTIVE =

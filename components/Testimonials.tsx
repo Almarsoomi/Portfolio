@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion, type PanInfo } from "framer-motion";
+import { AnimatePresence, motion, type PanInfo } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import { Quote } from "lucide-react";
 import type { PathKey } from "@/data/portfolio";
 import { clients, testimonials } from "@/data/testimonials";

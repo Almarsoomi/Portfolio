@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import Link from "next/link";
 import { ArrowLeftRight, Menu, X } from "lucide-react";
 import type { PathKey } from "@/data/portfolio";
