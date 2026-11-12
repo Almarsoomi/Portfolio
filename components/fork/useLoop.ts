@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useReducedMotion, type Transition } from "framer-motion";
+import { type Transition } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 
 /**
  * Returns a key that changes every `ms`, so keyed children remount and replay

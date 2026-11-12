@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import { Moon, Sun } from "lucide-react";
 import { useContent } from "./i18n";
 

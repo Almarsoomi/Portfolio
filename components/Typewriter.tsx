@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 
 /**
  * Types out each word, pauses, deletes it, and moves to the next — looping.

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import { Languages } from "lucide-react";
 import { switchLangPath, type Lang } from "@/data/content";
 import { useContent, useLang } from "./i18n";

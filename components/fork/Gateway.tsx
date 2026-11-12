@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useReducedMotion } from "@/components/use-reduced-motion";
 import { ArrowRight, Calculator, Code2 } from "lucide-react";
 import type { PathKey } from "@/data/portfolio";
 import { localHref } from "@/data/content";
