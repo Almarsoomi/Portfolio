@@ -1,4 +1,5 @@
 import type { PathKey } from "./portfolio";
+import type { LogoKey } from "./logos";
 
 /**
  * Client testimonials. ONLY add real quotes that clients have agreed to share.
@@ -25,10 +26,10 @@ export interface Testimonial {
 export const testimonials: Testimonial[] = [];
 
 /** Businesses I've worked with — shown as a moving strip on each path. */
-export const clients: { name: string; paths: PathKey[] }[] = [
-  { name: "The Walls Carpentry", paths: ["build", "books"] },
+export const clients: { name: string; logo?: LogoKey; paths: PathKey[] }[] = [
+  { name: "The Walls Carpentry", logo: "thewalls", paths: ["build", "books"] },
   { name: "Metal East Records", paths: ["build", "books"] },
-  { name: "Care Plus Auto Repairing", paths: ["build"] },
-  { name: "Build It Contracting", paths: ["build"] },
+  { name: "Care Plus Auto Repairing", logo: "careplus", paths: ["build"] },
+  { name: "Build It Contracting", logo: "buildit", paths: ["build"] },
   { name: "H&S Water Sports", paths: ["books"] },
 ];

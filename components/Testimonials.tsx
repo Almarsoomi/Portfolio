@@ -7,6 +7,7 @@ import type { PathKey } from "@/data/portfolio";
 import { clients, testimonials } from "@/data/testimonials";
 import { useContent, useLang } from "./i18n";
 import { SectionHeading } from "./motion-primitives";
+import BrandLogo from "./BrandLogo";
 
 /**
  * Social proof for a path: an endless strip of client names, plus a swipeable
@@ -16,7 +17,7 @@ export default function Testimonials({ path }: { path: PathKey }) {
   const { ui } = useContent();
   const rtl = useLang() === "ar";
   const reduce = useReducedMotion();
-  const names = clients.filter((c) => c.paths.includes(path)).map((c) => c.name);
+  const names = clients.filter((c) => c.paths.includes(path));
   const quotes = testimonials.filter((t) => t.paths.includes(path));
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -58,13 +59,19 @@ export default function Testimonials({ path }: { path: PathKey }) {
         >
           {[0, 1].map((copy) => (
             <div key={copy} aria-hidden={copy === 1} className="flex shrink-0 gap-4">
-              {strip.map((name, i) => (
+              {strip.map((client, i) => (
                 <span
                   key={`${copy}-${i}`}
-                  className="flex items-center gap-4 whitespace-nowrap rounded-full border border-edge bg-surface-raised/50 px-6 py-3 font-display text-lg font-semibold text-ink-muted transition-colors hover:border-accent/50 hover:text-ink sm:text-xl"
+                  className={`flex items-center gap-3 whitespace-nowrap rounded-full border border-edge bg-surface-raised/50 py-2 pe-6 font-display text-lg font-semibold text-ink-muted transition-colors hover:border-accent/50 hover:text-ink sm:text-xl ${
+                    client.logo ? "ps-2" : "ps-6"
+                  }`}
                 >
-                  <span aria-hidden className="h-2 w-2 rounded-full bg-gradient-to-br from-accent-bright to-accent-deep" />
-                  {name}
+                  {client.logo ? (
+                    <BrandLogo logo={client.logo} className="h-10 w-10 rounded-full sm:h-11 sm:w-11" padding="p-1.5" />
+                  ) : (
+                    <span aria-hidden className="h-2 w-2 rounded-full bg-gradient-to-br from-accent-bright to-accent-deep" />
+                  )}
+                  {client.name}
                 </span>
               ))}
             </div>

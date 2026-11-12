@@ -19,6 +19,7 @@ import { useIsDesktop } from "./use-media-query";
 import { demos } from "./demos";
 import { smoothScrollTo } from "./lenis-store";
 import VisitButton from "./VisitButton";
+import BrandLogo from "./BrandLogo";
 import { useContent } from "./i18n";
 
 const statusStyles: Record<ProjectStatus, string> = {
@@ -316,15 +317,22 @@ export default function PinnedProjects() {
                       : "border-edge bg-surface-raised/30 opacity-60 hover:opacity-100"
                   }`}
                 >
-                  <span
-                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-colors duration-300 ${
-                      isActive
-                        ? "border-accent/40 bg-accent/10 text-accent"
-                        : "border-edge bg-surface text-ink-faint"
-                    }`}
-                  >
-                    <Icon aria-hidden className="h-5 w-5" />
-                  </span>
+                  {project.logo ? (
+                    <BrandLogo
+                      logo={project.logo}
+                      className={`h-11 w-11 transition-[filter] duration-300 ${isActive ? "" : "grayscale"}`}
+                    />
+                  ) : (
+                    <span
+                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-colors duration-300 ${
+                        isActive
+                          ? "border-accent/40 bg-accent/10 text-accent"
+                          : "border-edge bg-surface text-ink-faint"
+                      }`}
+                    >
+                      <Icon aria-hidden className="h-5 w-5" />
+                    </span>
+                  )}
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-3">
@@ -418,9 +426,13 @@ export default function PinnedProjects() {
                     </div>
                   ) : (
                     <>
-                      <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/40 bg-accent/10 text-accent">
-                        <ActiveIcon aria-hidden className="h-8 w-8" />
-                      </span>
+                      {current.logo ? (
+                        <BrandLogo logo={current.logo} className="h-20 w-20 rounded-2xl" padding="p-2.5" />
+                      ) : (
+                        <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/40 bg-accent/10 text-accent">
+                          <ActiveIcon aria-hidden className="h-8 w-8" />
+                        </span>
+                      )}
                       <span className="font-display text-[5rem] font-bold leading-none text-ink/10">
                         {String(active + 1).padStart(2, "0")}
                       </span>

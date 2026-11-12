@@ -3,6 +3,8 @@
  * no component changes needed.
  */
 
+import type { LogoKey } from "./logos";
+
 export type ProjectStatus = "Live" | "In Progress" | "Planning" | "Archived";
 
 /** Keys of the animated mini-demos in components/demos. */
@@ -15,6 +17,8 @@ export interface Project {
   kind: ProjectKind;
   /** Optional animated demo shown in the card's visual panel. */
   demo?: ProjectDemo;
+  /** Brand logo shown in place of the generic icon. */
+  logo?: LogoKey;
   category: string;
   title: string;
   description: string;
@@ -144,6 +148,7 @@ export const projects: Project[] = [
     demo: "prestatement",
     status: "Live",
     link: "https://prestatement.com",
+    logo: "prestatement",
   },
   {
     kind: "web",
@@ -155,6 +160,7 @@ export const projects: Project[] = [
     demo: "myboatlog",
     status: "Live",
     link: "https://myboatlog.app",
+    logo: "myboatlog",
   },
   {
     kind: "web",
@@ -166,6 +172,7 @@ export const projects: Project[] = [
     demo: "careplus",
     status: "Live",
     link: "https://careplusauto.com",
+    logo: "careplus",
   },
   {
     kind: "web",
@@ -177,6 +184,7 @@ export const projects: Project[] = [
     status: "Live",
     demo: "thewalls",
     link: "https://thewalls.ae",
+    logo: "thewalls",
   },
   {
     kind: "web",
@@ -197,6 +205,7 @@ export const projects: Project[] = [
       "Website for Build It, a Dubai building contracting company. A coming-soon page is live while the full site is being built.",
     status: "In Progress",
     link: "https://builditdxb.ae",
+    logo: "buildit",
   },
   {
     kind: "ops",

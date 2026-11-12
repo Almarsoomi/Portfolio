@@ -92,6 +92,7 @@ export const projects: typeof EN.projects = [
     demo: "prestatement",
     status: "Live",
     link: "https://prestatement.com",
+    logo: "prestatement",
   },
   {
     kind: "web",
@@ -103,6 +104,7 @@ export const projects: typeof EN.projects = [
     demo: "myboatlog",
     status: "Live",
     link: "https://myboatlog.app",
+    logo: "myboatlog",
   },
   {
     kind: "web",
@@ -114,6 +116,7 @@ export const projects: typeof EN.projects = [
     demo: "careplus",
     status: "Live",
     link: "https://careplusauto.com",
+    logo: "careplus",
   },
   {
     kind: "web",
@@ -125,6 +128,7 @@ export const projects: typeof EN.projects = [
     status: "Live",
     demo: "thewalls",
     link: "https://thewalls.ae",
+    logo: "thewalls",
   },
   {
     kind: "web",
@@ -145,6 +149,7 @@ export const projects: typeof EN.projects = [
       "موقع لشركة Build It للمقاولات في دبي. صفحة «قريباً» متاحة الآن بينما يُبنى الموقع الكامل.",
     status: "In Progress",
     link: "https://builditdxb.ae",
+    logo: "buildit",
   },
   {
     kind: "ops",
