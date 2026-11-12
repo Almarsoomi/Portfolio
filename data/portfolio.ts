@@ -49,8 +49,6 @@ export const site = {
   description:
     "Dubai-based developer building practical business tools — web apps, financial automation, and accounting systems for UAE businesses. Zoho Books bookkeeping specialist.",
   url: "https://almarsoomi.github.io/Portfolio",
-  email: "almarsoomi96@gmail.com",
-  github: "https://github.com/almarsoomi",
 };
 
 export type PathKey = "build" | "books";
@@ -348,12 +346,282 @@ export const process = {
 
 export const contact = {
   heading: "Let's build something useful",
-  text: "Need a website, a web app or a tool that saves your team hours? I'm one message away. Based in Dubai, working with businesses across the UAE.",
+  text: "Tap through a few quick questions — no typing until the end. I'll reply with a clear plan and a quote. Based in Dubai, working with businesses across the UAE.",
 };
 
 export const booksContact = {
   heading: "Let's get your books in order",
-  text: "Tell me about your business and where your books are today. I'll reply with a clear plan and a fixed monthly quote — no jargon.",
+  text: "Tell me about your business in a few taps. I'll reply with a clear plan and a fixed monthly quote — no jargon.",
+};
+
+/** Icons available to the contact form's option cards. */
+export type FormIcon =
+  | "globe"
+  | "dashboard"
+  | "calendar"
+  | "cart"
+  | "bot"
+  | "sparkles"
+  | "rocket"
+  | "refresh"
+  | "puzzle"
+  | "book"
+  | "settings"
+  | "percent"
+  | "landmark"
+  | "eraser"
+  | "chart"
+  | "store"
+  | "factory"
+  | "briefcase"
+  | "hardhat"
+  | "utensils"
+  | "shapes"
+  | "bookcheck"
+  | "laptop"
+  | "sheet"
+  | "receipt"
+  | "zap"
+  | "clock"
+  | "compass";
+
+export interface FormOption {
+  id: string;
+  label: string;
+  /** Options with an icon render as cards; without, as compact chips. */
+  icon?: FormIcon;
+  hint?: string;
+}
+
+export interface FormGroup {
+  id: string;
+  /** Shown above the options when a step has more than one group. */
+  label?: string;
+  /** Short name used in the brief and in the email ("Budget"). */
+  summary: string;
+  multi?: boolean;
+  optional?: boolean;
+  options: FormOption[];
+}
+
+export interface FormStep {
+  title: string;
+  subtitle: string;
+  groups: FormGroup[];
+}
+
+/** The tap-through contact form: one set of questions per path. */
+export const contactForm = {
+  ui: {
+    step: "Step",
+    of: "of",
+    back: "Back",
+    next: "Next",
+    send: "Send request",
+    sending: "Sending…",
+    optional: "optional",
+    pickOne: "Pick one",
+    pickAny: "Pick any that apply",
+    brief: "Your brief",
+    briefEmpty: "Your answers will appear here as you tap.",
+    edit: "Edit",
+    detailsTitle: "Where should I reply?",
+    detailsSubtitle: "Last step — leave an email or WhatsApp number, whichever suits you.",
+    name: "Your name",
+    namePh: "e.g. Sara Ahmed",
+    company: "Company",
+    companyPh: "Business name",
+    email: "Email",
+    emailPh: "you@company.com",
+    whatsapp: "WhatsApp",
+    whatsappPh: "+971 50 123 4567",
+    preferred: "Best way to reach you",
+    preferredOptions: { email: "Email", whatsapp: "WhatsApp", either: "Either" },
+    message: "Anything else?",
+    messagePh: "A link to your current site, a deadline, an idea… (optional)",
+    errors: {
+      name: "Please add your name.",
+      contact: "Add an email or a WhatsApp number so I can reply.",
+      email: "That email doesn't look right.",
+      whatsapp: "That number looks too short.",
+    },
+    privacy: "Only used to reply to you. No newsletters, ever.",
+    successTitle: "Request sent",
+    successText: "Thanks, {name}! I'll get back to you within one working day.",
+    successCopy: "A copy is on its way to your inbox.",
+    reference: "Reference",
+    errorTitle: "That didn't go through",
+    errorText: "Something went wrong while sending. Please try again in a moment.",
+    retry: "Try again",
+    startOver: "Start a new request",
+    hoursNote: "Replies within one working day",
+    emailSubject: "New request",
+  },
+  build: {
+    label: "Website / Web app",
+    steps: [
+      {
+        title: "What are we building?",
+        subtitle: "Pick the closest — we can fine-tune it together.",
+        groups: [
+          {
+            id: "type",
+            summary: "Project",
+            options: [
+              { id: "website", label: "Business website", icon: "globe", hint: "Show who you are, win enquiries" },
+              { id: "webapp", label: "Web app or portal", icon: "dashboard", hint: "Logins, dashboards, data" },
+              { id: "booking", label: "Booking system", icon: "calendar", hint: "Customers book online" },
+              { id: "store", label: "Online store", icon: "cart", hint: "Sell products online" },
+              { id: "automation", label: "Automation / AI tool", icon: "bot", hint: "Stop doing it by hand" },
+              { id: "other", label: "Something else", icon: "sparkles", hint: "Tell me at the end" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Where are you starting from?",
+        subtitle: "And the must-haves, if you already know them.",
+        groups: [
+          {
+            id: "stage",
+            label: "Starting point",
+            summary: "Starting point",
+            options: [
+              { id: "new", label: "Brand new", icon: "rocket" },
+              { id: "redesign", label: "Redesign what I have", icon: "refresh" },
+              { id: "extend", label: "Add to what I have", icon: "puzzle" },
+            ],
+          },
+          {
+            id: "features",
+            label: "Must-haves",
+            summary: "Must-haves",
+            multi: true,
+            optional: true,
+            options: [
+              { id: "bilingual", label: "Arabic + English" },
+              { id: "whatsapp", label: "WhatsApp" },
+              { id: "booking", label: "Online booking" },
+              { id: "payments", label: "Payments" },
+              { id: "admin", label: "Admin dashboard" },
+              { id: "ai", label: "AI features" },
+              { id: "seo", label: "SEO" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Budget & timing",
+        subtitle: "A rough idea is perfect — it helps me suggest the right scope.",
+        groups: [
+          {
+            id: "budget",
+            label: "Budget (AED)",
+            summary: "Budget",
+            options: [
+              { id: "u5", label: "Under 5,000" },
+              { id: "5-15", label: "5,000 – 15,000" },
+              { id: "15-30", label: "15,000 – 30,000" },
+              { id: "30+", label: "30,000+" },
+              { id: "unsure", label: "Not sure yet" },
+            ],
+          },
+          {
+            id: "timeline",
+            label: "Timeline",
+            summary: "Timeline",
+            options: [
+              { id: "asap", label: "As soon as possible" },
+              { id: "month", label: "Within a month" },
+              { id: "quarter", label: "1–3 months" },
+              { id: "flexible", label: "Flexible" },
+            ],
+          },
+        ],
+      },
+    ] as FormStep[],
+  },
+  books: {
+    label: "Bookkeeping",
+    steps: [
+      {
+        title: "What do you need help with?",
+        subtitle: "Pick everything that applies.",
+        groups: [
+          {
+            id: "services",
+            summary: "Services",
+            multi: true,
+            options: [
+              { id: "monthly", label: "Monthly bookkeeping", icon: "book", hint: "Recorded & reconciled" },
+              { id: "zoho", label: "Zoho Books setup", icon: "settings", hint: "Setup or migration" },
+              { id: "vat", label: "VAT returns", icon: "percent", hint: "Registration & filing" },
+              { id: "ct", label: "Corporate Tax readiness", icon: "landmark", hint: "Records in order" },
+              { id: "cleanup", label: "Catch-up & clean-up", icon: "eraser", hint: "Fix the backlog" },
+              { id: "reports", label: "Reports & insight", icon: "chart", hint: "P&L, cash, balance sheet" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Tell me about your business",
+        subtitle: "So I know which accounts and reports matter to you.",
+        groups: [
+          {
+            id: "industry",
+            label: "Industry",
+            summary: "Industry",
+            options: [
+              { id: "retail", label: "Trading & retail", icon: "store" },
+              { id: "manufacturing", label: "Manufacturing", icon: "factory" },
+              { id: "services", label: "Services", icon: "briefcase" },
+              { id: "contracting", label: "Contracting", icon: "hardhat" },
+              { id: "food", label: "Food & hospitality", icon: "utensils" },
+              { id: "other", label: "Other", icon: "shapes" },
+            ],
+          },
+          {
+            id: "volume",
+            label: "Transactions per month",
+            summary: "Volume",
+            options: [
+              { id: "u100", label: "Under 100" },
+              { id: "100-500", label: "100 – 500" },
+              { id: "500+", label: "500+" },
+              { id: "unsure", label: "Not sure" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Where are your books today?",
+        subtitle: "No judgement — shoeboxes of receipts are welcome.",
+        groups: [
+          {
+            id: "current",
+            label: "Current setup",
+            summary: "Books today",
+            options: [
+              { id: "zoho", label: "Zoho Books", icon: "bookcheck" },
+              { id: "software", label: "Other software", icon: "laptop", hint: "QuickBooks, Xero, Tally…" },
+              { id: "excel", label: "Excel / spreadsheets", icon: "sheet" },
+              { id: "none", label: "Receipts & statements", icon: "receipt", hint: "Not started yet" },
+            ],
+          },
+          {
+            id: "start",
+            label: "When would you like to start?",
+            summary: "Start",
+            options: [
+              { id: "now", label: "Right away", icon: "zap" },
+              { id: "next", label: "Next month", icon: "clock" },
+              { id: "exploring", label: "Just exploring", icon: "compass" },
+            ],
+          },
+        ],
+      },
+    ] as FormStep[],
+  },
 };
 
 export const crossover = {
@@ -376,8 +644,6 @@ export const ui = {
   otherLangShort: "ع",
   switchLangLabel: "Switch to Arabic",
   portraitAlt: "Ahmed",
-  emailLabel: "Email Ahmed",
-  githubLabel: "GitHub (opens in a new tab)",
   lastVisited: "Last visited",
   or: "or",
   themeLabel: "Switch between light and dark theme",
