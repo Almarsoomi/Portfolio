@@ -56,7 +56,7 @@ import {
   type LucideProps,
 } from "lucide-react";
 import type { FormGroup, FormIcon, FormStep, PathKey } from "@/data/portfolio";
-import { EMAILJS, emailjsReady } from "@/data/emailjs";
+import { EMAILJS, EMAIL_ACCENTS, emailjsReady } from "@/data/emailjs";
 import { useContent, useLang } from "./i18n";
 import { smoothScrollTo } from "./lenis-store";
 import { EASE } from "./motion-primitives";
@@ -266,7 +266,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
     const answersHtml = brief
       .map(
         (r) =>
-          `<tr><td style="padding:6px 12px 6px 0;color:#64748b;white-space:nowrap;vertical-align:top">${esc(
+          `<tr><td style="padding:6px 12px 6px 0;color:#8b98b3;white-space:nowrap;vertical-align:top">${esc(
             r.group.summary,
           )}</td><td style="padding:6px 0;font-weight:600">${esc(r.values.join(", "))}</td></tr>`,
       )
@@ -289,6 +289,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
       lang,
       page: typeof window !== "undefined" ? window.location.href : "",
       submitted_at: new Date().toLocaleString("en-GB", { timeZone: "Asia/Dubai" }) + " (Dubai)",
+      ...EMAIL_ACCENTS[path],
     };
   }
 
