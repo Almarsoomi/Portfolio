@@ -42,6 +42,15 @@ export function dialCode(iso: string): string {
   return DIAL_BY_ISO[iso] ?? DIAL_BY_ISO[DEFAULT_COUNTRY];
 }
 
+/** "United Arab Emirates" / "الإمارات العربية المتحدة". */
+export function countryName(iso: string, lang: string): string {
+  try {
+    return new Intl.DisplayNames([lang], { type: "region" }).of(iso) ?? iso;
+  } catch {
+    return iso;
+  }
+}
+
 export function flagOf(iso: string): string {
   return String.fromCodePoint(0x1f1e6 + iso.charCodeAt(0) - 65, 0x1f1e6 + iso.charCodeAt(1) - 65);
 }

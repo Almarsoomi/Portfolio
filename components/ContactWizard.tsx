@@ -58,7 +58,7 @@ import {
 import type { FormGroup, FormIcon, FormStep, PathKey } from "@/data/portfolio";
 import { EMAILJS, EMAIL_ACCENTS, emailjsReady } from "@/data/emailjs";
 import { useContent, useLang } from "./i18n";
-import CountryCodePicker, { DEFAULT_COUNTRY, countryFromNumber, dialCode } from "./CountryCodePicker";
+import CountryCodePicker, { DEFAULT_COUNTRY, countryFromNumber, countryName, dialCode } from "./CountryCodePicker";
 import { smoothScrollTo } from "./lenis-store";
 import { EASE } from "./motion-primitives";
 
@@ -126,6 +126,59 @@ const EMPTY_DETAILS: Details = {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+const EMAIL_PROVIDERS = [
+  "gmail.com",
+  "hotmail.com",
+  "outlook.com",
+  "yahoo.com",
+  "icloud.com",
+  "live.com",
+  // Real providers that sit one letter away from gmail.com, so they aren't "corrected".
+  "email.com",
+  "mail.com",
+];
+
+/** Edit distance, for spotting "gmial" / "hotmial". */
+function distance(a: string, b: string): number {
+  const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let prev = row[0];
+    row[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const tmp = row[j];
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = tmp;
+    }
+  }
+  return row[b.length];
+}
+
+/** A corrected address for common typos ("gmail.con", "gmial.com"), or null. */
+function suggestEmail(email: string): string | null {
+  const at = email.lastIndexOf("@");
+  if (at < 1) return null;
+  const user = email.slice(0, at);
+  const original = email.slice(at + 1).toLowerCase();
+  if (EMAIL_PROVIDERS.includes(original)) return null;
+  // ".con", ".cmo"… are never real; ".co", ".om", ".cm" are real country domains, so leave them.
+  let domain = original.replace(/\.(con|cmo|ocm|vom|xom|comm|coom)$/, ".com");
+  if (!EMAIL_PROVIDERS.includes(domain)) {
+    // Near-misses of a big provider only ("gmial.com", "hotmial.com"); company domains stay as typed.
+    let best: string | null = null;
+    let bestDist = 3;
+    for (const p of EMAIL_PROVIDERS) {
+      const d = distance(domain, p);
+      // Short names like live.com allow one slip; longer ones two.
+      if (d <= (p.length >= 9 ? 2 : 1) && d < bestDist) {
+        best = p;
+        bestDist = d;
+      }
+    }
+    if (best) domain = best;
+  }
+  return domain !== original ? `${user}@${domain}` : null;
+}
+
 /** Full international number, digits only: AE + "050 123 4567" → "971501234567". */
 function waDigits(iso: string, raw: string): string {
   const local = raw.replace(/\D/g, "").replace(/^0+/, "");
@@ -170,6 +223,10 @@ export default function ContactWizard({ path }: { path: PathKey }) {
   const [shake, setShake] = useState(0);
   const [status, setStatus] = useState<Status>("idle");
   const [reference, setReference] = useState("");
+  /** "Did you mean …@gmail.com?" — shown before sending when the email looks mistyped. */
+  const [emailHint, setEmailHint] = useState<string | null>(null);
+  /** A suggestion the visitor turned down, so we don't ask again. */
+  const [hintDismissedFor, setHintDismissedFor] = useState<string | null>(null);
 
   const advanceTimer = useRef<number | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -253,23 +310,47 @@ export default function ContactWizard({ path }: { path: PathKey }) {
     return rows;
   }, [answers, steps]);
 
-  function validate(): boolean {
+  /** WhatsApp number as checked and formatted by libphonenumber, for the email. */
+  const phone = useRef<{ display: string; digits: string } | null>(null);
+
+  async function validate(): Promise<boolean> {
     const e: Partial<Record<ErrorKey, string>> = {};
     const email = details.email.trim();
-    const wa = waDigits(details.waCountry, details.whatsapp);
+    const wa = details.whatsapp.trim();
     if (!details.name.trim()) e.name = ui.errors.name;
-    if (!email && !details.whatsapp.trim()) e.contact = ui.errors.contact;
+    if (!email && !wa) e.contact = ui.errors.contact;
     if (email && !EMAIL_RE.test(email)) e.email = ui.errors.email;
-    if (details.whatsapp.trim() && wa.length < 9) e.whatsapp = ui.errors.whatsapp;
+
+    phone.current = null;
+    if (wa) {
+      try {
+        // Loaded only when someone sends, so it costs nothing on page load.
+        const { parsePhoneNumberFromString } = await import("libphonenumber-js/min");
+        const parsed = parsePhoneNumberFromString(wa, details.waCountry as never);
+        if (parsed?.isValid()) {
+          phone.current = { display: parsed.formatInternational(), digits: parsed.number.replace(/\D/g, "") };
+        } else {
+          e.whatsapp = ui.errors.whatsapp.replace("{country}", countryName(details.waCountry, lang));
+        }
+      } catch {
+        // If the checker can't load, fall back to a basic length check.
+        if (waDigits(details.waCountry, wa).length < 9) e.whatsapp = ui.errors.whatsapp.replace("{country}", countryName(details.waCountry, lang));
+      }
+    }
+
+    // A likely typo in a common email provider: ask once before sending.
+    const hint = email && !e.email ? suggestEmail(email) : null;
+    setEmailHint(hint && hint !== hintDismissedFor ? hint : null);
+
     setErrors(e);
     if (Object.keys(e).length) setShake((n) => n + 1);
-    return !Object.keys(e).length;
+    return !Object.keys(e).length && !(hint && hint !== hintDismissedFor);
   }
 
   function buildMessage(ref: string) {
     const prefLabel = ui.preferredOptions[details.preferred];
     const answersText = brief.map((r) => `${r.group.summary}: ${r.values.join(", ")}`).join("\n");
-    const wa = waDigits(details.waCountry, details.whatsapp);
+    const wa = phone.current?.digits ?? waDigits(details.waCountry, details.whatsapp);
     const esc = (s: string) =>
       s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
     const answersHtml = brief
@@ -288,7 +369,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
       company: details.company.trim() || "—",
       email: details.email.trim(),
       reply_to: details.email.trim(),
-      whatsapp: waDisplay(details.waCountry, details.whatsapp) || "—",
+      whatsapp: phone.current?.display ?? (waDisplay(details.waCountry, details.whatsapp) || "—"),
       whatsapp_link: wa ? `https://wa.me/${wa}` : "",
       preferred_contact: prefLabel,
       message: details.message.trim() || "—",
@@ -305,7 +386,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
   async function submit(e?: FormEvent) {
     e?.preventDefault();
     interacted.current = true;
-    if (status === "sending" || !validate()) return;
+    if (status === "sending" || !(await validate())) return;
     const ref = reference || makeRef();
     setReference(ref);
 
@@ -339,6 +420,8 @@ export default function ContactWizard({ path }: { path: PathKey }) {
     setDetails(EMPTY_DETAILS);
     setErrors({});
     setReference("");
+    setEmailHint(null);
+    setHintDismissedFor(null);
     setDir(-1);
     setStep(0);
     setMaxStep(0);
@@ -407,6 +490,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
                   <DetailsStep
                     details={details}
                     setDetails={(d) => {
+                      if (d.email !== details.email) setEmailHint(null);
                       setDetails(d);
                       if (Object.keys(errors).length) setErrors({});
                     }}
@@ -418,6 +502,12 @@ export default function ContactWizard({ path }: { path: PathKey }) {
                     onSubmit={submit}
                     status={status}
                     ui={ui}
+                    emailHint={emailHint}
+                    onEmailHint={(accept) => {
+                      if (accept && emailHint) setDetails({ ...details, email: emailHint });
+                      else setHintDismissedFor(emailHint);
+                      setEmailHint(null);
+                    }}
                   />
                 )}
               </div>
@@ -940,6 +1030,8 @@ function DetailsStep({
   onSubmit,
   status,
   ui,
+  emailHint,
+  onEmailHint,
 }: {
   details: Details;
   setDetails: (d: Details) => void;
@@ -951,6 +1043,8 @@ function DetailsStep({
   onSubmit: (e: FormEvent) => void;
   status: Status;
   ui: UI;
+  emailHint: string | null;
+  onEmailHint: (accept: boolean) => void;
 }) {
   const set = <K extends keyof Details>(k: K, v: Details[K]) => setDetails({ ...details, [k]: v });
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -1024,8 +1118,40 @@ function DetailsStep({
             placeholder={ui.emailPh}
             autoComplete="email"
             aria-invalid={!!(errors.email || errors.contact)}
-            aria-describedby={errors.email || errors.contact ? "cf-email-err" : undefined}
+            aria-describedby={emailHint ? "cf-email-hint" : errors.email || errors.contact ? "cf-email-err" : undefined}
           />
+          {emailHint ? (
+            <div
+              id="cf-email-hint"
+              role="alert"
+              className="wizard-rise mt-2 rounded-xl border border-accent/40 bg-accent/10 p-3 text-sm text-ink"
+            >
+              <p>
+                {ui.didYouMean}{" "}
+                <span dir="ltr" className="font-semibold text-accent">
+                  {emailHint}
+                </span>
+                {ui.questionMark}
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => onEmailHint(true)}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-accent to-accent-deep px-3 font-semibold text-surface"
+                >
+                  <Check aria-hidden className="h-3.5 w-3.5" strokeWidth={3} />
+                  {ui.useSuggestion}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onEmailHint(false)}
+                  className="inline-flex h-9 items-center rounded-lg border border-edge-strong px-3 font-semibold text-ink-muted hover:text-ink"
+                >
+                  {ui.keepMine}
+                </button>
+              </div>
+            </div>
+          ) : null}
         </Field>
         <Field
           id="cf-wa"
@@ -1051,7 +1177,8 @@ function DetailsStep({
               className={`${inputCls} min-w-0 !w-auto flex-1`}
               value={details.whatsapp}
               onChange={(e) => {
-                const v = e.target.value;
+                // Phone numbers only: digits, spaces, + - ( ). Letters never get in.
+                const v = e.target.value.replace(/[^\d\s()+-]/g, "");
                 // A full number ("+44 7700…") switches the country by itself.
                 const found = countryFromNumber(v, details.waCountry);
                 if (found) setDetails({ ...details, waCountry: found.iso, whatsapp: found.rest });
