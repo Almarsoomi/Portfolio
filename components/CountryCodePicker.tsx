@@ -30,8 +30,8 @@ const DIAL =
   "TH:66 TL:670 TG:228 TO:676 TT:1868 TN:216 TR:90 TM:993 TC:1649 TV:688 UG:256 UA:380 AE:971 GB:44 " +
   "US:1 UY:598 UZ:998 VU:678 VA:379 VE:58 VN:84 VG:1284 VI:1340 YE:967 ZM:260 ZW:263";
 
-/** Shown first, in this order. */
-const PINNED = ["AE", "SA", "OM", "QA", "KW", "BH"];
+/** Shown first, in this order: the Gulf, then Iraq and Jordan. */
+const PINNED = ["AE", "SA", "OM", "QA", "KW", "BH", "IQ", "JO"];
 
 /** For codes several countries share, the one to suggest first. */
 const MAIN_FOR_CODE = new Set(["GB", "US", "RU", "AU", "RE", "CW", "GP"]);
