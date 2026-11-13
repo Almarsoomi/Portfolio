@@ -286,6 +286,8 @@ export const contactForm: typeof EN.contactForm = {
     of: "من",
     back: "رجوع",
     next: "التالي",
+    backToSummary: "العودة إلى الملخص",
+    goToStep: "الانتقال إلى خطوة",
     send: "أرسل الطلب",
     sending: "جارٍ الإرسال…",
     optional: "اختياري",
