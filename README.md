@@ -200,3 +200,10 @@ vercel --prod
 - The custom cursor only activates on fine-pointer (mouse/trackpad) devices; text inputs keep their native caret.
 - Pointer-driven effects update Framer motion values directly (no React re-renders) for smooth performance.
 - Decorative SVG/motion layers are `aria-hidden` and `pointer-events-none`.
+
+---
+
+## Credits
+
+- Country flag font (used only on browsers without flag emojis, such as Chrome on Windows): `app/assets/TwemojiCountryFlags.woff2` from [country-flag-emoji-polyfill](https://github.com/talkjs/country-flag-emoji-polyfill) by TalkJS (MIT). Flag artwork from [Twemoji](https://github.com/twitter/twemoji), licensed under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/). Unmodified.
+- Phone number validation: [libphonenumber-js](https://github.com/catamphetamine/libphonenumber-js) (MIT).

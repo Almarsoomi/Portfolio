@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { createPortal } from "react-dom";
+import { Check, ChevronDown, Search, X } from "lucide-react";
 import { useLang } from "./i18n";
+import { getLenis } from "./lenis-store";
+import { useMediaQuery } from "./use-media-query";
 
 /**
  * Every country's dialling code, as "ISO2:code". Country names come from the
@@ -141,7 +144,7 @@ export default function CountryCodePicker({
   onChange: (iso: string) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  labels: { countryCode: string; searchCountry: string; noCountry: string };
+  labels: { countryCode: string; searchCountry: string; noCountry: string; close: string };
 }) {
   const lang = useLang();
   const countries = useCountries(lang);
@@ -168,42 +171,134 @@ export default function CountryCodePicker({
     return [...starts, ...contains];
   }, [countries, query]);
 
+  /** Phones and touch tablets get a bottom sheet; desktop keeps the inline list. */
+  const sheet = useMediaQuery("(max-width: 639px), (pointer: coarse)");
+  useFlagFont();
+
   useEffect(() => {
     if (!open) return;
     setQuery("");
     setActive(0);
-    // Focus the search box; preventScroll stops iOS jumping the page.
-    requestAnimationFrame(() => searchRef.current?.focus({ preventScroll: true }));
-  }, [open]);
+    // Desktop: type straight away. Phones: show the list first; the keyboard
+    // opens only if they tap the search box, so it never covers the list.
+    if (!sheet) requestAnimationFrame(() => searchRef.current?.focus({ preventScroll: true }));
+  }, [open, sheet]);
 
   useEffect(() => setActive(0), [query]);
 
+  // Keep the highlighted row in view, but only when it moved by arrow keys.
+  // (Doing this on touch made the list fight the finger on iPhone.)
+  const byKeyboard = useRef(false);
   useEffect(() => {
+    if (!byKeyboard.current) return;
+    byKeyboard.current = false;
     listRef.current?.querySelector<HTMLElement>(`[data-index="${active}"]`)?.scrollIntoView({ block: "nearest" });
   }, [active]);
 
-  const choose = (iso: string) => {
-    onChange(iso);
+  // While the sheet is open, the page behind it must not scroll.
+  useEffect(() => {
+    if (!open || !sheet) return;
+    const body = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    getLenis()?.stop();
+    return () => {
+      document.body.style.overflow = body;
+      getLenis()?.start();
+    };
+  }, [open, sheet]);
+
+  const close = () => {
     onOpenChange(false);
     buttonRef.current?.focus({ preventScroll: true });
+  };
+
+  const choose = (iso: string) => {
+    onChange(iso);
+    close();
   };
 
   const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
+      byKeyboard.current = true;
       setActive((i) => Math.min(results.length - 1, i + 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
+      byKeyboard.current = true;
       setActive((i) => Math.max(0, i - 1));
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (results[active]) choose(results[active].iso);
     } else if (e.key === "Escape") {
       e.preventDefault();
-      onOpenChange(false);
-      buttonRef.current?.focus({ preventScroll: true });
+      close();
     }
   };
+
+  const search = (
+    <div className="relative shrink-0 border-b border-edge">
+      <Search aria-hidden className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" />
+      <input
+        ref={searchRef}
+        type="search"
+        role="combobox"
+        aria-expanded
+        aria-controls={listId}
+        aria-activedescendant={results[active] ? `${listId}-${results[active].iso}` : undefined}
+        aria-label={labels.searchCountry}
+        placeholder={labels.searchCountry}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={onKey}
+        autoComplete="off"
+        enterKeyHint="done"
+        className="h-12 w-full bg-transparent pe-3 ps-9 text-base text-ink outline-none placeholder:text-ink-faint"
+      />
+    </div>
+  );
+
+  const list = (
+    <ul
+      ref={listRef}
+      id={listId}
+      role="listbox"
+      aria-label={labels.countryCode}
+      data-lenis-prevent
+      className={`overflow-y-auto overscroll-contain py-1 [touch-action:pan-y] ${sheet ? "min-h-0 flex-1" : "max-h-60"}`}
+    >
+      {results.length === 0 ? (
+        <li className="px-4 py-4 text-sm text-ink-faint">{labels.noCountry}</li>
+      ) : (
+        results.map((c, i) => {
+          const selected = c.iso === value;
+          const divider = !query && i === PINNED.length;
+          return (
+            <li
+              key={c.iso}
+              id={`${listId}-${c.iso}`}
+              data-index={i}
+              role="option"
+              aria-selected={selected}
+              onMouseEnter={sheet ? undefined : () => setActive(i)}
+              onClick={() => choose(c.iso)}
+              className={`flex cursor-pointer items-center gap-3 px-4 ${sheet ? "py-3.5 text-base active:bg-accent/10" : "py-2.5 text-[0.95rem]"} ${
+                divider ? "mt-1 border-t border-edge" : ""
+              } ${!sheet && i === active ? "bg-accent/10" : ""} ${selected && sheet ? "bg-accent/10" : ""}`}
+            >
+              <span aria-hidden className="flag-emoji text-xl leading-none">
+                {c.flag}
+              </span>
+              <span className="min-w-0 flex-1 truncate text-ink">{c.name}</span>
+              <span dir="ltr" className="shrink-0 tabular-nums text-ink-muted">
+                +{c.code}
+              </span>
+              {selected ? <Check aria-hidden className="h-4 w-4 shrink-0 text-accent" /> : null}
+            </li>
+          );
+        })
+      )}
+    </ul>
+  );
 
   return (
     <>
@@ -218,80 +313,141 @@ export default function CountryCodePicker({
           open ? "border-accent shadow-[0_0_0_3px_rgb(var(--color-accent)/0.18)]" : "border-edge-strong hover:border-accent/50"
         }`}
       >
-        <span aria-hidden className="text-lg leading-none">
+        <span aria-hidden className="flag-emoji text-lg leading-none">
           {flagOf(value)}
         </span>
         <span>+{dialCode(value)}</span>
         <ChevronDown aria-hidden className={`h-4 w-4 text-ink-faint transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
-      {open ? (
-        // Opens inline (not floating) so it never gets cut off and pushes the form down instead.
+      {open && !sheet ? (
+        // Desktop: opens inline (not floating) so it never gets cut off and pushes the form down instead.
         <div
           dir={lang === "ar" ? "rtl" : "ltr"}
           className="wizard-rise order-last basis-full overflow-hidden rounded-xl border border-edge-strong bg-surface-raised/80"
         >
-          <div className="relative border-b border-edge">
-            <Search aria-hidden className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" />
-            <input
-              ref={searchRef}
-              type="search"
-              role="combobox"
-              aria-expanded
-              aria-controls={listId}
-              aria-activedescendant={results[active] ? `${listId}-${results[active].iso}` : undefined}
-              aria-label={labels.searchCountry}
-              placeholder={labels.searchCountry}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={onKey}
-              autoComplete="off"
-              enterKeyHint="done"
-              className="h-11 w-full bg-transparent pe-3 ps-9 text-base text-ink outline-none placeholder:text-ink-faint"
-            />
-          </div>
-          <ul
-            ref={listRef}
-            id={listId}
-            role="listbox"
-            aria-label={labels.countryCode}
-            data-lenis-prevent
-            className="max-h-60 overflow-y-auto overscroll-contain py-1"
-          >
-            {results.length === 0 ? (
-              <li className="px-3 py-3 text-sm text-ink-faint">{labels.noCountry}</li>
-            ) : (
-              results.map((c, i) => {
-                const selected = c.iso === value;
-                const divider = !query && i === PINNED.length;
-                return (
-                  <li
-                    key={c.iso}
-                    id={`${listId}-${c.iso}`}
-                    data-index={i}
-                    role="option"
-                    aria-selected={selected}
-                    onMouseEnter={() => setActive(i)}
-                    onClick={() => choose(c.iso)}
-                    className={`flex cursor-pointer items-center gap-3 px-3 py-2.5 text-[0.95rem] ${
-                      divider ? "mt-1 border-t border-edge pt-3" : ""
-                    } ${i === active ? "bg-accent/10" : ""}`}
-                  >
-                    <span aria-hidden className="text-lg leading-none">
-                      {c.flag}
-                    </span>
-                    <span className="min-w-0 flex-1 truncate text-ink">{c.name}</span>
-                    <span dir="ltr" className="shrink-0 tabular-nums text-ink-muted">
-                      +{c.code}
-                    </span>
-                    {selected ? <Check aria-hidden className="h-4 w-4 shrink-0 text-accent" /> : null}
-                  </li>
-                );
-              })
-            )}
-          </ul>
+          {search}
+          {list}
         </div>
       ) : null}
+
+      {open && sheet
+        ? createPortal(
+            <BottomSheet title={labels.countryCode} closeLabel={labels.close} onClose={close} dir={lang === "ar" ? "rtl" : "ltr"}>
+              {search}
+              {list}
+            </BottomSheet>,
+            document.body,
+          )
+        : null}
     </>
   );
+}
+
+/**
+ * Phone sheet: slides up from the bottom with its own scrolling list. Rendered
+ * at the end of <body> so no animated parent in the form can affect it, and
+ * sized to the visible area so the keyboard never hides the list.
+ */
+function BottomSheet({
+  title,
+  closeLabel,
+  onClose,
+  dir,
+  children,
+}: {
+  title: string;
+  closeLabel: string;
+  onClose: () => void;
+  dir: "rtl" | "ltr";
+  children: ReactNode;
+}) {
+  const [box, setBox] = useState<{ top: number; height: number } | null>(null);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const update = () => {
+      const h = vv?.height ?? window.innerHeight;
+      const top = vv?.offsetTop ?? 0;
+      // Leave a strip of the page visible above the sheet (tap it to close).
+      const gap = Math.min(96, h * 0.12);
+      setBox({ top: top + gap, height: h - gap });
+    };
+    update();
+    vv?.addEventListener("resize", update);
+    vv?.addEventListener("scroll", update);
+    return () => {
+      vv?.removeEventListener("resize", update);
+      vv?.removeEventListener("scroll", update);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: globalThis.KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-[100]" role="dialog" aria-modal="true" aria-label={title}>
+      <div className="sheet-backdrop absolute inset-0 bg-black/60" onClick={onClose} />
+      {box ? (
+        <div
+          dir={dir}
+          className="sheet-panel absolute inset-x-0 flex flex-col overflow-hidden rounded-t-3xl border-t border-edge-strong bg-surface-raised shadow-2xl"
+          style={{ top: box.top, height: box.height }}
+        >
+          <div className="flex shrink-0 items-center justify-between px-4 pb-2 pt-3">
+            <span aria-hidden className="absolute left-1/2 top-2 h-1 w-10 -translate-x-1/2 rounded-full bg-edge-strong" />
+            <p className="pt-2 font-display text-base font-semibold text-ink">{title}</p>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label={closeLabel}
+              className="mt-1 grid h-9 w-9 place-items-center rounded-full bg-ink/5 text-ink-muted hover:text-ink"
+            >
+              <X aria-hidden className="h-4 w-4" />
+            </button>
+          </div>
+          {children}
+          {/* Room for the iPhone home bar. */}
+          <div className="h-[env(safe-area-inset-bottom)] shrink-0" />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * Windows has no flag emojis (it shows "AE" instead of 🇦🇪). On browsers that
+ * can't draw them, switch the flags to a small flag-only font (Twemoji art,
+ * CC-BY 4.0, via TalkJS's country-flag-emoji-polyfill, MIT). Other devices keep
+ * their own flags and never download it. Detection adapted from that package.
+ */
+function useFlagFont() {
+  useEffect(() => {
+    const root = document.documentElement;
+    if (root.hasAttribute("data-flag-font")) return;
+    const fonts = '"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji",sans-serif';
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 1;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return;
+    ctx.textBaseline = "top";
+    ctx.font = `100px ${fonts}`;
+    ctx.scale(0.01, 0.01);
+    const colour = (text: string, fill: string) => {
+      ctx.clearRect(0, 0, 100, 100);
+      ctx.fillStyle = fill;
+      ctx.fillText(text, 0, 0);
+      return ctx.getImageData(0, 0, 1, 1).data.join(",");
+    };
+    // A colour emoji draws the same whatever the fill colour; plain letters don't.
+    const isColourEmoji = (text: string) => {
+      const a = colour(text, "#fff");
+      const b = colour(text, "#000");
+      return a === b && !b.startsWith("0,0,0,");
+    };
+    if (isColourEmoji("\u{1F60A}") && !isColourEmoji("\u{1F1E6}\u{1F1EA}")) root.setAttribute("data-flag-font", "");
+  }, []);
 }

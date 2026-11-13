@@ -309,6 +309,7 @@ export const contactForm: typeof EN.contactForm = {
     countryCode: "رمز الدولة",
     searchCountry: "ابحث عن دولة أو رمز",
     noCountry: "لا توجد دولة بهذا الاسم",
+    close: "إغلاق",
     didYouMean: "هل تقصد",
     questionMark: "؟",
     useSuggestion: "نعم، صحّحه",

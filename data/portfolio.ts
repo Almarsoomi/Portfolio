@@ -440,6 +440,7 @@ export const contactForm = {
     countryCode: "Country code",
     searchCountry: "Search country or code",
     noCountry: "No country found",
+    close: "Close",
     didYouMean: "Did you mean",
     questionMark: "?",
     useSuggestion: "Yes, fix it",

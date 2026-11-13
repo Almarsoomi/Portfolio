@@ -1168,7 +1168,7 @@ function DetailsStep({
               onChange={(iso) => set("waCountry", iso)}
               open={pickerOpen}
               onOpenChange={setPickerOpen}
-              labels={{ countryCode: ui.countryCode, searchCountry: ui.searchCountry, noCountry: ui.noCountry }}
+              labels={{ countryCode: ui.countryCode, searchCountry: ui.searchCountry, noCountry: ui.noCountry, close: ui.close }}
             />
             <input
               id="cf-wa"
