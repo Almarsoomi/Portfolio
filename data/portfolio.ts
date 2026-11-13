@@ -438,6 +438,8 @@ export const contactForm = {
     whatsapp: "WhatsApp",
     whatsappPh: "50 123 4567",
     countryCode: "Country code",
+    searchCountry: "Search country or code",
+    noCountry: "No country found",
     preferred: "Best way to reach you",
     preferredOptions: { email: "Email", whatsapp: "WhatsApp", either: "Either" },
     message: "Anything else?",

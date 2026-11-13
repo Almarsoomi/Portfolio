@@ -307,6 +307,8 @@ export const contactForm: typeof EN.contactForm = {
     whatsapp: "واتساب",
     whatsappPh: "50 123 4567",
     countryCode: "رمز الدولة",
+    searchCountry: "ابحث عن دولة أو رمز",
+    noCountry: "لا توجد دولة بهذا الاسم",
     preferred: "أفضل طريقة للتواصل معك",
     preferredOptions: { email: "البريد", whatsapp: "واتساب", either: "أيهما" },
     message: "شيء آخر؟",

@@ -25,7 +25,6 @@ import {
   Briefcase,
   CalendarCheck,
   Check,
-  ChevronDown,
   Clock,
   Compass,
   Eraser,
@@ -59,6 +58,7 @@ import {
 import type { FormGroup, FormIcon, FormStep, PathKey } from "@/data/portfolio";
 import { EMAILJS, EMAIL_ACCENTS, emailjsReady } from "@/data/emailjs";
 import { useContent, useLang } from "./i18n";
+import CountryCodePicker, { DEFAULT_COUNTRY, countryFromNumber, dialCode } from "./CountryCodePicker";
 import { smoothScrollTo } from "./lenis-store";
 import { EASE } from "./motion-primitives";
 
@@ -103,8 +103,8 @@ interface Details {
   email: string;
   /** Local number, without the country code. */
   whatsapp: string;
-  /** Country dialling code, digits only ("971"). */
-  waCode: string;
+  /** Country for the WhatsApp number, ISO code ("AE"). */
+  waCountry: string;
   preferred: Preferred;
   message: string;
   /** Honeypot — real visitors never see or fill it. */
@@ -113,33 +113,12 @@ interface Details {
 
 type ErrorKey = "name" | "contact" | "email" | "whatsapp";
 
-/** Country codes for the WhatsApp field: Gulf first, then common client countries. */
-const COUNTRY_CODES: { code: string; flag: string; en: string; ar: string }[] = [
-  { code: "971", flag: "🇦🇪", en: "UAE", ar: "الإمارات" },
-  { code: "966", flag: "🇸🇦", en: "Saudi Arabia", ar: "السعودية" },
-  { code: "968", flag: "🇴🇲", en: "Oman", ar: "عُمان" },
-  { code: "974", flag: "🇶🇦", en: "Qatar", ar: "قطر" },
-  { code: "965", flag: "🇰🇼", en: "Kuwait", ar: "الكويت" },
-  { code: "973", flag: "🇧🇭", en: "Bahrain", ar: "البحرين" },
-  { code: "20", flag: "🇪🇬", en: "Egypt", ar: "مصر" },
-  { code: "962", flag: "🇯🇴", en: "Jordan", ar: "الأردن" },
-  { code: "961", flag: "🇱🇧", en: "Lebanon", ar: "لبنان" },
-  { code: "964", flag: "🇮🇶", en: "Iraq", ar: "العراق" },
-  { code: "212", flag: "🇲🇦", en: "Morocco", ar: "المغرب" },
-  { code: "90", flag: "🇹🇷", en: "Türkiye", ar: "تركيا" },
-  { code: "91", flag: "🇮🇳", en: "India", ar: "الهند" },
-  { code: "92", flag: "🇵🇰", en: "Pakistan", ar: "باكستان" },
-  { code: "63", flag: "🇵🇭", en: "Philippines", ar: "الفلبين" },
-  { code: "44", flag: "🇬🇧", en: "United Kingdom", ar: "المملكة المتحدة" },
-  { code: "1", flag: "🇺🇸", en: "USA / Canada", ar: "أمريكا / كندا" },
-];
-
 const EMPTY_DETAILS: Details = {
   name: "",
   company: "",
   email: "",
   whatsapp: "",
-  waCode: "971",
+  waCountry: DEFAULT_COUNTRY,
   preferred: "either",
   message: "",
   website: "",
@@ -147,24 +126,16 @@ const EMPTY_DETAILS: Details = {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-/**
- * Full international number, digits only: code "971" + "050 123 4567" →
- * "971501234567". A number typed with its own "+" or "00" prefix wins.
- */
-function waDigits(code: string, raw: string): string {
-  const trimmed = raw.trim();
-  if (!trimmed) return "";
-  if (/^(\+|00)/.test(trimmed)) return trimmed.replace(/\D/g, "").replace(/^00/, "");
-  const local = trimmed.replace(/\D/g, "").replace(/^0+/, "");
-  return local ? code + local : "";
+/** Full international number, digits only: AE + "050 123 4567" → "971501234567". */
+function waDigits(iso: string, raw: string): string {
+  const local = raw.replace(/\D/g, "").replace(/^0+/, "");
+  return local ? dialCode(iso) + local : "";
 }
 
 /** "+971 50 123 4567" for the email. */
-function waDisplay(code: string, raw: string): string {
-  const trimmed = raw.trim();
-  if (!trimmed) return "";
-  if (/^(\+|00)/.test(trimmed)) return "+" + trimmed.replace(/^(\+|00)\s*/, "");
-  return `+${code} ${trimmed.replace(/^0+/, "")}`;
+function waDisplay(iso: string, raw: string): string {
+  const local = raw.trim().replace(/^0+/, "");
+  return local ? `+${dialCode(iso)} ${local}` : "";
 }
 
 function isAnswered(group: FormGroup, answers: Answers) {
@@ -285,7 +256,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
   function validate(): boolean {
     const e: Partial<Record<ErrorKey, string>> = {};
     const email = details.email.trim();
-    const wa = waDigits(details.waCode, details.whatsapp);
+    const wa = waDigits(details.waCountry, details.whatsapp);
     if (!details.name.trim()) e.name = ui.errors.name;
     if (!email && !details.whatsapp.trim()) e.contact = ui.errors.contact;
     if (email && !EMAIL_RE.test(email)) e.email = ui.errors.email;
@@ -298,7 +269,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
   function buildMessage(ref: string) {
     const prefLabel = ui.preferredOptions[details.preferred];
     const answersText = brief.map((r) => `${r.group.summary}: ${r.values.join(", ")}`).join("\n");
-    const wa = waDigits(details.waCode, details.whatsapp);
+    const wa = waDigits(details.waCountry, details.whatsapp);
     const esc = (s: string) =>
       s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
     const answersHtml = brief
@@ -317,7 +288,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
       company: details.company.trim() || "—",
       email: details.email.trim(),
       reply_to: details.email.trim(),
-      whatsapp: waDisplay(details.waCode, details.whatsapp) || "—",
+      whatsapp: waDisplay(details.waCountry, details.whatsapp) || "—",
       whatsapp_link: wa ? `https://wa.me/${wa}` : "",
       preferred_contact: prefLabel,
       message: details.message.trim() || "—",
@@ -921,6 +892,7 @@ function Field({
   error,
   children,
   ui,
+  className,
 }: {
   id: string;
   label: string;
@@ -928,9 +900,10 @@ function Field({
   error?: string;
   children: ReactNode;
   ui: UI;
+  className?: string;
 }) {
   return (
-    <div>
+    <div className={className}>
       <label htmlFor={id} className="mb-1.5 flex items-baseline gap-2 text-sm font-semibold text-ink">
         {label}
         {optional ? <span className="text-xs font-normal text-ink-faint">{ui.optional}</span> : null}
@@ -980,7 +953,7 @@ function DetailsStep({
   ui: UI;
 }) {
   const set = <K extends keyof Details>(k: K, v: Details[K]) => setDetails({ ...details, [k]: v });
-  const lang = useLang();
+  const [pickerOpen, setPickerOpen] = useState(false);
   const reduce = useReducedMotion();
   const prefs: { id: Preferred; icon: ReactNode }[] = [
     { id: "email", icon: <Mail aria-hidden className="h-4 w-4" /> },
@@ -1054,42 +1027,36 @@ function DetailsStep({
             aria-describedby={errors.email || errors.contact ? "cf-email-err" : undefined}
           />
         </Field>
-        <Field id="cf-wa" label={ui.whatsapp} error={errors.whatsapp} ui={ui}>
+        <Field
+          id="cf-wa"
+          label={ui.whatsapp}
+          error={errors.whatsapp}
+          ui={ui}
+          // While the country list is open, use the full width so names fit.
+          className={pickerOpen ? "sm:col-span-2" : undefined}
+        >
           {/* Country code + number. Always left-to-right, as phone numbers are written. */}
-          <div dir="ltr" className="flex gap-2">
-            <div className="relative shrink-0">
-              <select
-                aria-label={ui.countryCode}
-                value={details.waCode}
-                onChange={(e) => set("waCode", e.target.value)}
-                className={`${inputCls} !w-[6.75rem] cursor-pointer appearance-none !pl-3 !pr-7 !text-transparent`}
-              >
-                {COUNTRY_CODES.map((c) => (
-                  <option key={c.code + c.en} value={c.code} className="bg-surface text-ink">
-                    {c.flag} +{c.code} {lang === "ar" ? c.ar : c.en}
-                  </option>
-                ))}
-              </select>
-              {/* The closed picker shows just the flag and code; the open list shows country names. */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-y-0 left-3 flex items-center gap-1.5 text-base text-ink"
-              >
-                <span>{COUNTRY_CODES.find((c) => c.code === details.waCode)?.flag}</span>
-                <span>+{details.waCode}</span>
-              </span>
-              <ChevronDown
-                aria-hidden
-                className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint"
-              />
-            </div>
+          <div dir="ltr" className="flex flex-wrap gap-2">
+            <CountryCodePicker
+              value={details.waCountry}
+              onChange={(iso) => set("waCountry", iso)}
+              open={pickerOpen}
+              onOpenChange={setPickerOpen}
+              labels={{ countryCode: ui.countryCode, searchCountry: ui.searchCountry, noCountry: ui.noCountry }}
+            />
             <input
               id="cf-wa"
               type="tel"
               inputMode="tel"
-              className={`${inputCls} min-w-0 flex-1`}
+              className={`${inputCls} min-w-0 !w-auto flex-1`}
               value={details.whatsapp}
-              onChange={(e) => set("whatsapp", e.target.value)}
+              onChange={(e) => {
+                const v = e.target.value;
+                // A full number ("+44 7700…") switches the country by itself.
+                const found = countryFromNumber(v, details.waCountry);
+                if (found) setDetails({ ...details, waCountry: found.iso, whatsapp: found.rest });
+                else set("whatsapp", v);
+              }}
               placeholder={ui.whatsappPh}
               autoComplete="tel-national"
               aria-invalid={!!(errors.whatsapp || errors.contact)}
