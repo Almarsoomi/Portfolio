@@ -58,6 +58,7 @@ import {
 import type { FormGroup, FormIcon, FormStep, PathKey } from "@/data/portfolio";
 import { EMAILJS, EMAIL_ACCENTS, emailjsReady } from "@/data/emailjs";
 import { useContent, useLang } from "./i18n";
+import CountryCodePicker, { DEFAULT_COUNTRY, countryFromNumber, dialCode } from "./CountryCodePicker";
 import { smoothScrollTo } from "./lenis-store";
 import { EASE } from "./motion-primitives";
 
@@ -100,7 +101,10 @@ interface Details {
   name: string;
   company: string;
   email: string;
+  /** Local number, without the country code. */
   whatsapp: string;
+  /** Country for the WhatsApp number, ISO code ("AE"). */
+  waCountry: string;
   preferred: Preferred;
   message: string;
   /** Honeypot — real visitors never see or fill it. */
@@ -114,6 +118,7 @@ const EMPTY_DETAILS: Details = {
   company: "",
   email: "",
   whatsapp: "",
+  waCountry: DEFAULT_COUNTRY,
   preferred: "either",
   message: "",
   website: "",
@@ -121,12 +126,16 @@ const EMPTY_DETAILS: Details = {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-/** "050 123 4567" → "971501234567" (UAE local numbers get the country code). */
-function waDigits(raw: string): string {
-  let d = raw.replace(/\D/g, "");
-  if (d.startsWith("00")) d = d.slice(2);
-  if (d.startsWith("05") && d.length === 10) d = `971${d.slice(1)}`;
-  return d;
+/** Full international number, digits only: AE + "050 123 4567" → "971501234567". */
+function waDigits(iso: string, raw: string): string {
+  const local = raw.replace(/\D/g, "").replace(/^0+/, "");
+  return local ? dialCode(iso) + local : "";
+}
+
+/** "+971 50 123 4567" for the email. */
+function waDisplay(iso: string, raw: string): string {
+  const local = raw.trim().replace(/^0+/, "");
+  return local ? `+${dialCode(iso)} ${local}` : "";
 }
 
 function isAnswered(group: FormGroup, answers: Answers) {
@@ -247,11 +256,11 @@ export default function ContactWizard({ path }: { path: PathKey }) {
   function validate(): boolean {
     const e: Partial<Record<ErrorKey, string>> = {};
     const email = details.email.trim();
-    const wa = waDigits(details.whatsapp);
+    const wa = waDigits(details.waCountry, details.whatsapp);
     if (!details.name.trim()) e.name = ui.errors.name;
     if (!email && !details.whatsapp.trim()) e.contact = ui.errors.contact;
     if (email && !EMAIL_RE.test(email)) e.email = ui.errors.email;
-    if (details.whatsapp.trim() && wa.length < 8) e.whatsapp = ui.errors.whatsapp;
+    if (details.whatsapp.trim() && wa.length < 9) e.whatsapp = ui.errors.whatsapp;
     setErrors(e);
     if (Object.keys(e).length) setShake((n) => n + 1);
     return !Object.keys(e).length;
@@ -260,7 +269,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
   function buildMessage(ref: string) {
     const prefLabel = ui.preferredOptions[details.preferred];
     const answersText = brief.map((r) => `${r.group.summary}: ${r.values.join(", ")}`).join("\n");
-    const wa = waDigits(details.whatsapp);
+    const wa = waDigits(details.waCountry, details.whatsapp);
     const esc = (s: string) =>
       s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
     const answersHtml = brief
@@ -279,7 +288,7 @@ export default function ContactWizard({ path }: { path: PathKey }) {
       company: details.company.trim() || "—",
       email: details.email.trim(),
       reply_to: details.email.trim(),
-      whatsapp: details.whatsapp.trim() || "—",
+      whatsapp: waDisplay(details.waCountry, details.whatsapp) || "—",
       whatsapp_link: wa ? `https://wa.me/${wa}` : "",
       preferred_contact: prefLabel,
       message: details.message.trim() || "—",
@@ -883,6 +892,7 @@ function Field({
   error,
   children,
   ui,
+  className,
 }: {
   id: string;
   label: string;
@@ -890,9 +900,10 @@ function Field({
   error?: string;
   children: ReactNode;
   ui: UI;
+  className?: string;
 }) {
   return (
-    <div>
+    <div className={className}>
       <label htmlFor={id} className="mb-1.5 flex items-baseline gap-2 text-sm font-semibold text-ink">
         {label}
         {optional ? <span className="text-xs font-normal text-ink-faint">{ui.optional}</span> : null}
@@ -942,6 +953,7 @@ function DetailsStep({
   ui: UI;
 }) {
   const set = <K extends keyof Details>(k: K, v: Details[K]) => setDetails({ ...details, [k]: v });
+  const [pickerOpen, setPickerOpen] = useState(false);
   const reduce = useReducedMotion();
   const prefs: { id: Preferred; icon: ReactNode }[] = [
     { id: "email", icon: <Mail aria-hidden className="h-4 w-4" /> },
@@ -1015,20 +1027,42 @@ function DetailsStep({
             aria-describedby={errors.email || errors.contact ? "cf-email-err" : undefined}
           />
         </Field>
-        <Field id="cf-wa" label={ui.whatsapp} error={errors.whatsapp} ui={ui}>
-          <input
-            id="cf-wa"
-            type="tel"
-            dir="ltr"
-            inputMode="tel"
-            className={`${inputCls} rtl:text-right`}
-            value={details.whatsapp}
-            onChange={(e) => set("whatsapp", e.target.value)}
-            placeholder={ui.whatsappPh}
-            autoComplete="tel"
-            aria-invalid={!!(errors.whatsapp || errors.contact)}
-            aria-describedby={errors.whatsapp ? "cf-wa-err" : undefined}
-          />
+        <Field
+          id="cf-wa"
+          label={ui.whatsapp}
+          error={errors.whatsapp}
+          ui={ui}
+          // While the country list is open, use the full width so names fit.
+          className={pickerOpen ? "sm:col-span-2" : undefined}
+        >
+          {/* Country code + number. Always left-to-right, as phone numbers are written. */}
+          <div dir="ltr" className="flex flex-wrap gap-2">
+            <CountryCodePicker
+              value={details.waCountry}
+              onChange={(iso) => set("waCountry", iso)}
+              open={pickerOpen}
+              onOpenChange={setPickerOpen}
+              labels={{ countryCode: ui.countryCode, searchCountry: ui.searchCountry, noCountry: ui.noCountry }}
+            />
+            <input
+              id="cf-wa"
+              type="tel"
+              inputMode="tel"
+              className={`${inputCls} min-w-0 !w-auto flex-1`}
+              value={details.whatsapp}
+              onChange={(e) => {
+                const v = e.target.value;
+                // A full number ("+44 7700…") switches the country by itself.
+                const found = countryFromNumber(v, details.waCountry);
+                if (found) setDetails({ ...details, waCountry: found.iso, whatsapp: found.rest });
+                else set("whatsapp", v);
+              }}
+              placeholder={ui.whatsappPh}
+              autoComplete="tel-national"
+              aria-invalid={!!(errors.whatsapp || errors.contact)}
+              aria-describedby={errors.whatsapp ? "cf-wa-err" : undefined}
+            />
+          </div>
         </Field>
 
         <fieldset className="sm:col-span-2">
