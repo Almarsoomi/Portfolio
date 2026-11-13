@@ -415,6 +415,34 @@ body {
   animation: wizard-rise 0.32s cubic-bezier(0.25, 0.4, 0.25, 1) both;
 }
 
+/* Country flags for browsers without flag emojis (Windows). Only flag
+   characters use this font, and it downloads only when [data-flag-font] is
+   set by CountryCodePicker. Flag art: Twemoji, CC-BY 4.0. */
+@font-face {
+  font-family: "Twemoji Country Flags";
+  unicode-range: U+1F1E6-1F1FF, U+1F3F4, U+E0062-E0063, U+E0065, U+E0067, U+E006C, U+E006E,
+    U+E0073-E0074, U+E0077, U+E007F;
+  src: url("./assets/TwemojiCountryFlags.woff2") format("woff2");
+  font-display: swap;
+}
+html[data-flag-font] .flag-emoji {
+  font-family: "Twemoji Country Flags", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
+/* Country picker sheet on phones: dim the page, slide the panel up. */
+@keyframes sheet-fade {
+  from { opacity: 0; }
+}
+@keyframes sheet-up {
+  from { transform: translate3d(0, 100%, 0); }
+}
+.sheet-backdrop {
+  animation: sheet-fade 0.25s ease-out both;
+}
+.sheet-panel {
+  animation: sheet-up 0.35s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
 /* Contact form: a soft light sweep across active buttons. */
 .wizard-shine {
   position: absolute;
