@@ -140,6 +140,7 @@ export const projects: typeof EN.projects = [
     demo: "metaleast",
     status: "Live",
     link: "https://metal-east-records.vercel.app",
+    logo: "metaleast",
   },
   {
     kind: "web",

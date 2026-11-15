@@ -28,8 +28,8 @@ export const testimonials: Testimonial[] = [];
 /** Businesses I've worked with — shown as a moving strip on each path. */
 export const clients: { name: string; logo?: LogoKey; paths: PathKey[] }[] = [
   { name: "The Walls Carpentry", logo: "thewalls", paths: ["build", "books"] },
-  { name: "Metal East Records", paths: ["build", "books"] },
+  { name: "Metal East Records", logo: "metaleast", paths: ["build", "books"] },
   { name: "Care Plus Auto Repairing", logo: "careplus", paths: ["build"] },
   { name: "Build It Contracting", logo: "buildit", paths: ["build"] },
-  { name: "H&S Water Sports", paths: ["books"] },
+  { name: "H&S Water Sports", logo: "hswatersports", paths: ["books"] },
 ];

@@ -196,6 +196,7 @@ export const projects: Project[] = [
     demo: "metaleast",
     status: "Live",
     link: "https://metal-east-records.vercel.app",
+    logo: "metaleast",
   },
   {
     kind: "web",
