@@ -528,6 +528,14 @@ export const ui: typeof EN.ui = {
   otherLangShort: "EN",
   switchLangLabel: "التبديل إلى الإنجليزية",
   portraitAlt: "أحمد",
+  heroReveal: {
+    label: "عرض صورة أحمد",
+    hint: "تعرّف على أحمد",
+    caption: {
+      build: "مرحباً، أنا من يبني هذا.",
+      books: "مرحباً، أنا من يضبط هذه الحسابات.",
+    },
+  },
   lastVisited: "آخر زيارة",
   or: "أو",
   themeLabel: "التبديل بين الوضع الفاتح والداكن",

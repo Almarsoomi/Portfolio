@@ -4,14 +4,17 @@ import { motion } from "framer-motion";
 import { CalendarCheck, Check, Code2, Percent } from "lucide-react";
 import type { PathKey } from "@/data/portfolio";
 import DirhamSign from "./DirhamSign";
+import { HERO_BEATS, heroStep } from "./HeroStage";
 
 /**
- * Small "pieces of the work" that float around the hero portrait, so the
+ * Small "pieces of the work" that float around the hero stage, so the
  * decoration says what the page is about:
  *   Build — a page assembling itself, a live site, a booking arriving, a phone layout.
  *   Books — a ledger being ticked off, VAT, a reconciled stamp, a monthly chart.
  * Like the other product mock-ups they stay LTR/English in both languages.
  * `bob` = gentle floating (desktop); `reduce` freezes every loop.
+ * The "Site live" / "New booking" / "Reconciled" chips are timed against the
+ * HeroStage clock, so they fire when the story in the circle reaches them.
  */
 
 const CARD =
@@ -94,18 +97,20 @@ function BuildProps(a: Anim) {
 
       {/* The site is live */}
       <Float {...a} className="right-0 top-[9%] origin-top-right md:-right-[3%]" dy={11} duration={4.6} delay={0.4}>
-        <div className={CHIP}>
+        <motion.div
+          className={CHIP}
+          {...heroStep(reduce, { opacity: 0.35, scale: 0.94 }, { opacity: 1, scale: 1 }, HERO_BEATS.live, 0.3)}
+        >
           <LiveDot />
           Site live
-        </div>
+        </motion.div>
       </Float>
 
       {/* A booking arrives from the site */}
       <Float {...a} className="left-0 bottom-[13%] origin-bottom-left md:-left-[7%]" dy={8} duration={5.2} delay={0.2}>
         <motion.div
           className={CHIP}
-          animate={reduce ? undefined : { opacity: [0, 1, 1, 0], y: [8, 0, 0, 8] }}
-          transition={reduce ? undefined : loop(1.8, 5)}
+          {...heroStep(reduce, { opacity: 0, y: 8 }, { opacity: 1, y: 0 }, HERO_BEATS.result, 0.3)}
         >
           <CalendarCheck className="h-3.5 w-3.5 text-accent" />
           New booking
@@ -178,8 +183,7 @@ function BooksProps(a: Anim) {
       <Float {...a} className="left-0 bottom-[13%] origin-bottom-left md:-left-[7%]" dy={8} duration={5.2} delay={0.2}>
         <motion.div
           className={`${CHIP} -rotate-6 border-accent-deep/50 text-accent-deep`}
-          animate={reduce ? undefined : { opacity: [0, 1, 1, 0], scale: [1.5, 1, 1, 1] }}
-          transition={reduce ? undefined : loop(2, 5)}
+          {...heroStep(reduce, { opacity: 0, scale: 1.5 }, { opacity: 1, scale: 1 }, HERO_BEATS.live + 1, 0.25)}
         >
           <Check className="h-3.5 w-3.5" strokeWidth={3} />
           Reconciled

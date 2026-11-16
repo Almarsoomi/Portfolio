@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
   motion,
@@ -17,6 +17,8 @@ import { useContent } from "./i18n";
 import { EASE } from "./motion-primitives";
 import Typewriter from "./Typewriter";
 import HeroProps from "./HeroProps";
+import HeroStage from "./HeroStage";
+import FitStage from "./fork/FitStage";
 import AvailabilityBadge from "./AvailabilityBadge";
 import { useIsDesktop, useMediaQuery } from "./use-media-query";
 import ahmedPhoto from "@/app/ahmed.webp";
@@ -58,6 +60,17 @@ export default function Hero({ path }: { path: PathKey }) {
   const photoX = useTransform(psX, (v) => v * 20);
   const photoRotY = useTransform(psX, (v) => v * 9);
   const photoRotX = useTransform(psY, (v) => v * -9);
+
+  // The circle shows the work by default; hovering (mouse) or tapping/pressing
+  // it reveals the person behind it. A tap lets go again after a few seconds.
+  const [hovered, setHovered] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  const showPhoto = hovered || pinned;
+  useEffect(() => {
+    if (!pinned) return;
+    const id = window.setTimeout(() => setPinned(false), 5000);
+    return () => window.clearTimeout(id);
+  }, [pinned]);
 
   const handlePointerMove = (e: React.MouseEvent) => {
     if (motionOff || !heroRef.current) return;
@@ -173,7 +186,7 @@ export default function Hero({ path }: { path: PathKey }) {
           </motion.div>
         </motion.div>
 
-        {/* Photo column with floating shapes (parallax) */}
+        {/* Stage column with floating shapes (parallax) */}
         <motion.div style={{ y: photoY }} className="relative mx-auto w-full max-w-[24rem] sm:max-w-[26rem]">
           <motion.div
             variants={item}
@@ -185,7 +198,7 @@ export default function Hero({ path }: { path: PathKey }) {
             }}
             className="relative aspect-square w-full"
           >
-          {/* Gradient blob behind the portrait */}
+          {/* Gradient blob behind the stage */}
           <div
             aria-hidden
             className="absolute inset-[6%] rounded-full bg-gradient-to-br from-accent/30 via-accent-deep/20 to-transparent blur-2xl"
@@ -196,18 +209,54 @@ export default function Hero({ path }: { path: PathKey }) {
             className="absolute inset-[4%] rounded-full border border-accent/20"
           />
 
-          {/* Portrait */}
-          <div className="absolute inset-[9%] overflow-hidden rounded-full border border-edge-strong bg-surface-raised shadow-glow">
-            <Image
-              src={ahmedPhoto}
-              alt={c.ui.portraitAlt}
-              priority
-              className="h-full w-full object-cover"
+          {/* The work, with the person behind it one hover/tap away */}
+          <button
+            type="button"
+            aria-pressed={showPhoto}
+            aria-label={c.ui.heroReveal.label}
+            onClick={() => setPinned((p) => !p)}
+            onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(true)}
+            onPointerLeave={() => setHovered(false)}
+            className="group absolute inset-[9%] overflow-hidden rounded-full border border-edge-strong bg-surface-raised shadow-glow outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            <span
+              aria-hidden
+              className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgb(var(--color-accent)/0.14),transparent_70%)]"
             />
-          </div>
+            <motion.span
+              className="absolute inset-0 block"
+              animate={{ opacity: showPhoto ? 0 : 1, scale: showPhoto ? 0.94 : 1 }}
+              transition={{ duration: reduce ? 0 : 0.35, ease: EASE }}
+            >
+              <FitStage width={300} height={300} max={2} className="h-full w-full">
+                <HeroStage path={path} reduce={!!reduce} />
+              </FitStage>
+              {/* Hint that there is a face behind the demo */}
+              <span className="absolute bottom-[7%] left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border border-edge-strong bg-surface/80 py-0.5 pe-2.5 ps-0.5 text-[10px] font-medium text-ink-muted backdrop-blur transition-colors group-hover:text-ink">
+                <Image src={ahmedPhoto} alt="" sizes="20px" className="h-5 w-5 rounded-full object-cover" />
+                {c.ui.heroReveal.hint}
+              </span>
+            </motion.span>
+
+            <motion.span
+              className="absolute inset-0 block"
+              initial={false}
+              animate={{ opacity: showPhoto ? 1 : 0, scale: showPhoto ? 1 : 1.08 }}
+              transition={{ duration: reduce ? 0 : 0.45, ease: EASE }}
+            >
+              <Image
+                src={ahmedPhoto}
+                alt={showPhoto ? c.ui.portraitAlt : ""}
+                className="h-full w-full object-cover"
+              />
+              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent px-[16%] pb-[9%] pt-[14%] text-center font-display text-[13px] font-semibold leading-snug text-white">
+                {c.ui.heroReveal.caption[path]}
+              </span>
+            </motion.span>
+          </button>
 
           {/* Floating pieces of the work (extra cursor parallax on desktop) */}
-          <motion.div style={{ x: shapeX, y: shapeY }} className="absolute inset-0">
+          <motion.div style={{ x: shapeX, y: shapeY }} className="pointer-events-none absolute inset-0">
             <HeroProps path={path} reduce={!!reduce} bob={isMd} />
           </motion.div>
           </motion.div>
