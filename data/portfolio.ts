@@ -664,6 +664,14 @@ export const ui = {
   otherLangShort: "ع",
   switchLangLabel: "Switch to Arabic",
   portraitAlt: "Ahmed",
+  heroReveal: {
+    label: "Show Ahmed's photo",
+    hint: "Meet Ahmed",
+    caption: {
+      build: "Hi, I'm the one who builds this.",
+      books: "Hi, I'm the one who keeps this straight.",
+    } as Record<PathKey, string>,
+  },
   lastVisited: "Last visited",
   or: "or",
   themeLabel: "Switch between light and dark theme",
